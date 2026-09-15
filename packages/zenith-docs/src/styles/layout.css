@@ -4,6 +4,20 @@ html {
   scrollbar-gutter: stable;
 }
 
+/* Page transitions: header and sidebar stay put while the content crossfades */
+.zd-header {
+  view-transition-name: zd-header;
+}
+
+.zd-sidebar {
+  view-transition-name: zd-sidebar;
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 120ms;
+}
+
 /* Dithered glow at the top of the page, drawn with two offset dot grids */
 .zd-backdrop {
   position: absolute;
