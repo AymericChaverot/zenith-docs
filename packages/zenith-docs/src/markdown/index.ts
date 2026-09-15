@@ -96,6 +96,8 @@ function headingsPlugin(): HastPluginDefinition {
       visit(node, ctx) {
         const parent = ctx.parent(node);
         if (parent?.type === 'element' && hasClass(parent, 'zd-heading')) return;
+        // Visually hidden headings, like the GFM footnotes label, get no anchor.
+        if (hasClass(node as Element, 'sr-only')) return;
 
         let heading: Element = { ...node, properties: { ...node.properties } };
         const last = heading.children.at(-1);

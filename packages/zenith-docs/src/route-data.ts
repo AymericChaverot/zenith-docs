@@ -100,6 +100,7 @@ export async function getRouteData(
     ? headings.filter(
         (heading) =>
           config.tableOfContents &&
+          heading.slug !== 'footnote-label' &&
           heading.depth >= config.tableOfContents.minHeadingLevel &&
           heading.depth <= config.tableOfContents.maxHeadingLevel,
       )
