@@ -10,6 +10,7 @@
 @import './content.css' layer(zenith.content);
 @import './code.css' layer(zenith.content);
 @import './components.css' layer(zenith.components);
+@import './search.css' layer(zenith.components);
 
 /* Crossfade between pages instead of flashing an empty page (Chrome, Safari) */
 @view-transition {

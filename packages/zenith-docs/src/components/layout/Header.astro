@@ -1,4 +1,5 @@
 ---
+import Search from 'virtual:zenith/components/Search';
 import ThemeToggle from 'virtual:zenith/components/ThemeToggle';
 import Icon from '../Icon.astro';
 
@@ -45,6 +46,7 @@ const showTitle = !config.logo?.replacesTitle;
     )
   }
   <div class="zd-header-actions">
+    <Search />
     {
       config.github && (
         <a class="zd-icon-button" href={config.github} aria-label="GitHub repository">

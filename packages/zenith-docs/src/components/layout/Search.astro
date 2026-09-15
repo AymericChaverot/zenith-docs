@@ -1,0 +1,159 @@
+---
+import Icon from '../Icon.astro';
+
+const { config } = Astro.locals.zenith;
+---
+
+{
+  config.search && (
+    <>
+      <button class="zd-search-button" type="button" data-search-open>
+        <Icon name="search" size={15} />
+        <span class="zd-search-label">Search</span>
+        <kbd class="zd-search-kbd">Ctrl K</kbd>
+      </button>
+      <dialog class="zd-search-dialog" data-search-dialog aria-label="Search">
+        <div class="zd-search-field">
+          <Icon name="search" size={16} />
+          <input
+            class="zd-search-input"
+            type="search"
+            placeholder="Search documentation"
+            autocomplete="off"
+            spellcheck="false"
+            aria-label="Search documentation"
+            data-search-input
+          />
+          <button class="zd-search-close" type="button" data-search-close>
+            Esc
+          </button>
+        </div>
+        <div class="zd-search-results" data-search-results />
+      </dialog>
+    </>
+  )
+}
+
+<script>
+  const dialog = document.querySelector<HTMLDialogElement>('[data-search-dialog]');
+  const input = document.querySelector<HTMLInputElement>('[data-search-input]');
+  const results = document.querySelector<HTMLElement>('[data-search-results]');
+
+  if (dialog && input && results) {
+    interface PagefindResult {
+      url: string;
+      excerpt: string;
+      meta: { title?: string };
+      sub_results?: { title: string; url: string; excerpt: string }[];
+    }
+
+    let pagefind: Promise<any> | undefined;
+    let query = 0;
+
+    /** Pagefind is generated at build time, so it is loaded from the site, not bundled. */
+    const load = () => {
+      pagefind ??= import(/* @vite-ignore */ `${import.meta.env.BASE_URL}pagefind/pagefind.js`)
+        .then(async (module) => {
+          await module.options({ baseUrl: import.meta.env.BASE_URL });
+          return module;
+        })
+        .catch(() => null);
+      return pagefind;
+    };
+
+    const message = (text: string) => {
+      results.replaceChildren(Object.assign(document.createElement('p'), {
+        className: 'zd-search-message',
+        textContent: text,
+      }));
+    };
+
+    const render = (pages: PagefindResult[]) => {
+      if (pages.length === 0) {
+        message('No results.');
+        return;
+      }
+      results.replaceChildren(
+        ...pages.map((page) => {
+          const group = document.createElement('div');
+          group.className = 'zd-search-group';
+
+          const link = document.createElement('a');
+          link.className = 'zd-search-result';
+          link.href = page.url;
+          link.dataset.searchResult = '';
+          link.innerHTML = `<span class="zd-search-result-title"></span><span class="zd-search-result-excerpt">${page.excerpt}</span>`;
+          link.querySelector('.zd-search-result-title')!.textContent = page.meta.title ?? page.url;
+          group.append(link);
+
+          for (const sub of (page.sub_results ?? []).slice(0, 3)) {
+            if (sub.url === page.url) continue;
+            const subLink = document.createElement('a');
+            subLink.className = 'zd-search-result zd-search-subresult';
+            subLink.href = sub.url;
+            subLink.dataset.searchResult = '';
+            subLink.innerHTML = `<span class="zd-search-result-title"></span><span class="zd-search-result-excerpt">${sub.excerpt}</span>`;
+            subLink.querySelector('.zd-search-result-title')!.textContent = sub.title;
+            group.append(subLink);
+          }
+          return group;
+        }),
+      );
+    };
+
+    const search = async () => {
+      const term = input.value.trim();
+      const id = ++query;
+      if (!term) {
+        results.replaceChildren();
+        return;
+      }
+      const module = await load();
+      if (!module) {
+        message('Search is available once the site has been built.');
+        return;
+      }
+      const response = await module.debouncedSearch(term, {}, 200);
+      if (!response || id !== query) return;
+      render(await Promise.all(response.results.slice(0, 8).map((result: any) => result.data())));
+    };
+
+    const open = () => {
+      if (dialog.open) return;
+      dialog.showModal();
+      input.select();
+      load();
+    };
+
+    for (const button of document.querySelectorAll('[data-search-open]')) {
+      button.addEventListener('click', open);
+    }
+    dialog.querySelector('[data-search-close]')?.addEventListener('click', () => dialog.close());
+    input.addEventListener('input', search);
+
+    // Clicking the backdrop closes the dialog.
+    dialog.addEventListener('click', (event) => {
+      if (event.target === dialog) dialog.close();
+    });
+
+    addEventListener('keydown', (event) => {
+      if (event.key === 'k' && (event.metaKey || event.ctrlKey)) {
+        event.preventDefault();
+        open();
+      }
+    });
+
+    dialog.addEventListener('keydown', (event) => {
+      const offsets: Record<string, number> = { ArrowDown: 1, ArrowUp: -1 };
+      const offset = offsets[event.key];
+      if (!offset) return;
+      event.preventDefault();
+      const links = [...dialog.querySelectorAll<HTMLAnchorElement>('[data-search-result]')];
+      if (links.length === 0) return;
+      const current = links.indexOf(document.activeElement as HTMLAnchorElement);
+      const next = current === -1 ? (offset > 0 ? 0 : links.length - 1) : current + offset;
+      if (next < 0) input.focus();
+      else links[Math.min(next, links.length - 1)]!.focus();
+    });
+  }
+</script>
