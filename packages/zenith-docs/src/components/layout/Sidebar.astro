@@ -67,6 +67,25 @@ if (tabs.length > 0 && hasRootContent) {
   }
 </aside>
 <script is:inline>
+  // Keep the sidebar scroll position across page loads.
+  (() => {
+    const sidebar = document.getElementById('zd-sidebar');
+    if (!sidebar) return;
+    const restore = () => {
+      try {
+        const saved = sessionStorage.getItem('zd-sidebar-scroll');
+        if (saved) sidebar.scrollTop = Number(saved);
+      } catch {}
+    };
+    restore();
+    addEventListener('pagereveal', restore);
+    addEventListener('pagehide', () => {
+      try {
+        sessionStorage.setItem('zd-sidebar-scroll', String(sidebar.scrollTop));
+      } catch {}
+    });
+  })();
+
   // Close the mobile menu when the viewport grows past the breakpoint.
   matchMedia('(min-width: 56.0625rem)').addEventListener('change', (event) => {
     const sidebar = document.getElementById('zd-sidebar');
