@@ -8,6 +8,6 @@ const { value } = Astro.props;
 ---
 
 <div class="zd-tab-panel" role="tabpanel" data-value={value} tabindex="0">
-  {value && <p class="zd-tab-label">{value}</p>}
+  {value && <p class="zd-tab-label" data-pagefind-ignore>{value}</p>}
   <slot />
 </div>

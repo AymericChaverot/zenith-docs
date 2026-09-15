@@ -20,7 +20,7 @@ const { items = [], defaultValue = items[0], groupId, persist = false } = Astro.
 >
   {
     items.length > 0 && (
-      <div class="zd-tabs-list" role="tablist">
+      <div class="zd-tabs-list" role="tablist" data-pagefind-ignore>
         {items.map((item) => (
           <button
             class="zd-tab-trigger"
