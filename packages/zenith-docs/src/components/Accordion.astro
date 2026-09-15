@@ -1,0 +1,21 @@
+---
+import Icon from './Icon.astro';
+
+interface Props {
+  title: string;
+  id?: string;
+  open?: boolean;
+  /** Accordions sharing a group name close each other when opened. */
+  group?: string;
+}
+
+const { title, id, open = false, group } = Astro.props;
+---
+
+<details class="zd-accordion" id={id} open={open} name={group}>
+  <summary>
+    {title}
+    <Icon name="chevron" size={14} class="zd-chevron" />
+  </summary>
+  <div class="zd-accordion-body"><slot /></div>
+</details>
