@@ -1,0 +1,34 @@
+---
+import { icons, isIconName } from '../icons';
+
+interface Props {
+  name: string;
+  size?: number;
+  class?: string;
+  label?: string;
+}
+
+const { name, size = 16, class: className, label } = Astro.props;
+const icon = isIconName(name) ? icons[name] : undefined;
+const filled = icon && 'filled' in icon && icon.filled;
+---
+
+{
+  icon && (
+    <svg
+      class={className}
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill={filled ? 'currentColor' : 'none'}
+      stroke={filled ? 'none' : 'currentColor'}
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      aria-hidden={label ? undefined : 'true'}
+      aria-label={label}
+      role={label ? 'img' : undefined}
+      set:html={icon.body}
+    />
+  )
+}
