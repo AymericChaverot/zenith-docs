@@ -8,13 +8,23 @@ ZenithDocs styles are built on the design tokens of [Lumos](https://lumosframewo
 
 ## Accent presets
 
-The default theme is neutral. Pick a colored accent with the `accent` option: `neutral`, `emerald`, `teal`, `amber`, `rose` or `violet`. Try them on the [kitchen sink](/writing/kitchen-sink/) page.
+The default accent is `emerald`. Pick another preset with the `accent` option: `teal`, `amber`, `rose`, `violet`, or `neutral` for a black and white theme. Try them on the [kitchen sink](/writing/kitchen-sink/) page.
 
 ```js title="astro.config.mjs"
 zenith({
   title: 'My Docs',
-  accent: 'emerald', // [!code highlight]
+  accent: 'violet', // [!code highlight]
 });
+```
+
+## Backdrop
+
+Pages get a subtle dithered glow at the top, tinted with the accent color. Tune its intensity with `--zd-backdrop-strength`, or turn it off with `backdrop: false`.
+
+```css
+.theme-light {
+  --zd-backdrop-strength: 18%;
+}
 ```
 
 ## Add a stylesheet
