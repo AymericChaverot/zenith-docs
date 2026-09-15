@@ -18,7 +18,10 @@ html {
   animation-duration: 120ms;
 }
 
-/* Dithered glow at the top of the page, drawn with two offset dot grids */
+/*
+ * Decorative background at the top of the page, picked with the `backdrop` option.
+ * Every style is plain CSS: no images, no JavaScript.
+ */
 .zd-backdrop {
   position: absolute;
   inset: 0 0 auto;
@@ -27,15 +30,43 @@ html {
   overflow: hidden;
   pointer-events: none;
   --zd-dither: color-mix(in oklab, var(--accent) var(--zd-backdrop-strength), transparent);
+}
+
+/* A soft accent glow, on its own or under a pattern */
+.zd-backdrop,
+[data-backdrop='glow'] .zd-backdrop {
   background: radial-gradient(
     45% 55% at 50% 0%,
-    color-mix(in oklab, var(--accent) 7%, transparent),
+    color-mix(in oklab, var(--accent) 8%, transparent),
     transparent
   );
 }
 
-.zd-backdrop::before,
-.zd-backdrop::after {
+/* Ruled grid */
+[data-backdrop='grid'] .zd-backdrop::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(to right, var(--zd-backdrop-line) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--zd-backdrop-line) 1px, transparent 1px);
+  background-size: 3rem 3rem;
+  mask-image: radial-gradient(75% 100% at 50% 0%, black 0%, transparent 72%);
+}
+
+/* Evenly spaced dots */
+[data-backdrop='dots'] .zd-backdrop::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle, var(--zd-backdrop-line) 1px, transparent 1px);
+  background-size: 1.25rem 1.25rem;
+  mask-image: radial-gradient(70% 100% at 50% 0%, black 0%, transparent 72%);
+}
+
+/* Two offset dot grids, for a halftone gradient */
+[data-backdrop='dither'] .zd-backdrop::before,
+[data-backdrop='dither'] .zd-backdrop::after {
   content: '';
   position: absolute;
   inset: 0;
@@ -43,13 +74,90 @@ html {
   background-size: 6px 6px;
 }
 
-.zd-backdrop::before {
+[data-backdrop='dither'] .zd-backdrop::before {
   mask-image: radial-gradient(62% 90% at 50% 0%, black 0%, transparent 75%);
 }
 
-.zd-backdrop::after {
+[data-backdrop='dither'] .zd-backdrop::after {
   background-position: 3px 3px;
   mask-image: radial-gradient(38% 55% at 50% 0%, black 0%, transparent 80%);
+}
+
+/* Blurred color fields */
+[data-backdrop='aurora'] .zd-backdrop {
+  height: 40rem;
+  background:
+    radial-gradient(
+      38% 42% at 18% 0%,
+      color-mix(in oklab, var(--accent) 20%, transparent),
+      transparent 70%
+    ),
+    radial-gradient(
+      32% 38% at 80% 4%,
+      color-mix(in oklab, var(--zd-color-important) 14%, transparent),
+      transparent 70%
+    ),
+    radial-gradient(
+      60% 50% at 50% 0%,
+      color-mix(in oklab, var(--accent) 9%, transparent),
+      transparent 75%
+    );
+  mask-image: linear-gradient(to bottom, black 25%, transparent);
+}
+
+/* Light rays from above the fold */
+[data-backdrop='rays'] .zd-backdrop::before {
+  content: '';
+  position: absolute;
+  inset: 0 -20%;
+  background: repeating-conic-gradient(
+    from 192deg at 50% -12%,
+    color-mix(in oklab, var(--accent) 16%, transparent) 0deg 3deg,
+    transparent 3deg 11deg
+  );
+  mask-image: radial-gradient(50% 75% at 50% 0%, black 0%, transparent 72%);
+}
+
+/* Film grain over the whole viewport */
+[data-backdrop='grain'] .zd-backdrop {
+  position: fixed;
+  inset: 0;
+  height: auto;
+}
+
+[data-backdrop='grain'] .zd-backdrop::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0.32;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* A horizon line under the header, echoing the logo */
+[data-backdrop='horizon'] .zd-backdrop {
+  height: 26rem;
+  background: radial-gradient(
+    55% 70% at 50% -15%,
+    color-mix(in oklab, var(--accent) 16%, transparent),
+    transparent 70%
+  );
+}
+
+[data-backdrop='horizon'] .zd-backdrop::after {
+  content: '';
+  position: absolute;
+  top: 16rem;
+  left: 0;
+  right: 0;
+  height: 6rem;
+  background:
+    linear-gradient(to right, transparent, var(--accent), transparent) top / 100% 1px no-repeat,
+    radial-gradient(
+      60% 100% at 50% 0%,
+      color-mix(in oklab, var(--accent) 22%, transparent),
+      transparent 70%
+    );
 }
 
 .zd-skip {

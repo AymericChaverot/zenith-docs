@@ -22,13 +22,14 @@ const hasToc = toc.length > 0 && !full;
   lang={config.lang}
   class="theme-light"
   data-accent={config.accent}
+  data-backdrop={config.backdrop}
   data-full={full ? '' : undefined}
 >
   <head>
     <Head />
   </head>
   <body>
-    {config.backdrop && <div class="zd-backdrop" aria-hidden="true" />}
+    {config.backdrop !== 'none' && <div class="zd-backdrop" aria-hidden="true" />}
     <a class="zd-skip" href="#zd-content">Skip to content</a>
     <Header />
     <div class="zd-layout" data-toc={hasToc ? '' : undefined}>
