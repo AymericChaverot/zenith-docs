@@ -34,6 +34,11 @@ const { config } = Astro.locals.zenith;
   )
 }
 
+{/* Not processed by Vite, so the import is left alone and still happens on demand. */}
+<script is:inline define:vars={{ base: import.meta.env.BASE_URL }}>
+  window.zenithLoadPagefind = () => import(`${base}pagefind/pagefind.js`);
+</script>
+
 <script>
   const dialog = document.querySelector<HTMLDialogElement>('[data-search-dialog]');
   const input = document.querySelector<HTMLInputElement>('[data-search-input]');
@@ -52,8 +57,10 @@ const { config } = Astro.locals.zenith;
 
     /** Pagefind is generated at build time, so it is loaded from the site, not bundled. */
     const load = () => {
-      pagefind ??= import(/* @vite-ignore */ `${import.meta.env.BASE_URL}pagefind/pagefind.js`)
-        .then(async (module) => {
+      const loader = (window as unknown as { zenithLoadPagefind?: () => Promise<any> })
+        .zenithLoadPagefind;
+      pagefind ??= (loader?.() ?? Promise.reject(new Error('missing loader')))
+        .then(async (module: any) => {
           await module.options({ baseUrl: import.meta.env.BASE_URL });
           return module;
         })
