@@ -1,0 +1,39 @@
+---
+title: Frontmatter
+description: Fields available at the top of each page.
+---
+
+```mdx
+---
+title: Getting started
+description: Learn the basics.
+icon: rocket
+sidebar:
+  label: Start here
+---
+```
+
+| Field             | Type                | Description                                                  |
+| ----------------- | ------------------- | ------------------------------------------------------------ |
+| `title`           | `string`            | Page title, required                                         |
+| `description`     | `string`            | Shown under the title and used as meta description           |
+| `icon`            | `string`            | Built-in icon shown in the sidebar                           |
+| `full`            | `boolean`           | Use the full content width, with the TOC collapsed           |
+| `toc`             | `boolean`           | Show the table of contents, `true` by default                |
+| `draft`           | `boolean`           | Only build the page in development                           |
+| `sidebar.label`   | `string`            | Label used in the sidebar instead of the title               |
+| `sidebar.hidden`  | `boolean`           | Hide the page from the sidebar                               |
+| `editUrl`         | `string \| false`   | Override or disable the edit link                            |
+| `lastUpdated`     | `Date \| false`     | Override or disable the last updated date                    |
+
+## Extending the schema
+
+`docsSchema()` returns a Zod object, so you can add your own fields:
+
+```ts title="src/content.config.ts"
+import { z } from 'astro/zod';
+
+const schema = docsSchema().extend({
+  authors: z.array(z.string()).optional(),
+});
+```

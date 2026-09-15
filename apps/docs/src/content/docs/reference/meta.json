@@ -1,0 +1,7 @@
+{
+  "title": "Reference",
+  "description": "Configuration and frontmatter",
+  "icon": "settings",
+  "root": true,
+  "pages": ["configuration", "frontmatter"]
+}

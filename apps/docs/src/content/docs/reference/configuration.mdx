@@ -1,0 +1,99 @@
+---
+title: Configuration
+description: Options of the ZenithDocs integration.
+---
+
+Options are passed to the integration in `astro.config.mjs`.
+
+```js title="astro.config.mjs"
+zenith({
+  title: 'My Docs',
+  description: 'Documentation for my project.',
+  logo: { src: '/logo.svg' },
+  github: 'https://github.com/me/my-project',
+  editLink: { baseUrl: 'https://github.com/me/my-project/edit/main/' },
+  lastUpdated: true,
+});
+```
+
+## Site
+
+### `title`
+
+**Type:** `string` (required)
+
+The site name, shown in the header and appended to page titles.
+
+### `description`
+
+**Type:** `string`
+
+Default meta description, used when a page has none.
+
+### `logo`
+
+**Type:** `{ src: string; alt?: string; replacesTitle?: boolean }`
+
+A logo shown next to the title. `src` is a public URL. Set `replacesTitle` to hide the text title.
+
+### `favicon`
+
+**Type:** `string` · **Default:** `'/favicon.svg'`
+
+### `lang`
+
+**Type:** `string` · **Default:** `'en'`
+
+The language of the site, used for the `lang` attribute and date formatting.
+
+## Header
+
+### `github`
+
+**Type:** `string`
+
+Repository URL, shown as an icon in the header.
+
+### `links`
+
+**Type:** `{ label: string; href: string }[]`
+
+Extra links shown in the header, and at the bottom of the sidebar on small screens.
+
+## Pages
+
+### `docsDir`
+
+**Type:** `string` · **Default:** `'src/content/docs'`
+
+Directory holding the content. Pass the same value to `docsLoader()` and `metaLoader()`.
+
+### `tableOfContents`
+
+**Type:** `false | { minHeadingLevel?: number; maxHeadingLevel?: number }` · **Default:** `{ minHeadingLevel: 2, maxHeadingLevel: 3 }`
+
+### `editLink`
+
+**Type:** `{ baseUrl: string }`
+
+Adds an "Edit this page" link. The path of the file, relative to the project root, is appended to `baseUrl`.
+
+### `lastUpdated`
+
+**Type:** `boolean` · **Default:** `false`
+
+Shows the date of the last commit that touched each page.
+
+## Customization
+
+### `customCss`
+
+**Type:** `string[]`
+
+Stylesheets loaded after the built-in styles. See [theming](/customization/theming/).
+
+### `components`
+
+**Type:** `Record<string, string>`
+
+Replaces layout components. See [component overrides](/customization/overrides/).
