@@ -1,0 +1,26 @@
+---
+import Icon from '../Icon.astro';
+---
+
+<button
+  class="zd-icon-button zd-theme-toggle"
+  type="button"
+  aria-label="Toggle dark mode"
+  data-theme-toggle
+>
+  <Icon name="sun" size={18} class="zd-icon-sun" />
+  <Icon name="moon" size={18} class="zd-icon-moon" />
+</button>
+<script is:inline>
+  document.querySelectorAll('[data-theme-toggle]').forEach((button) => {
+    button.addEventListener('click', () => {
+      const classes = document.documentElement.classList;
+      const dark = !classes.contains('theme-dark');
+      classes.toggle('theme-dark', dark);
+      classes.toggle('theme-light', !dark);
+      try {
+        localStorage.setItem('zd-theme', dark ? 'dark' : 'light');
+      } catch {}
+    });
+  });
+</script>
