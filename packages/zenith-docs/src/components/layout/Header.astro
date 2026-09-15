@@ -1,0 +1,47 @@
+---
+import ThemeToggle from 'virtual:zenith/components/ThemeToggle';
+import Icon from '../Icon.astro';
+
+const { config } = Astro.locals.zenith;
+const showTitle = !config.logo?.replacesTitle;
+---
+
+<header class="zd-header">
+  <button
+    class="zd-icon-button zd-menu-button"
+    type="button"
+    popovertarget="zd-sidebar"
+    aria-label="Open navigation"
+  >
+    <Icon name="menu" size={18} />
+  </button>
+  <a class="zd-header-title" href={import.meta.env.BASE_URL}>
+    {
+      config.logo && (
+        <img class="zd-logo" src={config.logo.src} alt={showTitle ? '' : config.logo.alt || config.title} />
+      )
+    }
+    {showTitle && <span>{config.title}</span>}
+  </a>
+  {
+    config.links.length > 0 && (
+      <nav class="zd-header-nav" aria-label="Main">
+        {config.links.map((link) => (
+          <a class="zd-header-link" href={link.href}>
+            {link.label}
+          </a>
+        ))}
+      </nav>
+    )
+  }
+  <div class="zd-header-actions">
+    {
+      config.github && (
+        <a class="zd-icon-button" href={config.github} aria-label="GitHub repository">
+          <Icon name="github" size={18} />
+        </a>
+      )
+    }
+    <ThemeToggle />
+  </div>
+</header>
