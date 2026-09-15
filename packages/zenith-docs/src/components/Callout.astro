@@ -1,0 +1,17 @@
+---
+import { CALLOUT_TITLES, resolveCalloutType } from '../callouts';
+
+interface Props {
+  /** `note`, `tip`, `success`, `warning` or `danger`, or an alias like `info`, `warn`, `error`. */
+  type?: string;
+  title?: string;
+}
+
+const type = resolveCalloutType(Astro.props.type ?? 'note') ?? 'note';
+const title = Astro.props.title ?? CALLOUT_TITLES[type];
+---
+
+<aside class="zd-callout" data-callout={type}>
+  <p class="zd-callout-title">{title}</p>
+  <div class="zd-callout-body"><slot /></div>
+</aside>
