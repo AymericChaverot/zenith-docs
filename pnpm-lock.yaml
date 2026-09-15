@@ -173,6 +173,15 @@ importers:
         specifier: ^1.0.0
         version: 1.0.0(@emnapi/core@1.11.1)(@emnapi/runtime@1.11.3)(prettier@3.9.6)
 
+  apps/docs:
+    dependencies:
+      astro:
+        specifier: ^7.3.2
+        version: 7.3.2(@emnapi/core@1.11.1)(@emnapi/runtime@1.11.3)(@types/node@22.20.3)
+      zenith-docs:
+        specifier: workspace:*
+        version: link:../../packages/zenith-docs
+
   packages/zenith-docs:
     dependencies:
       '@astrojs/markdown-satteri':
