@@ -19,11 +19,32 @@ zenith({
 
 ## Backdrop
 
-Pages get a subtle dithered glow at the top, tinted with the accent color. Tune its intensity with `--zd-backdrop-strength`, or turn it off with `backdrop: false`.
+Pages are drawn over a decorative background, tinted with the accent color. Pick its style with the `backdrop` option, and compare them on the [kitchen sink](/writing/kitchen-sink/) page.
+
+```js title="astro.config.mjs"
+zenith({
+  title: 'My Docs',
+  backdrop: 'grid', // [!code highlight]
+});
+```
+
+| Style     | Looks like                                            |
+| --------- | ----------------------------------------------------- |
+| `aurora`  | Blurred color fields, the default                     |
+| `grid`    | A ruled grid fading downwards                         |
+| `dots`    | Evenly spaced dots                                    |
+| `dither`  | Two offset dot grids, like a halftone print           |
+| `rays`    | Light rays coming from above the page                 |
+| `grain`   | Film grain over the whole viewport                    |
+| `horizon` | A glowing line under the header                       |
+| `glow`    | A soft accent glow, nothing else                      |
+| `none`    | No background                                         |
+
+Every style is plain CSS: no images and no JavaScript. Tune them with `--zd-backdrop-strength`, for the dither dots, and `--zd-backdrop-line`, for the grid and dots.
 
 ```css
 .theme-light {
-  --zd-backdrop-strength: 18%;
+  --zd-backdrop-line: color-mix(in oklab, var(--text) 5%, transparent);
 }
 ```
 
