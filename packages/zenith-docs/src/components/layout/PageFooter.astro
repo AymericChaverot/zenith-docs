@@ -1,0 +1,24 @@
+---
+import Icon from '../Icon.astro';
+
+const { config, editUrl, lastUpdated } = Astro.locals.zenith;
+const formatter = new Intl.DateTimeFormat(config.lang, { dateStyle: 'medium' });
+---
+
+{
+  (editUrl || lastUpdated) && (
+    <footer class="zd-page-footer">
+      {editUrl && (
+        <a class="zd-edit-link" href={editUrl}>
+          <Icon name="edit" size={14} />
+          Edit this page
+        </a>
+      )}
+      {lastUpdated && (
+        <p>
+          Last updated on <time datetime={lastUpdated.toISOString()}>{formatter.format(lastUpdated)}</time>
+        </p>
+      )}
+    </footer>
+  )
+}

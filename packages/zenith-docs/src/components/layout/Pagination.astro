@@ -1,0 +1,30 @@
+---
+import Icon from '../Icon.astro';
+
+const { previous, next } = Astro.locals.zenith;
+---
+
+{
+  (previous || next) && (
+    <nav class="zd-pagination" aria-label="Pagination">
+      {previous && (
+        <a class="zd-pagination-link" href={previous.url} rel="prev">
+          <span class="zd-pagination-label">
+            <Icon name="arrow-left" size={14} />
+            Previous
+          </span>
+          <span class="zd-pagination-title">{previous.name}</span>
+        </a>
+      )}
+      {next && (
+        <a class="zd-pagination-link zd-pagination-next" href={next.url} rel="next">
+          <span class="zd-pagination-label">
+            Next
+            <Icon name="arrow-right" size={14} />
+          </span>
+          <span class="zd-pagination-title">{next.name}</span>
+        </a>
+      )}
+    </nav>
+  )
+}
