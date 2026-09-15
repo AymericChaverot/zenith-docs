@@ -1,0 +1,35 @@
+---
+const backdrops = ['aurora', 'grid', 'dots', 'dither', 'rays', 'grain', 'horizon', 'glow', 'none'];
+---
+
+<div class="accent-picker" role="group" aria-label="Backdrop style">
+  {
+    backdrops.map((backdrop) => (
+      <button type="button" data-backdrop-choice={backdrop}>
+        {backdrop}
+      </button>
+    ))
+  }
+</div>
+
+<script>
+  const buttons = document.querySelectorAll<HTMLButtonElement>('[data-backdrop-choice]');
+  const backdrop = document.querySelector('.zd-backdrop');
+  const sync = () => {
+    for (const button of buttons) {
+      button.ariaPressed = String(
+        button.dataset.backdropChoice === document.documentElement.dataset.backdrop,
+      );
+    }
+  };
+  for (const button of buttons) {
+    button.addEventListener('click', () => {
+      const choice = button.dataset.backdropChoice!;
+      document.documentElement.dataset.backdrop = choice;
+      // The element is not rendered when the site is built with `backdrop: 'none'`.
+      if (backdrop) backdrop.toggleAttribute('hidden', choice === 'none');
+      sync();
+    });
+  }
+  sync();
+</script>
