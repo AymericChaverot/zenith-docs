@@ -36,12 +36,18 @@ const hasToc = toc.length > 0 && !full;
     <div class="zd-layout" data-toc={hasToc ? '' : undefined}>
       <Sidebar />
       <main id="zd-content" class="zd-main">
-        <article class="zd-article">
-          <Breadcrumb />
+        <article class="zd-article" data-pagefind-body>
+          <div data-pagefind-ignore>
+            <Breadcrumb />
+          </div>
           <PageTitle />
           {
             toc.length > 0 && (
-              <details class="zd-toc-mobile" style={full ? 'display: block' : undefined}>
+              <details
+                class="zd-toc-mobile"
+                style={full ? 'display: block' : undefined}
+                data-pagefind-ignore
+              >
                 <summary>
                   <Icon name="list" />
                   On this page
@@ -51,11 +57,13 @@ const hasToc = toc.length > 0 && !full;
               </details>
             )
           }
-          <div class="zd-prose" data-pagefind-body>
+          <div class="zd-prose">
             <slot />
           </div>
-          <PageFooter />
-          <Pagination />
+          <div data-pagefind-ignore>
+            <PageFooter />
+            <Pagination />
+          </div>
         </article>
       </main>
       {
