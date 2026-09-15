@@ -1,0 +1,18 @@
+---
+import Icon from './Icon.astro';
+
+interface Props {
+  name: string;
+  defaultOpen?: boolean;
+}
+
+const { name, defaultOpen = false } = Astro.props;
+---
+
+<details class="zd-folder" open={defaultOpen}>
+  <summary>
+    <Icon name="folder" size={14} />
+    {name}
+  </summary>
+  <div class="zd-folder-content"><slot /></div>
+</details>

@@ -1,0 +1,12 @@
+---
+import Icon from './Icon.astro';
+
+interface Props {
+  name: string;
+}
+---
+
+<div class="zd-file">
+  <Icon name="file" size={14} />
+  {Astro.props.name}
+</div>
