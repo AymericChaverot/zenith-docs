@@ -20,6 +20,8 @@ import {
 export interface DocsEntry {
   id: string;
   filePath?: string;
+  /** Raw Markdown source, without the frontmatter. */
+  body?: string;
   data: DocsFrontmatter;
 }
 

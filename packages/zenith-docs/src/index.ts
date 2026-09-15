@@ -56,6 +56,16 @@ export default function zenith(userConfig: ZenithUserConfig): AstroIntegration {
           prerender: true,
         });
 
+        if (config.llms) {
+          for (const [pattern, entrypoint] of [
+            ['llms.txt', 'zenith-docs/routes/llms.txt.ts'],
+            ['llms-full.txt', 'zenith-docs/routes/llms-full.txt.ts'],
+            ['[...slug].md', 'zenith-docs/routes/page.md.ts'],
+          ] as const) {
+            injectRoute({ pattern, entrypoint, prerender: true });
+          }
+        }
+
         const processor = astroConfig.markdown.processor;
         if (processor && isSatteriProcessor(processor)) {
           processor.options.features.directive = true;
