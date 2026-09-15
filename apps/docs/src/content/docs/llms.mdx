@@ -1,0 +1,73 @@
+---
+title: LLMs and AI tools
+description: Markdown versions of your documentation, for models and agents.
+icon: zap
+---
+
+Documentation is written for people, but it is increasingly read by models: a chat assistant answering a question about your project, an agent writing code against your API. ZenithDocs publishes a Markdown view of the site for them, generated at build time.
+
+## What is generated
+
+<Files>
+  <File name="llms.txt" />
+  <File name="llms-full.txt" />
+  <File name="installation.md" />
+  <File name="writing/markdown.md" />
+</Files>
+
+### `llms.txt`
+
+An index of the site, following the [llms.txt convention](https://llmstxt.org): the site title, its description, then one Markdown link per page, grouped the way the sidebar is.
+
+```md title="llms.txt"
+# ZenithDocs
+
+> A static, lightweight and themeable documentation engine built on Astro and Lumos.
+
+## Writing content
+
+- [Markdown](/writing/markdown/): Standard Markdown, GitHub Flavored Markdown and a few extensions.
+```
+
+It is small on purpose: a model reads it first, then fetches only the pages it needs.
+
+### `llms-full.txt`
+
+Every page, in reading order, separated by `---`. Useful to paste a whole documentation site into a context window in one go.
+
+### One `.md` per page
+
+Each page is also served as Markdown, at the same path with a `.md` extension: `/installation/` is also available at `/installation.md`. Every page links to its own Markdown version:
+
+```html
+<link rel="alternate" type="text/markdown" href="/installation.md" />
+```
+
+## What the Markdown contains
+
+The title, the description, the source URL and the body of the page:
+
+```md title="installation.md"
+# Installation
+
+> Add ZenithDocs to a new or existing Astro project.
+
+Source: /installation/
+
+ZenithDocs is an Astro integration. It needs Astro 7 and Node.js 22.12 or later.
+```
+
+MDX `import` and `export` lines are removed, since they mean nothing outside a bundler. Component tags are kept: they carry content, and models read them fine.
+
+:::tip
+Set `site` in your Astro configuration to get absolute URLs in the generated files, which is what most tools expect.
+:::
+
+## Turning it off
+
+```js title="astro.config.mjs"
+zenith({
+  title: 'My Docs',
+  llms: false, // [!code highlight]
+});
+```
