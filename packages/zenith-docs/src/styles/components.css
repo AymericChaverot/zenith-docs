@@ -1,3 +1,10 @@
+/* Interface text is not prose: no flow margins */
+.zd-callout-title,
+.zd-card-title,
+.zd-tab-label {
+  margin: 0;
+}
+
 /* Callout */
 
 .zd-callout {
@@ -247,11 +254,11 @@ a.zd-card:hover {
 }
 
 /* A tab holding a single code block renders it edge to edge */
-:root[data-js] .zd-tab-panel:not(:has(> :not(.zd-code, .zd-tab-label))) {
+:root[data-js] .zd-tab-panel:has(> .zd-code):not(:has(> :not(.zd-code, .zd-tab-label))) {
   padding: 0;
 }
 
-:root[data-js] .zd-tab-panel:not(:has(> :not(.zd-code, .zd-tab-label))) > .zd-code {
+:root[data-js] .zd-tab-panel:has(> .zd-code):not(:has(> :not(.zd-code, .zd-tab-label))) > .zd-code {
   margin: 0;
   border: 0;
   border-radius: 0;
