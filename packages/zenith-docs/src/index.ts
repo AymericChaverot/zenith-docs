@@ -73,7 +73,7 @@ export default function zenith(userConfig: ZenithUserConfig): AstroIntegration {
         updateConfig({
           markdown: {
             shikiConfig: {
-              ...(hasUserThemes ? {} : { themes: { light: 'github-light', dark: 'github-dark' } }),
+              ...(hasUserThemes ? {} : { themes: { light: 'vitesse-light', dark: 'vitesse-dark' } }),
               defaultColor: false,
               transformers: zenithShikiTransformers(),
             },
