@@ -1,0 +1,72 @@
+---
+import { flattenTree, type FolderNode, type TreeNode } from '../page-tree';
+import Icon from './Icon.astro';
+
+interface Props {
+  nodes: TreeNode[];
+  url: string;
+}
+
+const { nodes, url } = Astro.props;
+
+const containsUrl = (folder: FolderNode) =>
+  folder.index?.url === url || flattenTree(folder.children).some((page) => page.url === url);
+---
+
+<ul class="zd-sidebar-list">
+  {
+    nodes.map((node) => {
+      if (node.type === 'separator') {
+        return <li class="zd-sidebar-separator">{node.name}</li>;
+      }
+
+      if (node.type === 'page') {
+        return (
+          <li>
+            <a
+              class="zd-sidebar-link"
+              href={node.url}
+              aria-current={node.url === url ? 'page' : undefined}
+              target={node.external ? '_blank' : undefined}
+              rel={node.external ? 'noreferrer noopener' : undefined}
+            >
+              {node.icon && <Icon name={node.icon} />}
+              <span>{node.name}</span>
+              {node.external && <Icon name="external" size={12} />}
+            </a>
+          </li>
+        );
+      }
+
+      const label = node.index ? (
+        <a href={node.index.url} aria-current={node.index.url === url ? 'page' : undefined}>
+          {node.name}
+        </a>
+      ) : (
+        <span>{node.name}</span>
+      );
+
+      if (!node.collapsible) {
+        return (
+          <li>
+            <p class="zd-sidebar-group-title">{label}</p>
+            <Astro.self nodes={node.children} url={url} />
+          </li>
+        );
+      }
+
+      return (
+        <li>
+          <details class="zd-sidebar-folder" open={node.defaultOpen || containsUrl(node)}>
+            <summary class="zd-sidebar-link">
+              {node.icon && <Icon name={node.icon} />}
+              {label}
+              <Icon name="chevron" size={14} class="zd-chevron" />
+            </summary>
+            <Astro.self nodes={node.children} url={url} />
+          </details>
+        </li>
+      );
+    })
+  }
+</ul>
