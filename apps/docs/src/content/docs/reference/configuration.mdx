@@ -9,7 +9,8 @@ Options are passed to the integration in `astro.config.mjs`.
 zenith({
   title: 'My Docs',
   description: 'Documentation for my project.',
-  logo: { src: '/logo.svg' },
+  logo: { src: './src/assets/logo.svg' },
+  accent: 'emerald',
   github: 'https://github.com/me/my-project',
   editLink: { baseUrl: 'https://github.com/me/my-project/edit/main/' },
   lastUpdated: true,
@@ -34,7 +35,7 @@ Default meta description, used when a page has none.
 
 **Type:** `{ src: string; alt?: string; replacesTitle?: boolean }`
 
-A logo shown next to the title. `src` is a public URL. Set `replacesTitle` to hide the text title.
+A logo shown next to the title. `src` is either a path relative to the project root, like `./src/assets/logo.svg`, or a public URL, like `/logo.png`. SVG files are inlined in the page, so they can use `currentColor` and follow the color scheme. Set `replacesTitle` to hide the text title.
 
 ### `favicon`
 
@@ -85,6 +86,18 @@ Adds an "Edit this page" link. The path of the file, relative to the project roo
 Shows the date of the last commit that touched each page.
 
 ## Customization
+
+### `accent`
+
+**Type:** `'neutral' | 'emerald' | 'teal' | 'amber' | 'rose' | 'violet'` · **Default:** `'neutral'`
+
+Accent color preset. See [theming](/customization/theming/#accent-presets).
+
+### `fonts`
+
+**Type:** `boolean` · **Default:** `true`
+
+Self-host Geist and Geist Mono. Set to `false` to use system fonts.
 
 ### `customCss`
 

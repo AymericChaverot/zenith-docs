@@ -6,6 +6,17 @@ icon: palette
 
 ZenithDocs styles are built on the design tokens of [Lumos](https://lumosframework.com). Changing a handful of custom properties is enough to make the site yours.
 
+## Accent presets
+
+The default theme is neutral. Pick a colored accent with the `accent` option: `neutral`, `emerald`, `teal`, `amber`, `rose` or `violet`. Try them on the [kitchen sink](/writing/kitchen-sink/) page.
+
+```js title="astro.config.mjs"
+zenith({
+  title: 'My Docs',
+  accent: 'emerald', // [!code highlight]
+});
+```
+
 ## Add a stylesheet
 
 Create a CSS file and register it with the `customCss` option.
@@ -21,10 +32,12 @@ Custom stylesheets are loaded after the built-in styles and are not part of any 
 
 ## Colors
 
+Set your own accent for each color scheme:
+
 ```css title="src/styles/theme.css"
 :root {
-  --brand-500: oklch(65% 0.2 150);
-  --brand-text: #fff;
+  --zd-accent-light: oklch(55% 0.16 145);
+  --zd-accent-dark: oklch(80% 0.15 145);
 }
 ```
 
@@ -32,21 +45,24 @@ Light and dark themes are defined with the Lumos `theme-light` and `theme-dark` 
 
 ```css
 .theme-dark {
-  --background: #0b1020;
-  --background-2: #121a30;
+  --background: oklch(15% 0.02 260);
+  --background-2: oklch(19% 0.02 260);
 }
 ```
 
-| Token            | Used for                                   |
-| ---------------- | ------------------------------------------ |
-| `--brand-500`    | Accent color: links, active items, tabs    |
-| `--background`   | Page background                            |
+| Token                | Used for                                          |
+| -------------------- | ------------------------------------------------- |
+| `--zd-accent-light`  | Accent in light mode: links, active items, tabs   |
+| `--zd-accent-dark`   | Accent in dark mode                               |
+| `--background`       | Page background                                   |
 | `--background-2` | Raised surfaces: code blocks, hovers       |
 | `--text`         | Body text                                  |
 | `--text-2`       | Secondary text                             |
 | `--border`       | Hairlines                                  |
 
 ## Typography
+
+ZenithDocs self-hosts [Geist](https://vercel.com/font) and Geist Mono through the Astro Fonts API. Set `fonts: false` to use system fonts instead, or point the font tokens to your own families:
 
 ```css
 :root {
