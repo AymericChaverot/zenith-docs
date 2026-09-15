@@ -96,33 +96,33 @@
 /* Accent presets */
 
 :root[data-accent='emerald'] {
-  --zd-accent-light: oklch(52% 0.12 165);
-  --zd-accent-dark: oklch(79% 0.14 163);
-  --zd-accent-contrast-dark: oklch(20% 0.04 165);
+  --zd-accent-light: oklch(56% 0.14 160);
+  --zd-accent-dark: oklch(77% 0.18 157);
+  --zd-accent-contrast-dark: oklch(21% 0.05 160);
 }
 
 :root[data-accent='teal'] {
-  --zd-accent-light: oklch(52% 0.09 195);
-  --zd-accent-dark: oklch(80% 0.11 190);
-  --zd-accent-contrast-dark: oklch(20% 0.03 195);
+  --zd-accent-light: oklch(56% 0.11 192);
+  --zd-accent-dark: oklch(79% 0.15 187);
+  --zd-accent-contrast-dark: oklch(21% 0.04 192);
 }
 
 :root[data-accent='amber'] {
-  --zd-accent-light: oklch(58% 0.15 55);
-  --zd-accent-dark: oklch(83% 0.15 80);
-  --zd-accent-contrast-dark: oklch(22% 0.05 60);
+  --zd-accent-light: oklch(63% 0.17 58);
+  --zd-accent-dark: oklch(81% 0.17 70);
+  --zd-accent-contrast-dark: oklch(23% 0.06 60);
 }
 
 :root[data-accent='rose'] {
-  --zd-accent-light: oklch(56% 0.2 12);
-  --zd-accent-dark: oklch(77% 0.13 10);
-  --zd-accent-contrast-dark: oklch(20% 0.05 12);
+  --zd-accent-light: oklch(58% 0.21 12);
+  --zd-accent-dark: oklch(72% 0.19 10);
+  --zd-accent-contrast-dark: oklch(21% 0.06 12);
 }
 
 :root[data-accent='violet'] {
-  --zd-accent-light: oklch(52% 0.2 290);
-  --zd-accent-dark: oklch(77% 0.13 290);
-  --zd-accent-contrast-dark: oklch(20% 0.05 290);
+  --zd-accent-light: oklch(55% 0.21 290);
+  --zd-accent-dark: oklch(73% 0.17 290);
+  --zd-accent-contrast-dark: oklch(21% 0.06 290);
 }
 
 :root[data-accent]:not([data-accent='neutral']) {
@@ -146,7 +146,7 @@
 
   --accent: var(--zd-accent-light);
   --accent-contrast: var(--zd-accent-contrast-light);
-  --accent-soft: color-mix(in oklab, var(--accent) 7%, transparent);
+  --accent-soft: color-mix(in oklab, var(--accent) 9%, transparent);
 }
 
 .theme-dark,
@@ -163,7 +163,7 @@
 
   --accent: var(--zd-accent-dark);
   --accent-contrast: var(--zd-accent-contrast-dark);
-  --accent-soft: color-mix(in oklab, var(--accent) 10%, transparent);
+  --accent-soft: color-mix(in oklab, var(--accent) 14%, transparent);
 }
 
 :root,
