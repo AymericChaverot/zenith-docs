@@ -9,7 +9,7 @@ import type {
   MdastPluginDefinition,
   MdastPluginEntry,
 } from 'satteri';
-import { CALLOUT_TITLES, resolveCalloutType, type CalloutType } from '../callouts';
+import { resolveCallout, type CalloutType } from '../callouts';
 
 export function zenithMdastPlugins(): MdastPluginEntry[] {
   return [calloutsPlugin()];
@@ -44,8 +44,8 @@ function calloutsPlugin(): MdastPluginDefinition {
   return {
     name: 'zenith-callouts',
     containerDirective(node) {
-      const type = resolveCalloutType(node.name);
-      if (!type) return;
+      const resolved = resolveCallout(node.name);
+      if (!resolved) return;
 
       const children = [...node.children];
       const first = children[0];
@@ -54,7 +54,7 @@ function calloutsPlugin(): MdastPluginDefinition {
         title = [...first.children];
         children.shift();
       }
-      return callout(type, title, children);
+      return callout(resolved.type, title ?? resolved.title, children);
     },
     blockquote(node) {
       const first = node.children[0];
@@ -62,8 +62,8 @@ function calloutsPlugin(): MdastPluginDefinition {
       if (!first || first.type !== 'paragraph' || text?.type !== 'text') return;
 
       const match = /^\[!(\w+)\][ \t]*(?:\r?\n|$)/.exec(text.value);
-      const type = match && resolveCalloutType(match[1]!);
-      if (!match || !type) return;
+      const resolved = match && resolveCallout(match[1]!);
+      if (!match || !resolved) return;
 
       const remainingText = text.value.slice(match[0].length);
       const remaining: PhrasingContent[] = [
@@ -74,14 +74,15 @@ function calloutsPlugin(): MdastPluginDefinition {
         ...(remaining.length > 0 ? [{ ...first, children: remaining }] : []),
         ...node.children.slice(1),
       ];
-      return callout(type, undefined, children);
+      return callout(resolved.type, resolved.title, children);
     },
   };
 }
 
-function callout(type: CalloutType, title: PhrasingContent[] | undefined, children: unknown[]) {
+function callout(type: CalloutType, title: PhrasingContent[] | string, children: unknown[]) {
+  const titleChildren = typeof title === 'string' ? [{ type: 'text', value: title }] : title;
   return element('aside', { class: 'zd-callout', 'data-callout': type }, [
-    element('p', { class: 'zd-callout-title' }, title ?? [{ type: 'text', value: CALLOUT_TITLES[type] }]),
+    element('p', { class: 'zd-callout-title' }, titleChildren),
     element('div', { class: 'zd-callout-body' }, children),
   ]);
 }

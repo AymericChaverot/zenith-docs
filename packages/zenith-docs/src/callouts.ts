@@ -1,30 +1,32 @@
-export const CALLOUT_TYPES = ['note', 'tip', 'success', 'warning', 'danger'] as const;
+export const CALLOUT_TYPES = ['note', 'tip', 'important', 'success', 'warning', 'danger'] as const;
 export type CalloutType = (typeof CALLOUT_TYPES)[number];
 
-const CALLOUT_ALIASES: Record<string, CalloutType> = {
-  note: 'note',
-  info: 'note',
-  important: 'note',
-  tip: 'tip',
-  idea: 'tip',
-  success: 'success',
-  check: 'success',
-  warning: 'warning',
-  warn: 'warning',
-  caution: 'warning',
-  danger: 'danger',
-  error: 'danger',
+export interface ResolvedCallout {
+  type: CalloutType;
+  /** Default title, based on the name that was used. */
+  title: string;
+}
+
+/**
+ * Callout names and aliases. GitHub alert names (`NOTE`, `TIP`, `IMPORTANT`, `WARNING`, `CAUTION`)
+ * each map to their own style, matching the colors used on GitHub.
+ */
+const CALLOUT_NAMES: Record<string, ResolvedCallout> = {
+  note: { type: 'note', title: 'Note' },
+  info: { type: 'note', title: 'Info' },
+  tip: { type: 'tip', title: 'Tip' },
+  idea: { type: 'tip', title: 'Idea' },
+  important: { type: 'important', title: 'Important' },
+  success: { type: 'success', title: 'Success' },
+  check: { type: 'success', title: 'Success' },
+  warning: { type: 'warning', title: 'Warning' },
+  warn: { type: 'warning', title: 'Warning' },
+  danger: { type: 'danger', title: 'Danger' },
+  error: { type: 'danger', title: 'Error' },
+  caution: { type: 'danger', title: 'Caution' },
 };
 
-export const CALLOUT_TITLES: Record<CalloutType, string> = {
-  note: 'Note',
-  tip: 'Tip',
-  success: 'Success',
-  warning: 'Warning',
-  danger: 'Danger',
-};
-
-/** Map a callout name or alias (`info`, `warn`, `caution`…) to its canonical type. */
-export function resolveCalloutType(name: string): CalloutType | undefined {
-  return CALLOUT_ALIASES[name.toLowerCase()];
+/** Map a callout name or alias (`info`, `warn`, `caution`…) to its type and default title. */
+export function resolveCallout(name: string): ResolvedCallout | undefined {
+  return CALLOUT_NAMES[name.toLowerCase()];
 }

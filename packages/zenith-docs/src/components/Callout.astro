@@ -1,17 +1,20 @@
 ---
-import { CALLOUT_TITLES, resolveCalloutType } from '../callouts';
+import { resolveCallout } from '../callouts';
 
 interface Props {
-  /** `note`, `tip`, `success`, `warning` or `danger`, or an alias like `info`, `warn`, `error`. */
+  /**
+   * `note`, `tip`, `important`, `success`, `warning` or `danger`,
+   * or an alias like `info`, `warn`, `caution`, `error`.
+   */
   type?: string;
   title?: string;
 }
 
-const type = resolveCalloutType(Astro.props.type ?? 'note') ?? 'note';
-const title = Astro.props.title ?? CALLOUT_TITLES[type];
+const callout = resolveCallout(Astro.props.type ?? 'note') ?? resolveCallout('note')!;
+const title = Astro.props.title ?? callout.title;
 ---
 
-<aside class="zd-callout" data-callout={type}>
+<aside class="zd-callout" data-callout={callout.type}>
   <p class="zd-callout-title">{title}</p>
   <div class="zd-callout-body"><slot /></div>
 </aside>

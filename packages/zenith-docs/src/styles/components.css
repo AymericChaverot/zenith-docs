@@ -55,6 +55,11 @@
   --zd-callout-icon: var(--zd-icon-tip);
 }
 
+.zd-callout[data-callout='important'] {
+  --zd-callout: var(--zd-color-important);
+  --zd-callout-icon: var(--zd-icon-important);
+}
+
 .zd-callout[data-callout='success'] {
   --zd-callout: var(--zd-color-success);
   --zd-callout-icon: var(--zd-icon-success);
