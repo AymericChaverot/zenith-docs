@@ -1,0 +1,179 @@
+.zd-code {
+  position: relative;
+  overflow: hidden;
+  border: var(--border-width) solid var(--border);
+  border-radius: var(--radius-main);
+  background: var(--background-2);
+}
+
+.zd-code-title {
+  padding: 0.5rem 3rem 0.5rem 1rem;
+  border-bottom: var(--border-width) solid var(--border);
+  color: var(--text-2);
+  font-family: var(--mono-family);
+  font-size: 0.8125rem;
+}
+
+.zd-code pre {
+  margin: 0;
+  padding-block: 0.875rem;
+  overflow-x: auto;
+  font-family: var(--mono-family);
+  font-size: 0.8125rem;
+  line-height: 1.7;
+  tab-size: 2;
+}
+
+.zd-code pre:focus-visible {
+  outline-offset: calc(var(--focus-width) * -1);
+}
+
+.zd-code code {
+  display: grid;
+  min-width: max-content;
+  font-family: inherit;
+}
+
+.zd-code .line {
+  position: relative;
+  min-height: 1lh;
+  padding-inline: 1rem;
+}
+
+/* Shiki dual themes, rendered with CSS variables */
+.zd-code pre,
+.zd-code pre span {
+  color: var(--shiki-light);
+  font-style: var(--shiki-light-font-style);
+  font-weight: var(--shiki-light-font-weight);
+}
+
+.theme-dark .zd-code pre,
+.theme-dark .zd-code pre span {
+  color: var(--shiki-dark);
+  font-style: var(--shiki-dark-font-style);
+  font-weight: var(--shiki-dark-font-weight);
+}
+
+/* Notation transformers */
+.zd-code .highlighted {
+  background: color-mix(in oklab, var(--accent) 12%, transparent);
+  box-shadow: inset 2px 0 0 var(--accent);
+}
+
+.zd-code .highlighted-word {
+  padding: 0.0625rem 0.125rem;
+  border-radius: 0.25rem;
+  background: color-mix(in oklab, var(--accent) 16%, transparent);
+  box-shadow: 0 0 0 1px color-mix(in oklab, var(--accent) 35%, transparent);
+}
+
+.zd-code .diff.add {
+  background: color-mix(in oklab, var(--zd-color-success) 14%, transparent);
+}
+
+.zd-code .diff.remove {
+  background: color-mix(in oklab, var(--zd-color-danger) 14%, transparent);
+}
+
+.zd-code .diff::before {
+  position: absolute;
+  inset-inline-start: 0.375rem;
+}
+
+.zd-code .diff.add::before {
+  content: '+';
+  color: var(--zd-color-success);
+}
+
+.zd-code .diff.remove::before {
+  content: '-';
+  color: var(--zd-color-danger);
+}
+
+.zd-code .has-focused .line:not(.focused) {
+  opacity: 0.45;
+  filter: blur(0.5px);
+  transition:
+    opacity var(--hover-duration) var(--hover-ease),
+    filter var(--hover-duration) var(--hover-ease);
+}
+
+.zd-code:hover .has-focused .line:not(.focused) {
+  opacity: 1;
+  filter: none;
+}
+
+.zd-code pre.line-numbers code {
+  counter-reset: zd-line var(--start, 0);
+}
+
+.zd-code pre.line-numbers .line::before {
+  content: counter(zd-line);
+  display: inline-block;
+  width: 1.5rem;
+  margin-inline-end: 1rem;
+  color: var(--text-2);
+  text-align: end;
+  counter-increment: zd-line;
+}
+
+/* Copy button, only useful with JavaScript */
+.zd-copy {
+  position: absolute;
+  top: 0.375rem;
+  inset-inline-end: 0.375rem;
+  display: none;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  border: var(--border-width) solid var(--border);
+  border-radius: var(--radius-small);
+  background: var(--background-2);
+  color: var(--text-2);
+  opacity: 0;
+  transition:
+    opacity var(--hover-duration) var(--hover-ease),
+    color var(--hover-duration) var(--hover-ease);
+}
+
+:root[data-js] .zd-copy {
+  display: grid;
+}
+
+.zd-code:hover .zd-copy,
+.zd-copy:focus-visible {
+  opacity: 1;
+}
+
+@media (hover: none) {
+  .zd-copy {
+    opacity: 1;
+  }
+}
+
+.zd-copy:hover {
+  color: var(--text);
+}
+
+.zd-copy::before {
+  content: '';
+  width: 1rem;
+  height: 1rem;
+  background: currentColor;
+  mask: var(--zd-icon-copy) center / contain no-repeat;
+}
+
+.zd-copy[data-copied] {
+  color: var(--zd-color-success);
+}
+
+.zd-copy[data-copied]::before {
+  mask-image: var(--zd-icon-check);
+}
+
+.zd-code-titled .zd-copy {
+  top: 0.25rem;
+  width: 1.75rem;
+  height: 1.75rem;
+}
