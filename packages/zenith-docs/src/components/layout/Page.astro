@@ -1,0 +1,73 @@
+---
+import '../../styles/zenith.css';
+import 'virtual:zenith/user-css';
+
+import Breadcrumb from 'virtual:zenith/components/Breadcrumb';
+import Head from 'virtual:zenith/components/Head';
+import Header from 'virtual:zenith/components/Header';
+import PageFooter from 'virtual:zenith/components/PageFooter';
+import PageTitle from 'virtual:zenith/components/PageTitle';
+import Pagination from 'virtual:zenith/components/Pagination';
+import Sidebar from 'virtual:zenith/components/Sidebar';
+import TableOfContents from 'virtual:zenith/components/TableOfContents';
+import Icon from '../Icon.astro';
+
+const { config, entry, toc } = Astro.locals.zenith;
+const full = entry.data.full;
+const hasToc = toc.length > 0 && !full;
+---
+
+<!doctype html>
+<html lang={config.lang} class="theme-light" data-full={full ? '' : undefined}>
+  <head>
+    <Head />
+  </head>
+  <body>
+    <a class="zd-skip" href="#zd-content">Skip to content</a>
+    <Header />
+    <div class="zd-layout" data-toc={hasToc ? '' : undefined}>
+      <Sidebar />
+      <main id="zd-content" class="zd-main">
+        <article class="zd-article">
+          <Breadcrumb />
+          <PageTitle />
+          {
+            toc.length > 0 && (
+              <details class="zd-toc-mobile" style={full ? 'display: block' : undefined}>
+                <summary>
+                  <Icon name="list" />
+                  On this page
+                  <Icon name="chevron" size={14} class="zd-chevron" />
+                </summary>
+                <TableOfContents />
+              </details>
+            )
+          }
+          <div class="zd-prose" data-pagefind-body>
+            <slot />
+          </div>
+          <PageFooter />
+          <Pagination />
+        </article>
+      </main>
+      {
+        hasToc && (
+          <aside class="zd-toc-aside">
+            <TableOfContents />
+          </aside>
+        )
+      }
+    </div>
+    <script is:inline>
+      document.addEventListener('click', (event) => {
+        const button = event.target instanceof Element && event.target.closest('[data-copy]');
+        const code = button && button.parentElement.querySelector('pre code');
+        if (!code) return;
+        navigator.clipboard.writeText(code.textContent.replace(/\n$/, '')).then(() => {
+          button.setAttribute('data-copied', '');
+          setTimeout(() => button.removeAttribute('data-copied'), 1500);
+        });
+      });
+    </script>
+  </body>
+</html>
