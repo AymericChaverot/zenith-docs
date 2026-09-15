@@ -1,0 +1,78 @@
+---
+title: Theming
+description: Restyle ZenithDocs with CSS custom properties.
+icon: palette
+---
+
+ZenithDocs styles are built on the design tokens of [Lumos](https://lumosframework.com). Changing a handful of custom properties is enough to make the site yours.
+
+## Add a stylesheet
+
+Create a CSS file and register it with the `customCss` option.
+
+```js title="astro.config.mjs"
+zenith({
+  title: 'My Docs',
+  customCss: ['./src/styles/theme.css'], // [!code highlight]
+});
+```
+
+Custom stylesheets are loaded after the built-in styles and are not part of any cascade layer, so they always win without `!important`.
+
+## Colors
+
+```css title="src/styles/theme.css"
+:root {
+  --brand-500: oklch(65% 0.2 150);
+  --brand-text: #fff;
+}
+```
+
+Light and dark themes are defined with the Lumos `theme-light` and `theme-dark` classes. Each redeclares the same tokens, so you can tune them independently:
+
+```css
+.theme-dark {
+  --background: #0b1020;
+  --background-2: #121a30;
+}
+```
+
+| Token            | Used for                                   |
+| ---------------- | ------------------------------------------ |
+| `--brand-500`    | Accent color: links, active items, tabs    |
+| `--background`   | Page background                            |
+| `--background-2` | Raised surfaces: code blocks, hovers       |
+| `--text`         | Body text                                  |
+| `--text-2`       | Secondary text                             |
+| `--border`       | Hairlines                                  |
+
+## Typography
+
+```css
+:root {
+  --font-body: 'Inter', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  --h1-min: 32;
+  --h1-max: 40;
+}
+```
+
+Heading sizes are fluid: they scale between their `-min` and `-max` values, in pixels, depending on the viewport width.
+
+## Layout
+
+```css
+:root {
+  --zd-sidebar-width: 18rem;
+  --zd-content-width: 52rem;
+  --radius-main: 0;
+}
+```
+
+## Cascade layers
+
+Built-in styles are split into layers, from lowest to highest priority:
+
+```css
+@layer lumos.base, zenith.theme, zenith.layout, zenith.content, zenith.components;
+```

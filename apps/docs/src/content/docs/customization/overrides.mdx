@@ -1,0 +1,47 @@
+---
+title: Component overrides
+description: Replace any part of the layout with your own Astro component.
+icon: settings
+---
+
+When tokens are not enough, replace a layout component with your own through the `components` option.
+
+```js title="astro.config.mjs"
+zenith({
+  title: 'My Docs',
+  components: {
+    PageFooter: './src/components/PageFooter.astro',
+  },
+});
+```
+
+## Page data
+
+Overrides read the current page from `Astro.locals.zenith`: title, table of contents, sidebar tree, previous and next pages, and the resolved configuration.
+
+```astro title="src/components/PageFooter.astro"
+---
+import Default from 'zenith-docs/components/layout/PageFooter.astro';
+
+const { lastUpdated } = Astro.locals.zenith;
+---
+
+<Default />
+<p>Found a typo? Let us know!</p>
+```
+
+Importing the default component lets you add to it rather than rewrite it.
+
+## Available components
+
+| Component         | Renders                                         |
+| ----------------- | ----------------------------------------------- |
+| `Head`            | Tags in `<head>`: title, meta, theme script     |
+| `Header`          | The top bar                                     |
+| `ThemeToggle`     | The dark mode switch                            |
+| `Sidebar`         | Sidebar tabs and the navigation tree            |
+| `TableOfContents` | The "On this page" list                         |
+| `Breadcrumb`      | The trail of parent folders                     |
+| `PageTitle`       | The page title and description                  |
+| `PageFooter`      | The edit link and last updated date             |
+| `Pagination`      | Links to the previous and next pages            |
