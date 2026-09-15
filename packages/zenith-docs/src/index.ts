@@ -4,6 +4,7 @@ import { isSatteriProcessor } from '@astrojs/markdown-satteri';
 import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
 import type { AstroIntegration } from 'astro';
+import { fontProviders } from 'astro/config';
 import { AstroError } from 'astro/errors';
 import { ZenithConfigSchema, type ZenithUserConfig } from './config';
 import {
@@ -77,6 +78,28 @@ export default function zenith(userConfig: ZenithUserConfig): AstroIntegration {
               transformers: zenithShikiTransformers(),
             },
           },
+          fonts: config.fonts
+            ? [
+                {
+                  provider: fontProviders.fontsource(),
+                  name: 'Geist',
+                  cssVariable: '--zd-font-sans',
+                  weights: ['100 900'],
+                  styles: ['normal'],
+                  subsets: ['latin'],
+                  fallbacks: ['system-ui', 'sans-serif'],
+                },
+                {
+                  provider: fontProviders.fontsource(),
+                  name: 'Geist Mono',
+                  cssVariable: '--zd-font-mono',
+                  weights: ['100 900'],
+                  styles: ['normal'],
+                  subsets: ['latin'],
+                  fallbacks: ['ui-monospace', 'monospace'],
+                },
+              ]
+            : [],
           vite: {
             plugins: [vitePluginZenith(config, astroConfig.root)],
           },

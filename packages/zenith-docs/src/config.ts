@@ -26,6 +26,8 @@ export const ZenithConfigSchema = z.object({
     .optional(),
   /** Accent color preset. Use `customCss` for anything else. */
   accent: z.enum(['neutral', 'emerald', 'teal', 'amber', 'rose', 'violet']).default('neutral'),
+  /** Self-host Geist and Geist Mono. Set to `false` to use system fonts. */
+  fonts: z.boolean().default(true),
   favicon: z.string().default('/favicon.svg'),
   lang: z.string().default('en'),
   /** Directory holding the docs content, relative to the project root. */
