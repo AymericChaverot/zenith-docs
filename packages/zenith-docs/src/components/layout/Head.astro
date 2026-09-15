@@ -13,6 +13,16 @@ const noindex = entry.id === '404' || entry.data.draft;
 <title>{pageTitle}</title>
 {pageDescription && <meta name="description" content={pageDescription} />}
 {canonical && <link rel="canonical" href={canonical} />}
+{
+  config.llms && (
+    <link
+      rel="alternate"
+      type="text/markdown"
+      href={`${import.meta.env.BASE_URL}${entry.id}.md`}
+      title="Markdown source"
+    />
+  )
+}
 {noindex && <meta name="robots" content="noindex" />}
 <link rel="icon" href={config.favicon} />
 {
