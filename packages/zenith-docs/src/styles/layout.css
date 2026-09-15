@@ -151,9 +151,15 @@ html {
   content: '';
   position: absolute;
   inset: 0;
-  opacity: 0.32;
+  opacity: 0.3;
   mix-blend-mode: overlay;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Overlay blending turns the grain into gray mud on dark backgrounds */
+[data-backdrop='grain'].theme-dark .zd-backdrop::before {
+  opacity: 0.1;
+  mix-blend-mode: plus-lighter;
 }
 
 /* A horizon line under the header, echoing the logo */
