@@ -1,5 +1,17 @@
 ---
-const backdrops = ['aurora', 'grid', 'dots', 'dither', 'rays', 'grain', 'horizon', 'glow', 'none'];
+const backdrops = [
+  'dither',
+  'aurora',
+  'grid',
+  'dots',
+  'rays',
+  'grain',
+  'horizon',
+  'horizon-glow',
+  'glow',
+  'none',
+];
+const positions = ['left', 'center', 'right'];
 ---
 
 <div class="accent-picker" role="group" aria-label="Backdrop style">
@@ -12,24 +24,47 @@ const backdrops = ['aurora', 'grid', 'dots', 'dither', 'rays', 'grain', 'horizon
   }
 </div>
 
+<div class="accent-picker" role="group" aria-label="Backdrop position">
+  {
+    positions.map((position) => (
+      <button type="button" data-position-choice={position}>
+        {position}
+      </button>
+    ))
+  }
+</div>
+
 <script>
-  const buttons = document.querySelectorAll<HTMLButtonElement>('[data-backdrop-choice]');
+  const root = document.documentElement;
   const backdrop = document.querySelector('.zd-backdrop');
+  const styleButtons = document.querySelectorAll<HTMLButtonElement>('[data-backdrop-choice]');
+  const positionButtons = document.querySelectorAll<HTMLButtonElement>('[data-position-choice]');
+
   const sync = () => {
-    for (const button of buttons) {
-      button.ariaPressed = String(
-        button.dataset.backdropChoice === document.documentElement.dataset.backdrop,
-      );
+    for (const button of styleButtons) {
+      button.ariaPressed = String(button.dataset.backdropChoice === root.dataset.backdrop);
+    }
+    for (const button of positionButtons) {
+      button.ariaPressed = String(button.dataset.positionChoice === root.dataset.backdropPosition);
     }
   };
-  for (const button of buttons) {
+
+  for (const button of styleButtons) {
     button.addEventListener('click', () => {
       const choice = button.dataset.backdropChoice!;
-      document.documentElement.dataset.backdrop = choice;
+      root.dataset.backdrop = choice;
       // The element is not rendered when the site is built with `backdrop: 'none'`.
       if (backdrop) backdrop.toggleAttribute('hidden', choice === 'none');
       sync();
     });
   }
+
+  for (const button of positionButtons) {
+    button.addEventListener('click', () => {
+      root.dataset.backdropPosition = button.dataset.positionChoice!;
+      sync();
+    });
+  }
+
   sync();
 </script>
