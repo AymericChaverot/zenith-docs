@@ -1,0 +1,17 @@
+---
+import type { GetStaticPaths } from 'astro';
+import { render } from 'astro:content';
+import Page from '../components/layout/Page.astro';
+import { mdxComponents } from '../components';
+import { getDocs, getDocsPaths, getRouteData, type DocsEntry } from '../route-data';
+
+export const getStaticPaths = (async () => getDocsPaths(await getDocs())) satisfies GetStaticPaths;
+
+const { entry } = Astro.props as { entry: DocsEntry };
+const { Content, headings } = await render(entry as never);
+Astro.locals.zenith = await getRouteData(entry, headings);
+---
+
+<Page>
+  <Content components={mdxComponents} />
+</Page>

@@ -1,0 +1,21 @@
+---
+import Page from '../components/layout/Page.astro';
+import { docsSchema } from '../content';
+import { getRouteData } from '../route-data';
+
+const entry = {
+  id: '404',
+  data: docsSchema().parse({
+    title: 'Page not found',
+    description: 'The page you are looking for does not exist or has been moved.',
+    toc: false,
+  }),
+};
+Astro.locals.zenith = await getRouteData(entry, []);
+---
+
+<Page>
+  <div class="zd-not-found">
+    <a class="zd-pagination-link" href={import.meta.env.BASE_URL}>Back to the homepage</a>
+  </div>
+</Page>
