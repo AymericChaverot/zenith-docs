@@ -176,6 +176,42 @@
   font-weight: var(--primary-bold);
 }
 
+.zd-prose mark {
+  padding: 0.0625em 0.25em;
+  border-radius: 0.25rem;
+  background: color-mix(in oklab, var(--zd-color-warning) 28%, transparent);
+  color: inherit;
+}
+
+.zd-prose abbr[title] {
+  text-decoration: underline dotted;
+  text-underline-offset: 0.2em;
+  cursor: help;
+}
+
+.zd-prose details:not([class]) {
+  padding: 0.75rem 1rem;
+  border: var(--border-width) solid var(--border);
+  border-radius: var(--radius-main);
+}
+
+.zd-prose details:not([class]) > summary {
+  font-weight: var(--primary-medium);
+  cursor: pointer;
+}
+
+.zd-prose details:not([class])[open] > summary {
+  margin-bottom: 0.5rem;
+}
+
+.zd-prose :is(h4, h5, h6) {
+  color: var(--text);
+}
+
+.zd-prose h6 {
+  color: var(--text-2);
+}
+
 .zd-prose img {
   width: auto;
   max-width: 100%;
