@@ -28,17 +28,20 @@ zenith({
 });
 ```
 
-| Style     | Looks like                                            |
-| --------- | ----------------------------------------------------- |
-| `aurora`  | Blurred color fields, the default                     |
-| `grid`    | A ruled grid fading downwards                         |
-| `dots`    | Evenly spaced dots                                    |
-| `dither`  | Two offset dot grids, like a halftone print           |
-| `rays`    | Light rays coming from above the page                 |
-| `grain`   | Film grain over the whole viewport                    |
-| `horizon` | A glowing line under the header                       |
-| `glow`    | A soft accent glow, nothing else                      |
-| `none`    | No background                                         |
+| Style          | Looks like                                                     |
+| -------------- | -------------------------------------------------------------- |
+| `dither`        | Two offset dot grids, like a halftone print. The default, and the only style that stays in place while the page scrolls |
+| `aurora`        | Blurred color fields                                           |
+| `grid`          | A ruled grid fading downwards                                  |
+| `dots`          | Evenly spaced dots                                             |
+| `rays`          | Light rays coming from above the page                          |
+| `grain`         | Film grain over the whole viewport                             |
+| `horizon`       | A glowing line under the header                                |
+| `horizon-glow`  | The same line, over a wider glow                               |
+| `glow`          | A soft accent glow, nothing else                               |
+| `none`          | No background                                                  |
+
+The `dither` style is anchored to the top left. Move it with `backdropPosition: 'center'` or `'right'`.
 
 Every style is plain CSS: no images and no JavaScript. Tune them with `--zd-backdrop-strength`, for the dither dots, and `--zd-backdrop-line`, for the grid and dots.
 
