@@ -1,0 +1,44 @@
+---
+title: Search
+description: Static full-text search, with no server and no search service.
+icon: search
+---
+
+ZenithDocs indexes your pages at build time with [Pagefind](https://pagefind.app), and ships a search dialog that loads its index only when a reader opens it.
+
+Nothing else is needed: no API key, no search service, no server. The index is written to `dist/pagefind` and served as static files, like the rest of the site.
+
+## Using it
+
+Press <kbd>Ctrl</kbd> + <kbd>K</kbd>, or <kbd>Cmd</kbd> + <kbd>K</kbd> on a Mac, or click the search field in the header. Results list the matching pages, with the matching sections below them. Move through them with the arrow keys and open one with <kbd>Enter</kbd>.
+
+:::note
+The index is created by `astro build`. During `astro dev`, the dialog opens but reports that search is only available once the site has been built.
+:::
+
+## What gets indexed
+
+Only the article of each page: the title, the description and the content. The header, the sidebar, the table of contents, the breadcrumb and the page footer are left out, so navigation labels never pollute the results.
+
+Exclude part of a page with Pagefind's own attribute:
+
+```mdx
+<div data-pagefind-ignore>
+  This section is not searchable.
+</div>
+```
+
+## Turning it off
+
+```js title="astro.config.mjs"
+zenith({
+  title: 'My Docs',
+  search: false, // [!code highlight]
+});
+```
+
+The search field disappears from the header, and no index is built.
+
+## Weight and privacy
+
+The dialog itself is a few lines of JavaScript, loaded with the page. Pagefind and its index are only downloaded when the dialog is opened, and Pagefind only loads the fragments of the index it needs to answer a query. Nothing leaves the reader's browser.
