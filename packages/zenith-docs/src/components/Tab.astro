@@ -1,0 +1,13 @@
+---
+interface Props {
+  /** Must match one of the parent `<Tabs>` items. */
+  value?: string;
+}
+
+const { value } = Astro.props;
+---
+
+<div class="zd-tab-panel" role="tabpanel" data-value={value} tabindex="0">
+  {value && <p class="zd-tab-label">{value}</p>}
+  <slot />
+</div>

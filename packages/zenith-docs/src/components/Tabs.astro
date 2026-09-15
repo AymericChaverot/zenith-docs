@@ -1,0 +1,140 @@
+---
+interface Props {
+  /** Tab labels, in order. Built from the `<Tab>` values when omitted. */
+  items?: string[];
+  defaultValue?: string;
+  /** Tabs sharing a group id switch together. */
+  groupId?: string;
+  /** Remember the selected tab of the group across pages. */
+  persist?: boolean;
+}
+
+const { items = [], defaultValue = items[0], groupId, persist = false } = Astro.props;
+---
+
+<zd-tabs
+  class="zd-tabs"
+  data-group={groupId}
+  data-persist={persist ? '' : undefined}
+  data-default={defaultValue}
+>
+  {
+    items.length > 0 && (
+      <div class="zd-tabs-list" role="tablist">
+        {items.map((item) => (
+          <button
+            class="zd-tab-trigger"
+            type="button"
+            role="tab"
+            data-value={item}
+            aria-selected={item === defaultValue ? 'true' : 'false'}
+          >
+            {item}
+          </button>
+        ))}
+      </div>
+    )
+  }
+  <slot />
+</zd-tabs>
+
+<script>
+  const EVENT = 'zd-tabs-change';
+  let uid = 0;
+
+  class ZenithTabs extends HTMLElement {
+    tabs: HTMLButtonElement[] = [];
+    panels: HTMLElement[] = [];
+
+    connectedCallback() {
+      this.panels = [...this.children].filter(
+        (child): child is HTMLElement => child instanceof HTMLElement && child.role === 'tabpanel',
+      );
+      if (this.panels.length === 0) return;
+
+      let list = this.querySelector<HTMLElement>(':scope > [role="tablist"]');
+      if (!list) {
+        list = document.createElement('div');
+        list.className = 'zd-tabs-list';
+        list.role = 'tablist';
+        for (const [index, panel] of this.panels.entries()) {
+          const button = document.createElement('button');
+          button.className = 'zd-tab-trigger';
+          button.type = 'button';
+          button.role = 'tab';
+          button.dataset.value = panel.dataset.value ?? String(index);
+          button.textContent = panel.dataset.value ?? `Tab ${index + 1}`;
+          list.append(button);
+        }
+        this.prepend(list);
+      }
+      this.tabs = [...list.querySelectorAll<HTMLButtonElement>('[role="tab"]')];
+
+      const id = `zd-tabs-${uid++}`;
+      this.tabs.forEach((tab, index) => {
+        const panel = this.panels[index];
+        if (!panel) return;
+        panel.dataset.value ??= tab.dataset.value;
+        tab.id = `${id}-tab-${index}`;
+        panel.id = `${id}-panel-${index}`;
+        tab.setAttribute('aria-controls', panel.id);
+        panel.setAttribute('aria-labelledby', tab.id);
+        tab.addEventListener('click', () => this.select(tab.dataset.value!, true));
+        tab.addEventListener('keydown', (event) => this.onKeydown(event, index));
+      });
+
+      const { group, persist } = this.dataset;
+      let stored: string | null = null;
+      if (group && persist !== undefined) {
+        try {
+          stored = localStorage.getItem(`zd-tabs:${group}`);
+        } catch {}
+      }
+      this.select(stored ?? this.dataset.default ?? this.tabs[0]?.dataset.value ?? '', false);
+
+      if (group) {
+        document.addEventListener(EVENT, (event) => {
+          const detail = (event as CustomEvent<{ group: string; value: string }>).detail;
+          if (detail.group === group) this.select(detail.value, false);
+        });
+      }
+    }
+
+    select(value: string, broadcast: boolean) {
+      if (!this.tabs.some((tab) => tab.dataset.value === value)) {
+        if (broadcast) return;
+        value = this.tabs[0]?.dataset.value ?? '';
+      }
+      for (const tab of this.tabs) {
+        const selected = tab.dataset.value === value;
+        tab.setAttribute('aria-selected', String(selected));
+        tab.tabIndex = selected ? 0 : -1;
+      }
+      for (const panel of this.panels) panel.hidden = panel.dataset.value !== value;
+
+      const { group, persist } = this.dataset;
+      if (!broadcast || !group) return;
+      if (persist !== undefined) {
+        try {
+          localStorage.setItem(`zd-tabs:${group}`, value);
+        } catch {}
+      }
+      document.dispatchEvent(new CustomEvent(EVENT, { detail: { group, value } }));
+    }
+
+    onKeydown(event: KeyboardEvent, index: number) {
+      const offsets: Record<string, number> = { ArrowRight: 1, ArrowLeft: -1 };
+      let next: number | undefined;
+      if (event.key in offsets) next = (index + offsets[event.key]! + this.tabs.length) % this.tabs.length;
+      else if (event.key === 'Home') next = 0;
+      else if (event.key === 'End') next = this.tabs.length - 1;
+      if (next === undefined) return;
+      event.preventDefault();
+      const tab = this.tabs[next]!;
+      tab.focus();
+      this.select(tab.dataset.value!, true);
+    }
+  }
+
+  customElements.define('zd-tabs', ZenithTabs);
+</script>
