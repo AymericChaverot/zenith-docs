@@ -20,7 +20,7 @@ const items = toc.map((heading, index) => {
       </p>
       <ul class="zd-toc-list">
         {items.map((item) => (
-          <li class="zd-toc-item" style={`--depth: ${item.depth}`}>
+          <li class="zd-toc-item" data-depth={item.depth} style={`--depth: ${item.depth}`}>
             {item.previous !== item.depth && (
               <svg
                 class="zd-toc-connector"
@@ -49,27 +49,113 @@ const items = toc.map((heading, index) => {
 }
 
 <script>
+  const SVG_NS = 'http://www.w3.org/2000/svg';
+
+  interface Toc {
+    list: HTMLElement;
+    items: HTMLElement[];
+    thumb: SVGSVGElement;
+  }
+
+  /** Resolve a length custom property to pixels. */
+  const toPixels = (element: HTMLElement, property: string) => {
+    const probe = document.createElement('div');
+    probe.style.cssText = `position:absolute;visibility:hidden;width:var(${property})`;
+    element.append(probe);
+    const value = probe.offsetWidth;
+    probe.remove();
+    return value;
+  };
+
+  /** Draw the guide line, bends included, as a single path. */
+  const draw = ({ list, items, thumb }: Toc) => {
+    const indent = toPixels(list, '--zd-toc-indent');
+    const bend = toPixels(list, '--zd-toc-bend');
+    let path = '';
+    let previousX: number | undefined;
+    for (const item of items) {
+      const x = Number(item.dataset.depth) * indent + 0.5;
+      const top = item.offsetTop;
+      if (previousX === undefined) path += `M${x} ${top}`;
+      else if (x !== previousX) path += `L${x} ${top + bend}`;
+      path += `L${x} ${top + item.offsetHeight}`;
+      previousX = x;
+    }
+    const width = list.clientWidth;
+    const height = list.clientHeight;
+    thumb.setAttribute('width', String(width));
+    thumb.setAttribute('height', String(height));
+    thumb.setAttribute('viewBox', `0 0 ${width} ${height}`);
+    thumb.firstElementChild!.setAttribute('d', path);
+  };
+
+  const tocs: Toc[] = [...document.querySelectorAll<HTMLElement>('.zd-toc-list')].map((list) => {
+    const thumb = document.createElementNS(SVG_NS, 'svg');
+    thumb.classList.add('zd-toc-thumb');
+    thumb.setAttribute('aria-hidden', 'true');
+    thumb.append(document.createElementNS(SVG_NS, 'path'));
+    list.append(thumb);
+    const toc = { list, items: [...list.querySelectorAll<HTMLElement>('.zd-toc-item')], thumb };
+    new ResizeObserver(() => draw(toc)).observe(list);
+    return toc;
+  });
+
   const links = [...document.querySelectorAll<HTMLAnchorElement>('[data-toc-link]')];
-  const headings = [...new Set(links.map((link) => decodeURIComponent(link.hash.slice(1))))]
+  const idOf = (link: HTMLAnchorElement) => decodeURIComponent(link.hash.slice(1));
+  const headings = [...new Set(links.map(idOf))]
     .map((id) => document.getElementById(id))
     .filter((heading) => heading !== null);
+  const content = document.querySelector('.zd-prose');
+
+  /** Headings whose section intersects the viewport. */
+  const getActiveIds = () => {
+    const top = parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop) || 80;
+    const bottom = innerHeight;
+    const end = content?.getBoundingClientRect().bottom ?? Infinity;
+    const active = new Set<string>();
+    headings.forEach((heading, index) => {
+      const start = heading.getBoundingClientRect().top;
+      const next = headings[index + 1]?.getBoundingClientRect().top ?? end;
+      if (next > top + 1 && start < bottom) active.add(heading.id);
+    });
+    if (active.size === 0) {
+      const above = headings.filter((heading) => heading.getBoundingClientRect().top <= top + 1);
+      const last = above.at(-1) ?? headings[0];
+      if (last) active.add(last.id);
+    }
+    return active;
+  };
 
   let frame = 0;
   const update = () => {
     frame = 0;
-    const offset = parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop) || 80;
-    let current = headings[0];
-    for (const heading of headings) {
-      if (heading.getBoundingClientRect().top > offset + 1) break;
-      current = heading;
-    }
-    for (const link of links) {
-      link.toggleAttribute('data-active', decodeURIComponent(link.hash.slice(1)) === current?.id);
+    const active = getActiveIds();
+    for (const link of links) link.toggleAttribute('data-active', active.has(idOf(link)));
+
+    for (const { list, items, thumb } of tocs) {
+      const activeItems = items.filter((item) => {
+        const link = item.querySelector<HTMLAnchorElement>('[data-toc-link]');
+        return link && active.has(idOf(link));
+      });
+      const first = activeItems[0];
+      const last = activeItems.at(-1);
+      if (!first || !last) {
+        thumb.style.clipPath = 'inset(0 0 100% 0)';
+        continue;
+      }
+      const start = first.offsetTop;
+      const end = list.clientHeight - (last.offsetTop + last.offsetHeight);
+      thumb.style.clipPath = `inset(${start}px 0 ${end}px 0)`;
     }
   };
 
   if (headings.length > 0) {
     addEventListener('scroll', () => (frame ||= requestAnimationFrame(update)), { passive: true });
+    addEventListener('resize', () => (frame ||= requestAnimationFrame(update)));
     update();
+    // Animate only after the initial position is set.
+    requestAnimationFrame(() => {
+      for (const { thumb } of tocs) thumb.setAttribute('data-animate', '');
+    });
   }
 </script>
