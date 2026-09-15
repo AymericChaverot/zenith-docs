@@ -18,7 +18,12 @@ const hasToc = toc.length > 0 && !full;
 ---
 
 <!doctype html>
-<html lang={config.lang} class="theme-light" data-full={full ? '' : undefined}>
+<html
+  lang={config.lang}
+  class="theme-light"
+  data-accent={config.accent}
+  data-full={full ? '' : undefined}
+>
   <head>
     <Head />
   </head>
