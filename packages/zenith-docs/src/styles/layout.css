@@ -144,10 +144,11 @@ html {
   );
 }
 
+/* Sits right under the header, so it never crosses the text */
 [data-backdrop='horizon'] .zd-backdrop::after {
   content: '';
   position: absolute;
-  top: 16rem;
+  top: var(--zd-header-height);
   left: 0;
   right: 0;
   height: 6rem;
