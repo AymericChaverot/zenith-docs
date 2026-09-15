@@ -29,6 +29,8 @@ export const ZenithConfigSchema = z.object({
       svg: z.string().optional(),
     })
     .optional(),
+  /** Build a static search index with Pagefind, and show the search dialog. */
+  search: z.boolean().default(true),
   /** Accent color preset. Use `customCss` for anything else. */
   accent: z.enum(['emerald', 'teal', 'amber', 'rose', 'violet', 'neutral']).default('emerald'),
   /** Decorative background at the top of pages. `true` means `aurora`, `false` means `none`. */

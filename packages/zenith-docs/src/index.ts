@@ -14,6 +14,7 @@ import {
   zenithMdastPlugins,
 } from './markdown/index';
 import { zenithShikiTransformers } from './markdown/shiki';
+import { buildSearchIndex } from './search';
 import { OVERRIDABLE_COMPONENTS, vitePluginZenith } from './virtual';
 
 export type { ZenithConfig, ZenithUserConfig } from './config';
@@ -36,10 +37,14 @@ export default function zenith(userConfig: ZenithUserConfig): AstroIntegration {
     );
   }
 
+  let staticOutput = true;
+
   return {
     name: 'zenith-docs',
     hooks: {
       'astro:config:setup': ({ config: astroConfig, injectRoute, updateConfig, logger }) => {
+        staticOutput = astroConfig.output === 'static';
+
         injectRoute({
           pattern: '404',
           entrypoint: 'zenith-docs/routes/404.astro',
@@ -107,6 +112,15 @@ export default function zenith(userConfig: ZenithUserConfig): AstroIntegration {
             plugins: [vitePluginZenith(resolvedConfig, astroConfig.root)],
           },
         });
+      },
+
+      'astro:build:done': async ({ dir, logger }) => {
+        if (!config.search) return;
+        if (!staticOutput) {
+          logger.warn('Search is only built for static output, skipping the index.');
+          return;
+        }
+        await buildSearchIndex(dir, logger);
       },
     },
   };
