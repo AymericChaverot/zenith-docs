@@ -1,0 +1,13 @@
+{
+  "pages": [
+    "index",
+    "installation",
+    "project-structure",
+    "---Writing content---",
+    "...writing",
+    "---Customization---",
+    "...customization",
+    "reference",
+    "[Astro documentation](https://docs.astro.build)"
+  ]
+}

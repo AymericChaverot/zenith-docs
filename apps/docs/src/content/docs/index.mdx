@@ -1,0 +1,45 @@
+---
+title: ZenithDocs
+description: A static, lightweight and themeable documentation engine built on Astro and Lumos.
+icon: rocket
+---
+
+ZenithDocs turns a folder of Markdown and MDX files into a fast documentation site. Every page is prerendered to plain HTML and CSS, and JavaScript is only shipped for the few interactions that need it.
+
+<Cards>
+  <Card title="Installation" href="/installation/" icon="zap">
+    Add ZenithDocs to an Astro project in a couple of minutes.
+  </Card>
+  <Card title="Writing content" href="/writing/markdown/" icon="file">
+    Markdown, code blocks and built-in components.
+  </Card>
+  <Card title="Theming" href="/customization/theming/" icon="palette">
+    Restyle everything with a handful of CSS custom properties.
+  </Card>
+  <Card title="Reference" href="/reference/" icon="settings">
+    Every configuration option and frontmatter field.
+  </Card>
+</Cards>
+
+## Why ZenithDocs?
+
+Big documentation frameworks come with a lot of features, and often a lot of JavaScript. ZenithDocs aims for the same authoring experience while shipping a site that is as light as a hand-written one.
+
+- **Static by design**: every page is plain HTML. The sidebar, table of contents, accordions and file trees work without JavaScript.
+- **Familiar conventions**: pages are ordered with `meta.json` files, following the same syntax as Fumadocs.
+- **Themeable**: styles are built on Lumos design tokens and CSS cascade layers, so your own CSS always wins.
+- **Built on Astro 7**: Markdown goes through the Rust-based Sätteri pipeline and code is highlighted at build time with Shiki.
+
+:::tip[Dogfooding]
+This site is built with ZenithDocs. Browse its source in `apps/docs` to see how it is put together.
+:::
+
+## JavaScript budget
+
+| Feature               | JavaScript                           |
+| --------------------- | ------------------------------------ |
+| Sidebar, mobile menu  | None, thanks to the Popover API      |
+| Dark mode             | A tiny inline script                 |
+| Copy code button      | A tiny inline script                 |
+| Table of contents     | A small scroll-spy module            |
+| Tabs                  | A small web component, only if used  |

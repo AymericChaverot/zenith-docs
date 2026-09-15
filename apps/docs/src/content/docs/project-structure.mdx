@@ -1,0 +1,44 @@
+---
+title: Project structure
+description: Where ZenithDocs looks for your content and assets.
+icon: folder
+---
+
+A ZenithDocs site is a regular Astro project. Content lives in `src/content/docs`, and every Markdown or MDX file becomes a page.
+
+<Files>
+  <Folder name="public" defaultOpen>
+    <File name="favicon.svg" />
+  </Folder>
+  <Folder name="src" defaultOpen>
+    <Folder name="content" defaultOpen>
+      <Folder name="docs" defaultOpen>
+        <Folder name="guides" defaultOpen>
+          <File name="index.mdx" />
+          <File name="deploy.mdx" />
+          <File name="meta.json" />
+        </Folder>
+        <File name="index.mdx" />
+        <File name="meta.json" />
+      </Folder>
+    </Folder>
+    <File name="content.config.ts" />
+  </Folder>
+  <File name="astro.config.mjs" />
+</Files>
+
+## From files to URLs
+
+The file path, relative to the docs directory, gives the page URL.
+
+| File                   | URL               |
+| ---------------------- | ----------------- |
+| `index.mdx`            | `/`               |
+| `guides/index.mdx`     | `/guides/`        |
+| `guides/deploy.mdx`    | `/guides/deploy/` |
+
+Files whose name starts with an underscore are ignored, which is handy for partials and drafts.
+
+## Folders
+
+Folders become collapsible groups in the sidebar. A folder's `index` page is linked from the group title, and a [`meta.json`](/writing/navigation/) file can set its title, icon and page order.

@@ -1,0 +1,82 @@
+---
+title: Installation
+description: Add ZenithDocs to a new or existing Astro project.
+icon: zap
+---
+
+ZenithDocs is an Astro integration. It needs Astro 7 and Node.js 22.12 or later.
+
+<Steps>
+
+### Install the package
+
+<Tabs items={['pnpm', 'npm', 'yarn', 'bun']} groupId="package-manager" persist>
+  <Tab value="pnpm">
+    ```sh
+    pnpm add zenith-docs
+    ```
+  </Tab>
+  <Tab value="npm">
+    ```sh
+    npm install zenith-docs
+    ```
+  </Tab>
+  <Tab value="yarn">
+    ```sh
+    yarn add zenith-docs
+    ```
+  </Tab>
+  <Tab value="bun">
+    ```sh
+    bun add zenith-docs
+    ```
+  </Tab>
+</Tabs>
+
+### Add the integration
+
+Register ZenithDocs in your Astro configuration and give your site a title.
+
+```js title="astro.config.mjs"
+import { defineConfig } from 'astro/config';
+import zenith from 'zenith-docs'; // [!code ++]
+
+export default defineConfig({
+  integrations: [
+    zenith({ title: 'My Docs' }), // [!code ++]
+  ],
+});
+```
+
+### Define the content collections
+
+ZenithDocs reads pages from a `docs` collection and navigation metadata from a `meta` collection.
+
+```ts title="src/content.config.ts"
+import { defineCollection } from 'astro:content';
+import { docsLoader, docsSchema, metaLoader, metaSchema } from 'zenith-docs/content';
+
+export const collections = {
+  docs: defineCollection({ loader: docsLoader(), schema: docsSchema() }),
+  meta: defineCollection({ loader: metaLoader(), schema: metaSchema() }),
+};
+```
+
+### Write your first page
+
+```mdx title="src/content/docs/index.mdx"
+---
+title: Welcome
+description: The first page of my documentation.
+---
+
+Hello, world!
+```
+
+</Steps>
+
+Run `astro dev` and open the site: your page is served at the root, with the sidebar, table of contents and dark mode already set up.
+
+:::note
+Pages are prerendered, so `astro build` outputs a fully static site that can be hosted anywhere.
+:::
