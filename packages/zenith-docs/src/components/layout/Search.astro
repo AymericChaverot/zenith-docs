@@ -143,6 +143,11 @@ const { config } = Astro.locals.zenith;
       if (event.target === dialog) dialog.close();
     });
 
+    // A dialog left open in the top layer aborts the page transition.
+    results.addEventListener('click', (event) => {
+      if ((event.target as Element).closest('[data-search-result]')) dialog.close();
+    });
+
     addEventListener('keydown', (event) => {
       if (event.key === 'k' && (event.metaKey || event.ctrlKey)) {
         event.preventDefault();
