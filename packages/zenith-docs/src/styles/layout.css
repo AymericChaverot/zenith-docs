@@ -1,5 +1,7 @@
 html {
   scroll-padding-top: calc(var(--zd-header-height) + 1.5rem);
+  /* Keep the layout still when navigating between short and long pages */
+  scrollbar-gutter: stable;
 }
 
 body {
@@ -123,10 +125,6 @@ body {
   width: 100%;
   max-width: var(--zd-layout-width);
   margin-inline: auto;
-}
-
-.zd-layout:not([data-toc]) {
-  grid-template-columns: var(--zd-sidebar-width) minmax(0, 1fr);
 }
 
 /* Explicit columns, so the sidebar leaving the flow as a popover never shifts the page */
@@ -381,8 +379,7 @@ body {
 }
 
 @media (max-width: 80rem) {
-  .zd-layout,
-  .zd-layout:not([data-toc]) {
+  .zd-layout {
     grid-template-columns: var(--zd-sidebar-width) minmax(0, 1fr);
   }
 
@@ -396,8 +393,7 @@ body {
 }
 
 @media (max-width: 56rem) {
-  .zd-layout,
-  .zd-layout:not([data-toc]) {
+  .zd-layout {
     grid-template-columns: minmax(0, 1fr);
   }
 
