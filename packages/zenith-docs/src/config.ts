@@ -45,6 +45,7 @@ export const ZenithConfigSchema = z.object({
         'rays',
         'grain',
         'horizon',
+        'horizon-glow',
       ]),
     ])
     .default('dither')

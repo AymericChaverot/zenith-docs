@@ -172,8 +172,25 @@ html {
   );
 }
 
+/* The same line, over a wider glow */
+[data-backdrop='horizon-glow'] .zd-backdrop {
+  height: 32rem;
+  background:
+    radial-gradient(
+      45% 55% at 50% 0%,
+      color-mix(in oklab, var(--accent) 16%, transparent),
+      transparent 70%
+    ),
+    radial-gradient(
+      85% 60% at 50% 8%,
+      color-mix(in oklab, var(--accent) 7%, transparent),
+      transparent 75%
+    );
+}
+
 /* Sits right under the header, so it never crosses the text */
-[data-backdrop='horizon'] .zd-backdrop::after {
+[data-backdrop='horizon'] .zd-backdrop::after,
+[data-backdrop='horizon-glow'] .zd-backdrop::after {
   content: '';
   position: absolute;
   top: var(--zd-header-height);
