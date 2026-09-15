@@ -1,0 +1,55 @@
+---
+title: Organizing pages
+description: Order, group and split your sidebar with meta.json files.
+icon: list
+---
+
+By default, pages and folders are sorted alphabetically, with `index` first. Add a `meta.json` file to a folder to take control, using the same conventions as Fumadocs.
+
+```json title="src/content/docs/meta.json"
+{
+  "pages": ["index", "installation", "---Guides---", "...", "!drafts", "[GitHub](https://github.com)"]
+}
+```
+
+## The `pages` array
+
+| Entry           | Effect                                                             |
+| --------------- | ------------------------------------------------------------------ |
+| `"name"`        | A page (`name.mdx`) or a folder (`name/`)                          |
+| `"---Label---"` | A separator with a label                                           |
+| `"..."`         | All remaining items, sorted alphabetically                         |
+| `"z...a"`       | All remaining items, in reverse order                              |
+| `"...folder"`   | The items of `folder`, inlined at this level                       |
+| `"!name"`       | Excludes an item from `...`                                        |
+| `"[Text](url)"` | A link, opened in a new tab when external                          |
+
+When `pages` is set, only the listed items are shown. Use `...` to include the rest.
+
+## Folder options
+
+```json title="src/content/docs/guides/meta.json"
+{
+  "title": "Guides",
+  "icon": "book",
+  "defaultOpen": true
+}
+```
+
+- `title` replaces the folder name in the sidebar.
+- `icon` shows one of the built-in icons.
+- `defaultOpen` expands the folder on every page.
+- `collapsible: false` renders the folder as a plain group.
+
+## Sidebar tabs
+
+Set `"root": true` to turn a folder into a sidebar tab. When a page of that folder is open, the sidebar only shows the folder's content. The [Reference](/reference/) section of this site is a root folder.
+
+## Hiding a page
+
+Hide a page from the sidebar without removing it from the site with frontmatter:
+
+```yaml
+sidebar:
+  hidden: true
+```

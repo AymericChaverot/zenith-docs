@@ -1,0 +1,66 @@
+---
+title: Markdown
+description: Standard Markdown, GitHub Flavored Markdown and a few extensions.
+icon: file
+---
+
+Pages are written in Markdown or MDX. ZenithDocs supports GitHub Flavored Markdown out of the box: tables, task lists, strikethrough, autolinks and footnotes.
+
+## Text formatting
+
+You can use **bold**, _italic_, ~~strikethrough~~, `inline code` and [links](/installation/). Keyboard keys use the HTML element: press <kbd>Ctrl</kbd> + <kbd>K</kbd>.
+
+> Blockquotes are useful to quote other sources.
+
+- Unordered lists
+  - can be nested
+- [x] and turned into task lists
+- [ ] like this one
+
+1. Ordered lists
+2. work too
+
+## Callouts
+
+Use a container directive to highlight important information. The label between brackets replaces the default title.
+
+:::note
+Notes add context the reader should know about.
+:::
+
+:::tip[Pro tip]
+Tips help readers get more out of a feature.
+:::
+
+:::success
+Success callouts confirm that something worked.
+:::
+
+:::warning
+Warnings point out things that could go wrong.
+:::
+
+:::danger
+Danger callouts flag destructive or irreversible actions.
+:::
+
+GitHub alerts are supported as well, so the same files render nicely on GitHub:
+
+> [!WARNING]
+> This callout was written with the GitHub alert syntax.
+
+Aliases like `info`, `warn`, `caution` and `error` map to the closest callout type.
+
+## Headings
+
+Headings from level 2 to 3 are listed in the table of contents, and each one gets an anchor link. Set a custom id by ending the heading with `[#your-id]`.
+
+### A heading with a custom id [#custom-id]
+
+This heading can be linked to with [`#custom-id`](#custom-id).
+
+## Footnotes
+
+Footnotes are collected at the end of the page.[^1]
+
+[^1]: Like this one.

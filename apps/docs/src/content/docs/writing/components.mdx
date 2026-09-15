@@ -1,0 +1,122 @@
+---
+title: Components
+description: Built-in MDX components, available in every page without imports.
+icon: layers
+---
+
+These components are available in all `.mdx` pages. They render to static HTML, and only tabs ship a few lines of JavaScript.
+
+## Callout
+
+The component form of [callouts](/writing/markdown/#callouts).
+
+<Callout type="warning" title="Heads up">
+  Callouts can contain **any** Markdown content.
+</Callout>
+
+```mdx
+<Callout type="warning" title="Heads up">
+  Callouts can contain **any** Markdown content.
+</Callout>
+```
+
+## Cards
+
+<Cards>
+  <Card title="Installation" href="/installation/" icon="zap">
+    Get started in a few minutes.
+  </Card>
+  <Card title="Theming" href="/customization/theming/" icon="palette">
+    Make it yours.
+  </Card>
+</Cards>
+
+```mdx
+<Cards>
+  <Card title="Installation" href="/installation/" icon="zap">
+    Get started in a few minutes.
+  </Card>
+</Cards>
+```
+
+## Tabs
+
+Tabs sharing a `groupId` switch together, and `persist` remembers the choice across pages.
+
+<Tabs items={['JavaScript', 'TypeScript']} groupId="language">
+  <Tab value="JavaScript">
+    ```js
+    export const add = (a, b) => a + b;
+    ```
+  </Tab>
+  <Tab value="TypeScript">
+    ```ts
+    export const add = (a: number, b: number) => a + b;
+    ```
+  </Tab>
+</Tabs>
+
+<Tabs items={['JavaScript', 'TypeScript']} groupId="language">
+  <Tab value="JavaScript">This tab switches along with the one above.</Tab>
+  <Tab value="TypeScript">So does this one.</Tab>
+</Tabs>
+
+```mdx
+<Tabs items={['JavaScript', 'TypeScript']} groupId="language" persist>
+  <Tab value="JavaScript">…</Tab>
+  <Tab value="TypeScript">…</Tab>
+</Tabs>
+```
+
+Without JavaScript, all tabs are displayed one after the other.
+
+## Steps
+
+<Steps>
+  <Step>
+    ### Write
+
+    Add a Markdown file to `src/content/docs`.
+  </Step>
+  <Step>
+    ### Build
+
+    Run `astro build`.
+  </Step>
+</Steps>
+
+You can also wrap a series of level 3 headings in `<Steps>` without using `<Step>`, as on the [installation](/installation/) page.
+
+## Accordion
+
+Accordions use the native `<details>` element. Accordions with the same `group` close each other.
+
+<Accordions>
+  <Accordion title="Does ZenithDocs need JavaScript?" group="faq">
+    No. Pages are fully usable without it.
+  </Accordion>
+  <Accordion title="Can I use my own components?" group="faq">
+    Yes, import any Astro component in an MDX page.
+  </Accordion>
+</Accordions>
+
+## Files
+
+<Files>
+  <Folder name="src" defaultOpen>
+    <File name="content.config.ts" />
+    <Folder name="content">
+      <File name="index.mdx" />
+    </Folder>
+  </Folder>
+  <File name="astro.config.mjs" />
+</Files>
+
+```mdx
+<Files>
+  <Folder name="src" defaultOpen>
+    <File name="content.config.ts" />
+  </Folder>
+  <File name="astro.config.mjs" />
+</Files>
+```

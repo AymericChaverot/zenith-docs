@@ -1,0 +1,78 @@
+---
+title: Code blocks
+description: Syntax highlighting, titles, line highlights, diffs and more.
+icon: code
+---
+
+Code blocks are highlighted at build time with Shiki, using a light and a dark theme that follow the site color scheme. No highlighting code is sent to the browser.
+
+## Titles
+
+Add `title="..."` after the language to show a file name.
+
+```ts title="src/utils/greet.ts"
+export function greet(name: string) {
+  return `Hello, ${name}!`;
+}
+```
+
+## Highlighting lines
+
+Add `// [!code highlight]` at the end of a line, or list line numbers in the meta, like `{1,3-4}`.
+
+```ts {1}
+const answer = 42;
+const question = 'What is the meaning of life?'; // [!code highlight]
+console.log(question, answer);
+```
+
+## Highlighting words
+
+Use `// [!code word:name]` to highlight every occurrence of a word in the following line.
+
+```ts
+// [!code word:config]
+const config = defineConfig({ site: 'https://example.com' });
+export default config;
+```
+
+## Diffs
+
+Mark added and removed lines with `// [!code ++]` and `// [!code --]`.
+
+```js title="astro.config.mjs"
+export default defineConfig({
+  integrations: [
+    starlight({ title: 'My Docs' }), // [!code --]
+    zenith({ title: 'My Docs' }), // [!code ++]
+  ],
+});
+```
+
+## Focus
+
+Blur everything but the important lines with `// [!code focus]`. Hover the block to reveal the rest.
+
+```ts
+import { defineCollection } from 'astro:content';
+import { docsLoader, docsSchema } from 'zenith-docs/content';
+
+export const collections = {
+  docs: defineCollection({ loader: docsLoader(), schema: docsSchema() }), // [!code focus]
+};
+```
+
+## Line numbers
+
+Add `lineNumbers` to the meta, optionally with a starting number: `lineNumbers=10`.
+
+```css lineNumbers=10
+:root {
+  --brand-500: oklch(58% 0.18 268);
+  --radius-main: 0.625rem;
+}
+```
+
+## Copy button
+
+Every code block gets a copy button, shown on hover. It is only rendered when JavaScript is available.
