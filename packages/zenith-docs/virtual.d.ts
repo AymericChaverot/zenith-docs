@@ -1,3 +1,8 @@
+declare module '*.astro' {
+  const Component: (props: Record<string, any>) => any;
+  export default Component;
+}
+
 declare module 'virtual:zenith/config' {
   const config: import('./src/config').ZenithConfig;
   export default config;

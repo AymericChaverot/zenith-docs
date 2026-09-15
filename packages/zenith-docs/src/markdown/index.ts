@@ -186,7 +186,8 @@ function hasClass(node: Element, name: string): boolean {
 function element(tagName: string, properties: Record<string, string>, children: unknown[]): Paragraph {
   return {
     type: 'paragraph',
-    data: { hName: tagName, hProperties: properties },
+    // `hName` and `hProperties` are read by the mdast to hast conversion.
+    data: { hName: tagName, hProperties: properties } as Paragraph['data'],
     children: children as Paragraph['children'],
   };
 }
