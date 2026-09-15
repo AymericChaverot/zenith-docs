@@ -64,7 +64,21 @@ html {
   mask-image: radial-gradient(70% 100% at 50% 0%, black 0%, transparent 72%);
 }
 
-/* Two offset dot grids, for a halftone gradient */
+/*
+ * Two offset dot grids, for a halftone gradient. It stays in place while the page scrolls,
+ * anchored on the side given by the `backdropPosition` option.
+ */
+[data-backdrop='dither'] .zd-backdrop {
+  position: fixed;
+  inset: 0 0 auto 0;
+  height: min(40rem, 75vh);
+  background: radial-gradient(
+    38% 62% at var(--zd-backdrop-x) 0%,
+    color-mix(in oklab, var(--accent) 10%, transparent),
+    transparent 72%
+  );
+}
+
 [data-backdrop='dither'] .zd-backdrop::before,
 [data-backdrop='dither'] .zd-backdrop::after {
   content: '';
@@ -75,12 +89,20 @@ html {
 }
 
 [data-backdrop='dither'] .zd-backdrop::before {
-  mask-image: radial-gradient(62% 90% at 50% 0%, black 0%, transparent 75%);
+  mask-image: radial-gradient(45% 78% at var(--zd-backdrop-x) 0%, black 0%, transparent 72%);
 }
 
 [data-backdrop='dither'] .zd-backdrop::after {
   background-position: 3px 3px;
-  mask-image: radial-gradient(38% 55% at 50% 0%, black 0%, transparent 80%);
+  mask-image: radial-gradient(27% 48% at var(--zd-backdrop-x) 0%, black 0%, transparent 78%);
+}
+
+[data-backdrop-position='center'] {
+  --zd-backdrop-x: 50%;
+}
+
+[data-backdrop-position='right'] {
+  --zd-backdrop-x: 100%;
 }
 
 /* Blurred color fields */

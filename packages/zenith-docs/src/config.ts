@@ -31,14 +31,26 @@ export const ZenithConfigSchema = z.object({
     .optional(),
   /** Accent color preset. Use `customCss` for anything else. */
   accent: z.enum(['emerald', 'teal', 'amber', 'rose', 'violet', 'neutral']).default('emerald'),
-  /** Decorative background at the top of pages. `true` means `aurora`, `false` means `none`. */
+  /** Decorative background at the top of pages. `true` means `dither`, `false` means `none`. */
   backdrop: z
     .union([
       z.boolean(),
-      z.enum(['none', 'glow', 'grid', 'dots', 'dither', 'aurora', 'rays', 'grain', 'horizon']),
+      z.enum([
+        'none',
+        'glow',
+        'grid',
+        'dots',
+        'dither',
+        'aurora',
+        'rays',
+        'grain',
+        'horizon',
+      ]),
     ])
-    .default('aurora')
-    .transform((value) => (value === true ? 'aurora' : value === false ? 'none' : value)),
+    .default('dither')
+    .transform((value) => (value === true ? 'dither' : value === false ? 'none' : value)),
+  /** Side the backdrop is anchored to. */
+  backdropPosition: z.enum(['left', 'center', 'right']).default('left'),
   /** Self-host Geist and Geist Mono. Set to `false` to use system fonts. */
   fonts: z.boolean().default(true),
   favicon: z.string().default('/favicon.svg'),
