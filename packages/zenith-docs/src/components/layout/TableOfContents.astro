@@ -3,25 +3,43 @@ import Icon from '../Icon.astro';
 
 const { toc } = Astro.locals.zenith;
 const minDepth = Math.min(...toc.map((heading) => heading.depth));
+
+const items = toc.map((heading, index) => {
+  const depth = heading.depth - minDepth;
+  const previous = index > 0 ? toc[index - 1]!.depth - minDepth : depth;
+  return { ...heading, depth, previous };
+});
 ---
 
 {
-  toc.length > 0 && (
+  items.length > 0 && (
     <nav class="zd-toc" aria-label="On this page">
       <p class="zd-toc-title">
         <Icon name="list" />
         On this page
       </p>
       <ul class="zd-toc-list">
-        {toc.map((heading) => (
-          <li>
-            <a
-              class="zd-toc-link"
-              href={`#${heading.slug}`}
-              style={`--depth: ${heading.depth - minDepth}`}
-              data-toc-link
-            >
-              {heading.text}
+        {items.map((item) => (
+          <li class="zd-toc-item" style={`--depth: ${item.depth}`}>
+            {item.previous !== item.depth && (
+              <svg
+                class="zd-toc-connector"
+                style={`--from: ${Math.min(item.previous, item.depth)}; --span: ${Math.abs(item.previous - item.depth)}`}
+                viewBox="0 0 1 1"
+                preserveAspectRatio="none"
+                aria-hidden="true"
+              >
+                <line
+                  x1={item.previous < item.depth ? 0 : 1}
+                  y1="0"
+                  x2={item.previous < item.depth ? 1 : 0}
+                  y2="1"
+                  vector-effect="non-scaling-stroke"
+                />
+              </svg>
+            )}
+            <a class="zd-toc-link" href={`#${item.slug}`} data-toc-link>
+              {item.text}
             </a>
           </li>
         ))}
