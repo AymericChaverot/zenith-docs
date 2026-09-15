@@ -66,3 +66,10 @@ if (tabs.length > 0 && hasRootContent) {
     )
   }
 </aside>
+<script is:inline>
+  // Close the mobile menu when the viewport grows past the breakpoint.
+  matchMedia('(min-width: 56.0625rem)').addEventListener('change', (event) => {
+    const sidebar = document.getElementById('zd-sidebar');
+    if (event.matches && sidebar && sidebar.matches(':popover-open')) sidebar.hidePopover();
+  });
+</script>
