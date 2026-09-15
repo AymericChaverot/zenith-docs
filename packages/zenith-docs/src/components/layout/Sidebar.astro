@@ -1,0 +1,68 @@
+---
+import { flattenTree } from '../../page-tree';
+import Icon from '../Icon.astro';
+import SidebarTree from '../SidebarTree.astro';
+
+const { config, sidebar, tree, url } = Astro.locals.zenith;
+
+const tabs = sidebar.tabs.map((tab) => ({
+  name: tab.name,
+  description: tab.description,
+  icon: tab.icon ?? 'layers',
+  url: tab.index?.url ?? flattenTree(tab.children)[0]?.url,
+  active: tab === sidebar.activeTab,
+}));
+
+const hasRootContent = tree.children.some((node) => node.type !== 'folder' || !node.root);
+if (tabs.length > 0 && hasRootContent) {
+  tabs.unshift({
+    name: 'Documentation',
+    description: undefined,
+    icon: 'book',
+    url: import.meta.env.BASE_URL,
+    active: !sidebar.activeTab,
+  });
+}
+---
+
+<aside id="zd-sidebar" class="zd-sidebar" popover aria-label="Navigation">
+  <button
+    class="zd-icon-button zd-sidebar-close"
+    type="button"
+    popovertarget="zd-sidebar"
+    popovertargetaction="hide"
+    aria-label="Close navigation"
+  >
+    <Icon name="close" size={18} />
+  </button>
+  {
+    tabs.length > 0 && (
+      <nav class="zd-sidebar-tabs" aria-label="Sections">
+        {tabs.map((tab) => (
+          <a class="zd-sidebar-tab" href={tab.url} aria-current={tab.active ? 'true' : undefined}>
+            <span class="zd-sidebar-tab-icon">
+              <Icon name={tab.icon} size={14} />
+            </span>
+            <span>{tab.name}</span>
+          </a>
+        ))}
+      </nav>
+    )
+  }
+  <nav aria-label="Pages">
+    <SidebarTree nodes={sidebar.nodes} url={url} />
+  </nav>
+  {
+    config.links.length > 0 && (
+      <ul class="zd-sidebar-extra">
+        {config.links.map((link) => (
+          <li>
+            <a class="zd-sidebar-link" href={link.href}>
+              {link.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+    )
+  }
+</aside>
