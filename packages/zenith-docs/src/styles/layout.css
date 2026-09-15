@@ -129,7 +129,10 @@ body {
   grid-template-columns: var(--zd-sidebar-width) minmax(0, 1fr);
 }
 
+/* Explicit columns, so the sidebar leaving the flow as a popover never shifts the page */
 .zd-main {
+  grid-column: 2;
+  grid-row: 1;
   min-width: 0;
   padding: 2.5rem clamp(1rem, 4vw, 3rem) 4rem;
 }
@@ -291,6 +294,8 @@ body {
 /* Table of contents */
 
 .zd-toc-aside {
+  grid-column: 3;
+  grid-row: 1;
   position: sticky;
   top: var(--zd-header-height);
   align-self: start;
@@ -399,6 +404,10 @@ body {
   .zd-menu-button,
   .zd-sidebar-close {
     display: inline-grid;
+  }
+
+  .zd-main {
+    grid-column: 1;
   }
 
   .zd-header-nav {
