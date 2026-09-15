@@ -28,6 +28,7 @@ const hasToc = toc.length > 0 && !full;
     <Head />
   </head>
   <body>
+    {config.backdrop && <div class="zd-backdrop" aria-hidden="true" />}
     <a class="zd-skip" href="#zd-content">Skip to content</a>
     <Header />
     <div class="zd-layout" data-toc={hasToc ? '' : undefined}>

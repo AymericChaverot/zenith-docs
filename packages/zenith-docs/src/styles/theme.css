@@ -147,6 +147,7 @@
   --accent: var(--zd-accent-light);
   --accent-contrast: var(--zd-accent-contrast-light);
   --accent-soft: color-mix(in oklab, var(--accent) 9%, transparent);
+  --zd-backdrop-strength: 28%;
 }
 
 .theme-dark,
@@ -164,6 +165,7 @@
   --accent: var(--zd-accent-dark);
   --accent-contrast: var(--zd-accent-contrast-dark);
   --accent-soft: color-mix(in oklab, var(--accent) 14%, transparent);
+  --zd-backdrop-strength: 30%;
 }
 
 :root,

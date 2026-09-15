@@ -31,6 +31,8 @@ export const ZenithConfigSchema = z.object({
     .optional(),
   /** Accent color preset. Use `customCss` for anything else. */
   accent: z.enum(['neutral', 'emerald', 'teal', 'amber', 'rose', 'violet']).default('neutral'),
+  /** Draw a subtle dithered glow at the top of pages. */
+  backdrop: z.boolean().default(true),
   /** Self-host Geist and Geist Mono. Set to `false` to use system fonts. */
   fonts: z.boolean().default(true),
   favicon: z.string().default('/favicon.svg'),

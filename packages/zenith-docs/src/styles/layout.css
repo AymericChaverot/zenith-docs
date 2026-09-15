@@ -4,8 +4,38 @@ html {
   scrollbar-gutter: stable;
 }
 
-body {
-  background-color: var(--background);
+/* Dithered glow at the top of the page, drawn with two offset dot grids */
+.zd-backdrop {
+  position: absolute;
+  inset: 0 0 auto;
+  z-index: -1;
+  height: 36rem;
+  overflow: hidden;
+  pointer-events: none;
+  --zd-dither: color-mix(in oklab, var(--accent) var(--zd-backdrop-strength), transparent);
+  background: radial-gradient(
+    45% 55% at 50% 0%,
+    color-mix(in oklab, var(--accent) 7%, transparent),
+    transparent
+  );
+}
+
+.zd-backdrop::before,
+.zd-backdrop::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle, var(--zd-dither) 0.7px, transparent 1.1px);
+  background-size: 6px 6px;
+}
+
+.zd-backdrop::before {
+  mask-image: radial-gradient(62% 90% at 50% 0%, black 0%, transparent 75%);
+}
+
+.zd-backdrop::after {
+  background-position: 3px 3px;
+  mask-image: radial-gradient(38% 55% at 50% 0%, black 0%, transparent 80%);
 }
 
 .zd-skip {
@@ -324,7 +354,25 @@ body {
 }
 
 .zd-toc-list {
+  position: relative;
   display: grid;
+}
+
+/* Accent copy of the guide line, revealed over the headings in view */
+.zd-toc-thumb {
+  position: absolute;
+  top: 0;
+  left: 0;
+  overflow: visible;
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 2;
+  pointer-events: none;
+  clip-path: inset(0 0 100% 0);
+}
+
+.zd-toc-thumb[data-animate] {
+  transition: clip-path 0.35s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .zd-toc-item {
@@ -374,15 +422,7 @@ body {
 }
 
 .zd-toc-link[data-active] {
-  color: var(--accent);
-}
-
-.zd-toc-link[data-active]::before {
-  background: var(--accent);
-}
-
-.zd-toc-connector:has(+ [data-active]) {
-  stroke: var(--accent);
+  color: var(--text);
 }
 
 .zd-toc-mobile {
