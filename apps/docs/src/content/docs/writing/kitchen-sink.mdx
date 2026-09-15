@@ -1,0 +1,360 @@
+---
+title: Kitchen sink
+description: Every element ZenithDocs can render, on a single page.
+icon: layers
+---
+
+import AccentPicker from '../../../components/AccentPicker.astro';
+import { Icon } from 'zenith-docs/components';
+
+This page uses every Markdown feature and component available in ZenithDocs. Use it to check a theme at a glance.
+
+## Theme
+
+Switch the accent preset to preview it on this page. Use the button in the header to toggle dark mode.
+
+<AccentPicker />
+
+## Typography
+
+A regular paragraph with **bold**, _italic_, **_bold italic_**, ~~strikethrough~~, `inline code`, <mark>highlighted text</mark>, <abbr title="Cascading Style Sheets">CSS</abbr>, H<sub>2</sub>O and E = mc<sup>2</sup>. Press <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>P</kbd> to open the command palette.
+
+Links can point to [another page](/installation/), to [a section of this page](#code-blocks), or to [an external site](https://astro.build). Bare URLs are linked too: https://lumosframework.com.
+
+A second paragraph follows, long enough to wrap on several lines, so you can judge the line height and measure of body text. Good documentation reads like a conversation: short sentences, concrete examples and a clear structure make it easy to skim.
+
+### Heading level 3
+
+#### Heading level 4
+
+##### Heading level 5
+
+###### Heading level 6
+
+### Heading with a custom id [#custom-anchor]
+
+This heading uses `[#custom-anchor]` to set its id.
+
+## Lists
+
+- Unordered item
+- Item with **formatting** and `code`
+  - Nested item
+  - Another nested item
+    - Third level
+- Last item
+
+1. First step
+2. Second step
+   1. Nested ordered item
+   2. Another one
+3. Third step
+
+- [x] Completed task
+- [x] Another completed task
+- [ ] Pending task
+
+## Blockquote
+
+> Documentation is a love letter that you write to your future self.
+>
+> It can span several paragraphs, and contain `code` or **formatting**.
+
+## Table
+
+| Feature        |  Status  | Notes                                      |
+| :------------- | :------: | -----------------------------------------: |
+| Search         | Planned  | Static index with Pagefind                 |
+| i18n           | Planned  | Multiple locales with fallbacks            |
+| `llms.txt`     | Planned  | Markdown output for LLMs                   |
+| Callouts       |   Done   | Directives and GitHub alerts               |
+
+## Image
+
+![A mountain range under a dusk sky](../../../assets/showcase.svg)
+
+## Details
+
+<details>
+  <summary>Native details element</summary>
+
+Raw HTML works in MDX, including `<details>`.
+
+</details>
+
+## Horizontal rule
+
+Content above the rule.
+
+---
+
+Content below the rule.
+
+## Callouts
+
+### Directives
+
+:::note
+A note with a [link](/installation/) and `inline code`.
+:::
+
+:::tip[Custom title]
+A tip with a custom title.
+:::
+
+:::success
+A success callout.
+:::
+
+:::warning
+A warning callout containing a list:
+
+- First point
+- Second point
+:::
+
+:::danger
+A danger callout containing a code block:
+
+```sh
+rm -rf node_modules
+```
+:::
+
+:::info
+`info` is an alias of `note`, like `warn` for `warning` and `error` for `danger`.
+:::
+
+### GitHub alerts
+
+> [!NOTE]
+> Useful information that users should know.
+
+> [!TIP]
+> Helpful advice for doing things better.
+
+> [!IMPORTANT]
+> Key information users need to know.
+
+> [!WARNING]
+> Urgent info that needs immediate attention.
+
+> [!CAUTION]
+> Advises about risks or negative outcomes.
+
+### Component
+
+<Callout type="success" title="Component callout">
+  Written with the `<Callout>` component, which accepts **any** Markdown.
+</Callout>
+
+## Code blocks
+
+```
+A code block without a language.
+```
+
+```ts title="src/greet.ts"
+interface Options {
+  name: string;
+  excited?: boolean;
+}
+
+export function greet({ name, excited = false }: Options): string {
+  return `Hello, ${name}${excited ? '!' : '.'}`;
+}
+```
+
+```ts {2}
+const first = 'meta highlight';
+const second = 'this line is highlighted from the meta';
+const third = 'back to normal';
+```
+
+```js
+const regular = true;
+const important = true; // [!code highlight]
+const alsoRegular = true;
+```
+
+```js
+// [!code word:zenith]
+import zenith from 'zenith-docs';
+export default { integrations: [zenith({ title: 'Docs' })] };
+```
+
+```js title="astro.config.mjs"
+export default defineConfig({
+  integrations: [
+    starlight({ title: 'Docs' }), // [!code --]
+    zenith({ title: 'Docs' }), // [!code ++]
+  ],
+});
+```
+
+```css
+.card {
+  padding: 1rem;
+  border-radius: var(--radius-main); /* [!code focus] */
+  background: var(--background-2);
+}
+```
+
+```json lineNumbers title="package.json"
+{
+  "name": "my-docs",
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build"
+  }
+}
+```
+
+```astro title="src/components/Hello.astro"
+---
+const { name } = Astro.props;
+---
+
+<p class="hello">Hello, {name}!</p>
+
+<style>
+  .hello { color: var(--accent); }
+</style>
+```
+
+```yaml
+title: Kitchen sink
+sidebar:
+  label: Every element
+  hidden: false
+```
+
+```bash
+pnpm add zenith-docs && pnpm astro build
+```
+
+```ts
+const aVeryLongLine = 'This line is deliberately long so that the code block has to scroll horizontally instead of wrapping, which keeps the code readable.';
+```
+
+## Cards
+
+<Cards>
+  <Card title="With icon and link" href="/installation/" icon="zap">
+    The whole card is clickable.
+  </Card>
+  <Card title="Without a link" icon="palette">
+    A static card with an icon.
+  </Card>
+  <Card title="Without an icon" href="/reference/">
+    Just a title and a description.
+  </Card>
+  <Card title="Title only" href="/writing/components/" />
+</Cards>
+
+## Tabs
+
+<Tabs items={['npm', 'pnpm', 'yarn']} groupId="pm" persist>
+  <Tab value="npm">
+    ```sh
+    npm install zenith-docs
+    ```
+  </Tab>
+  <Tab value="pnpm">
+    ```sh
+    pnpm add zenith-docs
+    ```
+  </Tab>
+  <Tab value="yarn">
+    ```sh
+    yarn add zenith-docs
+    ```
+  </Tab>
+</Tabs>
+
+<Tabs items={['npm', 'pnpm', 'yarn']} groupId="pm" persist>
+  <Tab value="npm">This set follows the one above, and the choice is remembered across pages.</Tab>
+  <Tab value="pnpm">Selected **pnpm**.</Tab>
+  <Tab value="yarn">Selected **yarn**.</Tab>
+</Tabs>
+
+<Tabs>
+  <Tab value="Rich content">
+    Tabs can hold any content, like lists:
+
+    - One
+    - Two
+  </Tab>
+  <Tab value="Built from values">
+    Without `items`, the tab list is built from each `<Tab>` value.
+  </Tab>
+</Tabs>
+
+## Steps
+
+<Steps>
+  <Step>
+    ### Install
+
+    Add the package to your project.
+  </Step>
+  <Step>
+    ### Configure
+
+    Register the integration in `astro.config.mjs`.
+  </Step>
+  <Step>
+    ### Write
+
+    Create your first page in `src/content/docs`.
+  </Step>
+</Steps>
+
+## Accordions
+
+<Accordions>
+  <Accordion title="Grouped: only one opens at a time" group="kitchen" open>
+    Opening another accordion of the group closes this one.
+  </Accordion>
+  <Accordion title="Second item of the group" group="kitchen">
+    Accordions are native `<details>` elements.
+  </Accordion>
+  <Accordion title="Third item of the group" group="kitchen">
+    No JavaScript involved.
+  </Accordion>
+</Accordions>
+
+<Accordion title="A standalone accordion">
+  Accordions can also be used on their own.
+</Accordion>
+
+## Files
+
+<Files>
+  <Folder name="apps" defaultOpen>
+    <Folder name="docs" defaultOpen>
+      <Folder name="src" defaultOpen>
+        <Folder name="content">
+          <File name="index.mdx" />
+        </Folder>
+        <File name="content.config.ts" />
+      </Folder>
+      <File name="astro.config.mjs" />
+    </Folder>
+  </Folder>
+  <File name="package.json" />
+  <File name="pnpm-workspace.yaml" />
+</Files>
+
+## Icons
+
+Built-in icons can be used anywhere with the `Icon` component: <Icon name="rocket" /> <Icon name="palette" /> <Icon name="code" /> <Icon name="book" />
+
+## Footnotes
+
+ZenithDocs builds on Lumos[^lumos] and Astro[^astro].
+
+[^lumos]: A CSS framework built around design tokens and cascade layers.
+
+[^astro]: A web framework for content-driven websites.

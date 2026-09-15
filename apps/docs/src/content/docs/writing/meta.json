@@ -1,4 +1,4 @@
 {
   "title": "Writing content",
-  "pages": ["markdown", "code-blocks", "components", "navigation"]
+  "pages": ["markdown", "code-blocks", "components", "navigation", "kitchen-sink"]
 }
