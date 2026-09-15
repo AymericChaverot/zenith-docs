@@ -105,9 +105,11 @@ html {
   --zd-backdrop-x: 100%;
 }
 
-/* Blurred color fields */
+/* Blurred color fields, staying in place while the page scrolls */
 [data-backdrop='aurora'] .zd-backdrop {
-  height: 40rem;
+  position: fixed;
+  inset: 0 0 auto 0;
+  height: min(40rem, 75vh);
   background:
     radial-gradient(
       38% 42% at 18% 0%,
