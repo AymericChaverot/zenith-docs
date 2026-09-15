@@ -1,0 +1,12 @@
+/*
+ * ZenithDocs styles. Cascade layers, lowest priority first.
+ * Stylesheets added with `customCss` are unlayered, so they always win.
+ */
+@layer lumos.base, zenith.theme, zenith.layout, zenith.content, zenith.components;
+
+@import './lumos/base.css' layer(lumos.base);
+@import './theme.css' layer(zenith.theme);
+@import './layout.css' layer(zenith.layout);
+@import './content.css' layer(zenith.content);
+@import './code.css' layer(zenith.content);
+@import './components.css' layer(zenith.components);
