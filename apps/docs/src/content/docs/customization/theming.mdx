@@ -30,8 +30,8 @@ zenith({
 
 | Style          | Looks like                                                     |
 | -------------- | -------------------------------------------------------------- |
-| `dither`        | Two offset dot grids, like a halftone print. The default, and the only style that stays in place while the page scrolls |
-| `aurora`        | Blurred color fields                                           |
+| `aurora`        | Blurred color fields. The default                              |
+| `dither`        | Two offset dot grids, like a halftone print                    |
 | `grid`          | A ruled grid fading downwards                                  |
 | `dots`          | Evenly spaced dots                                             |
 | `rays`          | Light rays coming from above the page                          |
@@ -41,7 +41,7 @@ zenith({
 | `glow`          | A soft accent glow, nothing else                               |
 | `none`          | No background                                                  |
 
-The `dither` style is anchored to the top left. Move it with `backdropPosition: 'center'` or `'right'`.
+`aurora` and `dither` stay in place while the page scrolls; the other styles sit at the top of the page. `dither` is anchored to the top left, and `backdropPosition: 'center'` or `'right'` moves it.
 
 Every style is plain CSS: no images and no JavaScript. Tune them with `--zd-backdrop-strength`, for the dither dots, and `--zd-backdrop-line`, for the grid and dots.
 
