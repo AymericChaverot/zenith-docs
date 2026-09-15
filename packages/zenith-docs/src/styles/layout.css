@@ -54,9 +54,15 @@ body {
 }
 
 .zd-logo {
+  display: flex;
   width: auto;
   height: 1.5rem;
   object-fit: contain;
+}
+
+.zd-logo > svg {
+  width: auto;
+  height: 100%;
 }
 
 .zd-header-nav {

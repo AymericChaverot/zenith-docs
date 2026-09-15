@@ -17,8 +17,18 @@ const showTitle = !config.logo?.replacesTitle;
   </button>
   <a class="zd-header-title" href={import.meta.env.BASE_URL}>
     {
-      config.logo && (
-        <img class="zd-logo" src={config.logo.src} alt={showTitle ? '' : config.logo.alt || config.title} />
+      config.logo?.svg ? (
+        <span
+          class="zd-logo"
+          role={showTitle ? undefined : 'img'}
+          aria-label={showTitle ? undefined : config.logo.alt || config.title}
+          aria-hidden={showTitle ? 'true' : undefined}
+          set:html={config.logo.svg}
+        />
+      ) : (
+        config.logo && (
+          <img class="zd-logo" src={config.logo.src} alt={showTitle ? '' : config.logo.alt || config.title} />
+        )
       )
     }
     {showTitle && <span>{config.title}</span>}

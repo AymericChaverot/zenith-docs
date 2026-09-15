@@ -7,6 +7,7 @@ import type { AstroIntegration } from 'astro';
 import { fontProviders } from 'astro/config';
 import { AstroError } from 'astro/errors';
 import { ZenithConfigSchema, type ZenithUserConfig } from './config';
+import { resolveLogo } from './logo';
 import {
   directivesRestorationPlugin,
   zenithHastPlugins,
@@ -68,6 +69,8 @@ export default function zenith(userConfig: ZenithUserConfig): AstroIntegration {
         const selfIndex = astroConfig.integrations.findIndex((i) => i.name === 'zenith-docs');
         astroConfig.integrations.splice(selfIndex + 1, 0, ...integrations);
 
+        const resolvedConfig = { ...config, logo: resolveLogo(config.logo, astroConfig) };
+
         const { shikiConfig } = astroConfig.markdown;
         const hasUserThemes = Object.keys(shikiConfig.themes ?? {}).length > 0;
         updateConfig({
@@ -101,7 +104,7 @@ export default function zenith(userConfig: ZenithUserConfig): AstroIntegration {
               ]
             : [],
           vite: {
-            plugins: [vitePluginZenith(config, astroConfig.root)],
+            plugins: [vitePluginZenith(resolvedConfig, astroConfig.root)],
           },
         });
       },

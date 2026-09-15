@@ -16,12 +16,17 @@ export const ZenithConfigSchema = z.object({
   /** Site name, shown in the header and used as the title suffix. */
   title: z.string(),
   description: z.string().optional(),
-  /** Public URL of a logo image, e.g. `/logo.svg`. */
+  /**
+   * Logo shown in the header: a path relative to the project root (`./src/assets/logo.svg`)
+   * or a public URL (`/logo.png`). SVG files are inlined, so they can use `currentColor`.
+   */
   logo: z
     .object({
       src: z.string(),
       alt: z.string().default(''),
       replacesTitle: z.boolean().default(false),
+      /** SVG markup, filled in by ZenithDocs. */
+      svg: z.string().optional(),
     })
     .optional(),
   /** Accent color preset. Use `customCss` for anything else. */
