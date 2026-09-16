@@ -44,6 +44,8 @@ const controls = [
 ];
 
 const sliders = [
+  { key: 'headingScale', label: 'Heading size', min: 80, max: 140, step: 5, value: 100, unit: '%' },
+  { key: 'textScale', label: 'Text size', min: 90, max: 125, step: 5, value: 100, unit: '%' },
   { key: 'radius', label: 'Corner radius', min: 0, max: 24, step: 1, value: 12, unit: 'px' },
   { key: 'width', label: 'Content width', min: 36, max: 64, step: 1, value: 48, unit: 'rem' },
 ];
@@ -62,6 +64,12 @@ const sliders = [
               {labels?.[index] ?? option}
             </button>
           ))}
+          {key === 'accent' && (
+            <label class="builder-color">
+              <input type="color" value="#10b981" data-color aria-label="Custom accent color" />
+              <span>Custom</span>
+            </label>
+          )}
         </div>
       </div>
     ))
@@ -95,7 +103,7 @@ const sliders = [
   </div>
 </div>
 
-<p class="builder-note">Paste these two into your project to get exactly what you see.</p>
+<p class="builder-note">Paste these into your project to get exactly what you see.</p>
 
 <figure class="zd-code zd-code-titled builder-output">
   <figcaption class="zd-code-title">astro.config.mjs</figcaption>
@@ -120,6 +128,10 @@ const sliders = [
   const root = document.documentElement;
   const builder = document.querySelector<HTMLElement>('.builder');
   const themes: Record<string, Theme> = JSON.parse(builder?.dataset.themes ?? '{}');
+  const colorInput = document.querySelector<HTMLInputElement>('[data-color]');
+
+  const UNITS = { headingScale: '%', textScale: '%', radius: 'px', width: 'rem' } as const;
+  type SliderKey = keyof typeof UNITS;
 
   /** What the site ships with, so the snippets only carry what you changed. */
   const DEFAULTS = {
@@ -128,6 +140,10 @@ const sliders = [
     backdrop: 'dither',
     backdropPosition: 'left',
     fonts: 'instrument',
+    /** A hex color replacing the accent preset, or nothing. */
+    customAccent: '',
+    headingScale: 100,
+    textScale: 100,
     radius: 12,
     width: 48,
   };
@@ -139,6 +155,18 @@ const sliders = [
 
   const toPx = (value: string) =>
     value.endsWith('rem') ? parseFloat(value) * 16 : parseFloat(value) || 0;
+
+  /** The accent the config would give without a custom color: the theme's, or the default. */
+  const baseAccent = () => (state.theme ? themes[state.theme]?.accent : undefined) ?? DEFAULTS.accent;
+
+  /** Dark mode needs a lighter accent: keep the hue and chroma, lift the lightness if needed. */
+  const darkAccent = (hex: string) => `oklch(from ${hex} max(l, 0.72) c h)`;
+
+  const syncSliders = () => {
+    for (const slider of document.querySelectorAll<HTMLInputElement>('[data-slider]')) {
+      slider.value = String(state[slider.dataset.slider as SliderKey]);
+    }
+  };
 
   const readThemeTokens = () => {
     root.style.removeProperty('--radius-main');
@@ -153,9 +181,7 @@ const sliders = [
     };
     state.radius = tokenBase.radius;
     state.width = tokenBase.width;
-    for (const slider of document.querySelectorAll<HTMLInputElement>('[data-slider]')) {
-      slider.value = String(state[slider.dataset.slider as 'radius' | 'width']);
-    }
+    syncSliders();
   };
 
   const apply = () => {
@@ -169,17 +195,30 @@ const sliders = [
     if (state.fonts === 'instrument') delete root.dataset.fontsPreview;
     else root.dataset.fontsPreview = state.fonts;
 
+    // Inline tokens win over the presets, exactly like an unlayered `customCss` file.
+    if (state.customAccent) {
+      root.style.setProperty('--zd-accent-light', state.customAccent);
+      root.style.setProperty('--zd-accent-dark', darkAccent(state.customAccent));
+    } else {
+      root.style.removeProperty('--zd-accent-light');
+      root.style.removeProperty('--zd-accent-dark');
+    }
+    root.style.setProperty('--zd-heading-scale', String(state.headingScale / 100));
+    root.style.setProperty('--zd-text-scale', String(state.textScale / 100));
     root.style.setProperty('--radius-main', `${state.radius}px`);
     root.style.setProperty('--radius-small', `${Math.round(state.radius / 2)}px`);
     root.style.setProperty('--zd-content-width', `${state.width}rem`);
 
     for (const button of document.querySelectorAll<HTMLButtonElement>('[data-control]')) {
       const control = button.dataset.control as keyof typeof state;
-      button.ariaPressed = String(String(state[control]) === button.dataset.value);
+      const pressed = String(state[control]) === button.dataset.value;
+      // A custom color replaces the presets, so none of them stays selected.
+      button.ariaPressed = String(pressed && !(control === 'accent' && state.customAccent));
     }
+    colorInput?.parentElement?.toggleAttribute('data-active', Boolean(state.customAccent));
     for (const output of document.querySelectorAll<HTMLOutputElement>('[data-output]')) {
-      const key = output.dataset.output as 'radius' | 'width';
-      output.textContent = key === 'radius' ? `${state.radius}px` : `${state.width}rem`;
+      const key = output.dataset.output as SliderKey;
+      output.textContent = `${state[key]}${UNITS[key]}`;
     }
 
     write();
@@ -197,6 +236,17 @@ const sliders = [
 
     // Tokens are compared with the theme, which already carries its own radius and width.
     const tokens: string[] = [];
+    if (state.customAccent) {
+      tokens.push(`  --zd-accent-light: ${state.customAccent};`);
+      tokens.push(`  /* The same hue, kept light enough to read on a dark background */`);
+      tokens.push(`  --zd-accent-dark: ${darkAccent(state.customAccent)};`);
+    }
+    if (state.headingScale !== DEFAULTS.headingScale) {
+      tokens.push(`  --zd-heading-scale: ${state.headingScale / 100};`);
+    }
+    if (state.textScale !== DEFAULTS.textScale) {
+      tokens.push(`  --zd-text-scale: ${state.textScale / 100};`);
+    }
     if (state.radius !== tokenBase.radius) {
       tokens.push(`  --radius-main: ${state.radius}px;`);
       tokens.push(`  --radius-small: ${Math.round(state.radius / 2)}px;`);
@@ -236,23 +286,33 @@ const sliders = [
       const control = button.dataset.control as keyof typeof state;
       const value = button.dataset.value ?? '';
       Object.assign(state, { [control]: value });
+      if (control === 'accent') state.customAccent = '';
       // Picking a theme moves the options it covers, which you can then change again.
-      if (control === 'theme' && value && themes[value]) {
+      if (control === 'theme') {
+        const theme = themes[value];
         Object.assign(state, {
-          accent: themes[value].accent,
-          backdrop: themes[value].backdrop,
-          backdropPosition: themes[value].backdropPosition ?? DEFAULTS.backdropPosition,
-          fonts: themes[value].fonts,
+          customAccent: '',
+          accent: theme?.accent ?? DEFAULTS.accent,
+          backdrop: theme?.backdrop ?? DEFAULTS.backdrop,
+          backdropPosition: theme?.backdropPosition ?? DEFAULTS.backdropPosition,
+          fonts: theme?.fonts ?? DEFAULTS.fonts,
         });
+        readThemeTokens();
       }
-      if (control === 'theme') readThemeTokens();
       apply();
     });
   }
 
+  colorInput?.addEventListener('input', () => {
+    state.customAccent = colorInput.value;
+    // The config keeps its accent, the stylesheet overrides it.
+    state.accent = baseAccent();
+    apply();
+  });
+
   for (const slider of document.querySelectorAll<HTMLInputElement>('[data-slider]')) {
     slider.addEventListener('input', () => {
-      Object.assign(state, { [slider.dataset.slider as string]: Number(slider.value) });
+      Object.assign(state, { [slider.dataset.slider as SliderKey]: Number(slider.value) });
       apply();
     });
   }
@@ -260,6 +320,7 @@ const sliders = [
   document.querySelector('[data-reset]')?.addEventListener('click', () => {
     Object.assign(state, DEFAULTS);
     readThemeTokens();
+    syncSliders();
     apply();
   });
 
@@ -297,7 +358,8 @@ const sliders = [
     align-items: center;
   }
 
-  .builder-options button {
+  .builder-options button,
+  .builder-color {
     padding: 0.25rem 0.625rem;
     border: var(--border-width) solid var(--border);
     border-radius: var(--radius-round, 999px);
@@ -306,9 +368,37 @@ const sliders = [
     text-transform: capitalize;
   }
 
-  .builder-options button[aria-pressed='true'] {
+  .builder-options button[aria-pressed='true'],
+  .builder-color[data-active] {
     border-color: var(--accent);
     color: var(--text);
+  }
+
+  .builder-color {
+    display: inline-flex;
+    gap: 0.375rem;
+    align-items: center;
+    padding-block: 0.125rem;
+    cursor: pointer;
+  }
+
+  .builder-color input {
+    width: 1.25rem;
+    height: 1.25rem;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: none;
+    cursor: pointer;
+  }
+
+  .builder-color input::-webkit-color-swatch-wrapper {
+    padding: 0;
+  }
+
+  .builder-color input::-webkit-color-swatch {
+    border: 0;
+    border-radius: 50%;
   }
 
   .builder-options input[type='range'] {
