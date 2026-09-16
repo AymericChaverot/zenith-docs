@@ -5,6 +5,7 @@ import { existsSync, mkdirSync, readdirSync, writeFileSync } from 'node:fs';
 import { basename, dirname, join, relative, resolve } from 'node:path';
 import { createInterface } from 'node:readline';
 import { parseArgs } from 'node:util';
+import { dockerFiles } from './docker.mjs';
 import { TEMPLATES, THEMES } from './templates.mjs';
 
 const HELP = `Create a ZenithDocs site
@@ -18,6 +19,7 @@ Options
   -t, --template <name>  cli (default) or astro
       --title <title>    Site title, derived from the directory otherwise
       --theme <name>     ${Object.keys(THEMES).join(', ')}
+      --docker           Add a Dockerfile that serves the site with nginx
       --install          Install dependencies once the files are written
   -y, --yes              Ask nothing, use the options and the defaults
   -h, --help             Show this message
@@ -32,6 +34,7 @@ export async function create(argv) {
       template: { type: 'string', short: 't' },
       title: { type: 'string' },
       theme: { type: 'string' },
+      docker: { type: 'boolean' },
       install: { type: 'boolean' },
       yes: { type: 'boolean', short: 'y' },
       // Forces the questions when input is piped, which is how they are tested.
@@ -84,12 +87,21 @@ export async function create(argv) {
     throw new Error(`Unknown theme \`${theme}\`. Use one of: ${Object.keys(THEMES).join(', ')}.`);
   }
 
+  const withDocker =
+    values.docker ?? (prompt ? await prompt.confirm('Add a Dockerfile?', false) : false);
+
   const install =
     values.install ?? (prompt ? await prompt.confirm(`Install dependencies with ${run}?`, true) : false);
   prompt?.close();
 
   const name = toPackageName(basename(target));
-  const files = TEMPLATES[template].files({ name, title, theme: theme === 'none' ? undefined : theme });
+  const files = {
+    ...TEMPLATES[template].files({ name, title, theme: theme === 'none' ? undefined : theme }),
+    // pnpm refuses to install, outside a terminal, when a dependency's build script is not
+    // approved: esbuild, pulled in by Astro, has one.
+    ...(run === 'pnpm' ? { 'pnpm-workspace.yaml': 'allowBuilds:\n  esbuild: true\n' } : {}),
+    ...(withDocker ? dockerFiles({ packageManager: run }) : {}),
+  };
   for (const [path, contents] of Object.entries(files)) {
     const file = join(target, path);
     mkdirSync(dirname(file), { recursive: true });
