@@ -37,37 +37,42 @@
   --letter-spacing-tight: -0.025em;
   --line-height-huge: 1.7;
 
-  /* Docs-sized type scale (Lumos values are tuned for marketing pages) */
-  --h1-min: 30;
-  --h1-max: 36;
+  /*
+   * Docs-sized type scale (Lumos values are tuned for marketing pages). Sizes are in
+   * pixels, fluid between their min and max. The two scales multiply them all at once.
+   */
+  --zd-heading-scale: 1;
+  --zd-text-scale: 1;
+  --h1-min: calc(36 * var(--zd-heading-scale));
+  --h1-max: calc(44 * var(--zd-heading-scale));
   --h1-font-weight: var(--primary-bold);
   --h1-font-family: var(--display-family);
   --h2-font-family: var(--display-family);
   --display-font-family: var(--display-family);
-  --h2-min: 22;
-  --h2-max: 25;
+  --h2-min: calc(26 * var(--zd-heading-scale));
+  --h2-max: calc(30 * var(--zd-heading-scale));
   --h2-font-weight: var(--primary-bold);
   --h2-line-height: var(--line-height-large);
-  --h3-min: 18;
-  --h3-max: 19;
+  --h3-min: calc(20 * var(--zd-heading-scale));
+  --h3-max: calc(22 * var(--zd-heading-scale));
   --h3-font-weight: var(--primary-bold);
   --h3-line-height: var(--line-height-large);
   --h3-letter-spacing: -0.015em;
-  --h4-min: 16;
-  --h4-max: 16;
+  --h4-min: calc(17 * var(--zd-heading-scale));
+  --h4-max: calc(18 * var(--zd-heading-scale));
   --h4-font-weight: var(--primary-bold);
   --h4-line-height: var(--line-height-large);
   --h4-letter-spacing: var(--letter-spacing-normal);
-  --h5-min: 15;
-  --h5-max: 15;
+  --h5-min: calc(16 * var(--zd-heading-scale));
+  --h5-max: calc(16 * var(--zd-heading-scale));
   --h5-font-weight: var(--primary-bold);
-  --h6-min: 14;
-  --h6-max: 14;
+  --h6-min: calc(15 * var(--zd-heading-scale));
+  --h6-max: calc(15 * var(--zd-heading-scale));
   --h6-font-weight: var(--primary-bold);
-  --text-main-min: 15;
-  --text-main-max: 16;
-  --text-large-min: 17;
-  --text-large-max: 18;
+  --text-main-min: calc(16 * var(--zd-text-scale));
+  --text-main-max: calc(17 * var(--zd-text-scale));
+  --text-large-min: calc(18 * var(--zd-text-scale));
+  --text-large-max: calc(20 * var(--zd-text-scale));
 
   --radius-small: 0.375rem;
   --radius-main: 0.75rem;
@@ -102,10 +107,18 @@
 }
 
 /* Instrument Serif ships a single weight, so its headings cannot be bold. */
+/*
+ * Instrument Serif ships a single weight, so its headings cannot be bold, and its small
+ * x-height makes it read smaller than a sans at the same size: its headings get more room.
+ */
 :root[data-fonts='instrument'] {
   --h1-font-weight: 400;
   --h2-font-weight: 400;
   --h1-letter-spacing: -0.02em;
+  --h1-min: calc(42 * var(--zd-heading-scale));
+  --h1-max: calc(52 * var(--zd-heading-scale));
+  --h2-min: calc(30 * var(--zd-heading-scale));
+  --h2-max: calc(36 * var(--zd-heading-scale));
 }
 
 /* Accent presets */
