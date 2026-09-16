@@ -4,8 +4,12 @@
   "private": true,
   "description": "Static, lightweight and themeable documentation engine for Astro",
   "type": "module",
+  "bin": {
+    "zenith": "./src/cli/index.ts"
+  },
   "exports": {
     ".": "./src/index.ts",
+    "./config": "./src/config.ts",
     "./content": "./src/content.ts",
     "./components": "./src/components.ts",
     "./components/*": "./src/components/*",
