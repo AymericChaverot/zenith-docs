@@ -1,0 +1,64 @@
+---
+title: Typography
+description: Compare font pairings, and set your own.
+icon: tag
+---
+
+import FontPicker from '../../../components/FontPicker.astro';
+
+ZenithDocs self-hosts its fonts through the Astro Fonts API: nothing is fetched from a third party at runtime, and no layout shift is paid for it.
+
+## Try a pairing
+
+The buttons below swap the fonts of this whole page, chrome included, so you can judge a pairing in place rather than on a specimen sheet. Scroll around after switching.
+
+<FontPicker />
+
+| Pairing              | Headings           | Body               | Code            |
+| -------------------- | ------------------ | ------------------ | --------------- |
+| **Geist**            | Geist              | Geist              | Geist Mono      |
+| **Instrument**       | Instrument Serif   | Instrument Sans    | Martian Mono    |
+| **Newsreader + Onest** | Newsreader       | Onest              | IBM Plex Mono   |
+| **Schibsted Grotesk**| Schibsted Grotesk  | Schibsted Grotesk  | JetBrains Mono  |
+| **Space Grotesk**    | Space Grotesk      | Space Grotesk      | Space Mono      |
+| **Atkinson**         | Atkinson Hyperlegible | Atkinson Hyperlegible | JetBrains Mono |
+| **Literata**         | Literata           | Literata           | IBM Plex Mono   |
+
+The pairings with a serif use it for `h1` and `h2` only. Lumos keeps one family token per heading level, so `h3` and below stay on the body font, where a high-contrast serif would become hard to read at small sizes.
+
+### A heading three, to judge the smaller sizes
+
+A paragraph of running text, long enough to show how the pairing behaves over several lines: the width of the lowercase, the shape of the numerals like 0123456789, and how it handles `inline code` and [a link](/customization/theming/) in the middle of a sentence.
+
+```ts title="sample.ts"
+export function greet(name: string, excited = false): string {
+  return `Hello ${name}${excited ? '!' : '.'}`;
+}
+```
+
+:::note
+Switching fonts here only affects this page, and only until you reload it. Nothing is saved.
+:::
+
+## Setting your own
+
+Point the two font tokens at any family you like, and register it with the Astro Fonts API if you want it self-hosted.
+
+```css title="src/styles/fonts.css"
+:root {
+  --font-body: 'Inter Variable', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono Variable', monospace;
+}
+```
+
+To give headings their own voice, override the family per level:
+
+```css
+:root {
+  --display-font-family: 'Instrument Serif', serif;
+  --h1-font-family: 'Instrument Serif', serif;
+  --h2-font-family: 'Instrument Serif', serif;
+}
+```
+
+Set `fonts: false` in the integration options to stop shipping Geist altogether and fall back to system fonts.
