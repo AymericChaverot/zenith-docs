@@ -38,7 +38,23 @@ The quickest start creates a ready-to-run project:
 | `cli`, the default    | A `zenith.config.ts` and a `content/` folder, run by the [CLI](/cli/)         |
 | `astro`               | An Astro project with the integration, ready for pages of your own            |
 
-Pick one with `--template astro`, and set the title with `--title "My Docs"`. The directory has to be empty.
+Run in a terminal, the command asks where to put the site, its title, the template, a [packaged theme](/customization/theming/#packaged-themes), and whether to install the dependencies:
+
+```txt
+  ◆ Where should the site go? (my-docs) acme-docs
+  ◆ Site title (Acme Docs) Acme Handbook
+  ◆ Template
+      1. cli    A config file and a folder of Markdown, run by the zenith CLI
+      2. astro  An Astro project with the integration, for more than docs
+    Choose 1-2 (1)
+  ◆ Theme
+      1. none      Keep the defaults
+      2. zenith    Emerald, dither backdrop, Instrument fonts: the defaults
+      ...
+  ◆ Install dependencies with pnpm? (Y/n)
+```
+
+Every answer has a flag, for scripts and CI: `--template`, `--title`, `--theme` and `--install`. Add `--yes` to skip the questions and take the defaults for anything not given. The directory has to be empty.
 
 ## Add to an Astro project
 
