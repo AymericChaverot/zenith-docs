@@ -6,7 +6,9 @@ const fontsource = fontProviders.fontsource();
 
 export default defineConfig({
   site: 'https://aymericchaverot.github.io',
-  base: '/zenith-docs',
+  // GitHub Pages serves the site from /zenith-docs/. The deploy workflow sets DOCS_BASE, so
+  // the local dev server and previews stay at the root.
+  base: process.env.DOCS_BASE,
   // Families compared on /customization/typography/, loaded only by that page.
   fonts: [
     { provider: fontsource, name: 'Geist', cssVariable: '--font-geist', weights: ['400 700'], subsets: ['latin'], fallbacks: ['sans-serif'] },
