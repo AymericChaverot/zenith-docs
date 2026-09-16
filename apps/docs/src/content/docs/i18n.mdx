@@ -1,0 +1,69 @@
+---
+title: Internationalization
+description: Publish your documentation in several languages, with a fallback for untranslated pages.
+icon: languages
+---
+
+Declare your languages with the `locales` option. Each key is both a content directory and a URL prefix, except `root`, which is the default language served without a prefix.
+
+```js title="astro.config.mjs"
+zenith({
+  title: 'My Docs',
+  locales: {
+    root: { label: 'English' },
+    fr: { label: 'Français' },
+    ar: { label: 'العربية', dir: 'rtl' },
+  },
+});
+```
+
+| Field   | Purpose                                                        |
+| ------- | -------------------------------------------------------------- |
+| `label` | Name shown in the language switcher                            |
+| `lang`  | BCP-47 tag for the `lang` attribute, defaults to the key       |
+| `dir`   | `ltr` or `rtl`, defaults to `ltr`                              |
+
+## Organizing translations
+
+Translations mirror the default language, one directory per locale:
+
+<Files>
+  <Folder name="src/content/docs" defaultOpen>
+    <File name="index.mdx" />
+    <File name="installation.mdx" />
+    <File name="meta.json" />
+    <Folder name="fr" defaultOpen>
+      <File name="index.mdx" />
+      <File name="installation.mdx" />
+    </Folder>
+  </Folder>
+</Files>
+
+`index.mdx` is served at `/`, and `fr/index.mdx` at `/fr/`.
+
+## Untranslated pages
+
+Every page of the default language exists in every locale. When a translation is missing, the default content is shown at the translated URL, with a note telling the reader the page is not translated yet. Navigation stays complete, and no link ever breaks.
+
+A locale also inherits the [page order](/writing/navigation/) of the default language, so a `meta.json` only needs to be translated when you want different labels.
+
+## Interface strings
+
+Labels like "On this page" or "Edit this page" ship translated for English, French, Spanish and German, picked from each locale's `lang`. Override any string, or add a language, with the `translations` option:
+
+```js title="astro.config.mjs"
+zenith({
+  locales: { root: { label: 'English' }, fr: { label: 'Français' } },
+  translations: {
+    fr: { 'toc.title': 'Sommaire' }, // [!code highlight]
+  },
+});
+```
+
+Callout titles follow the language of the file, so `:::warning` renders as "Avertissement" in a French page.
+
+## Search and Markdown output
+
+Pagefind builds one index per language and searches the one matching the current page, so readers only get results in the language they are browsing.
+
+`llms.txt` and `llms-full.txt` cover the default language. Each page, translated or not, still has its own `.md` version.

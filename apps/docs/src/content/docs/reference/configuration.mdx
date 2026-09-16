@@ -45,7 +45,19 @@ A logo shown next to the title. `src` is either a path relative to the project r
 
 **Type:** `string` · **Default:** `'en'`
 
-The language of the site, used for the `lang` attribute and date formatting.
+The language of the site, used for the `lang` attribute and date formatting. Ignored when `locales` is set.
+
+### `locales`
+
+**Type:** `Record<string, { label: string; lang?: string; dir?: 'ltr' | 'rtl' }>`
+
+Languages of the site, keyed by content directory and URL prefix. A `root` entry is required: it is the default language, served without a prefix. See [internationalization](/i18n/).
+
+### `translations`
+
+**Type:** `Record<string, Record<string, string>>`
+
+Interface strings, keyed by locale, overriding the built-in ones.
 
 ## Header
 
