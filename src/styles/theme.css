@@ -20,7 +20,7 @@
   --zd-accent-contrast-light: oklch(100% 0 0);
   --zd-accent-contrast-dark: oklch(21% 0.006 286);
 
-  /* Typography: Geist by default, see the `fonts` option */
+  /* Typography: set by the `fonts` option, overridable with the three --font-* tokens */
   --primary-family: var(
     --font-body,
     var(--zd-font-sans, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif)

@@ -17,8 +17,8 @@ zenith({
 });
 ```
 
-| Theme      | Accent  | Backdrop | Fonts        | Also                                   |
-| ---------- | ------- | -------- | ------------ | -------------------------------------- |
+| Theme      | Accent  | Backdrop | Fonts        | Also                                    |
+| ---------- | ------- | -------- | ------------ | --------------------------------------- |
 | `zenith`   | emerald | dither   | `instrument` | The defaults, named                    |
 | `slate`    | neutral | grid     | `schibsted`  | Squarer corners                        |
 | `terminal` | teal    | grain    | `space`      | Sharp corners, thinner scrollbars      |
@@ -29,7 +29,7 @@ A theme only fills in what you leave unset: `theme: 'paper', accent: 'rose'` kee
 
 ## Accent presets
 
-The default accent is `emerald`. Pick another preset with the `accent` option: `teal`, `amber`, `rose`, `violet`, or `neutral` for a black and white theme. Try them on the [kitchen sink](/writing/kitchen-sink/) page.
+The default accent is `emerald`. Pick another preset with the `accent` option: `teal`, `amber`, `rose`, `violet`, or `neutral` for a black and white theme. Try them in the [theme builder](/customization/builder/), which also takes any custom color.
 
 ```js title="astro.config.mjs"
 zenith({
@@ -40,7 +40,7 @@ zenith({
 
 ## Backdrop
 
-Pages are drawn over a decorative background, tinted with the accent color. Pick its style with the `backdrop` option, and compare them on the [kitchen sink](/writing/kitchen-sink/) page.
+Pages are drawn over a decorative background, tinted with the accent color. Pick its style with the `backdrop` option, and compare them in the [theme builder](/customization/builder/).
 
 ```js title="astro.config.mjs"
 zenith({
@@ -49,8 +49,8 @@ zenith({
 });
 ```
 
-| Style          | Looks like                                                     |
-| -------------- | -------------------------------------------------------------- |
+| Style           | Looks like                                                     |
+| --------------- | -------------------------------------------------------------- |
 | `dither`        | Two offset dot grids, like a halftone print. The default       |
 | `aurora`        | Blurred color fields                                           |
 | `grid`          | A ruled grid fading downwards                                  |
@@ -110,41 +110,22 @@ Light and dark themes are defined with the Lumos `theme-light` and `theme-dark` 
 | `--zd-accent-light`  | Accent in light mode: links, active items, tabs   |
 | `--zd-accent-dark`   | Accent in dark mode                               |
 | `--background`       | Page background                                   |
-| `--background-2` | Raised surfaces: code blocks, hovers       |
-| `--text`         | Body text                                  |
-| `--text-2`       | Secondary text                             |
-| `--border`       | Hairlines                                  |
+| `--background-2`     | Raised surfaces: code blocks, hovers              |
+| `--text`             | Body text                                         |
+| `--text-2`           | Secondary text                                    |
+| `--border`           | Hairlines                                         |
+
+The [theme builder](/customization/builder/) writes these for any color you pick, and derives the dark accent from the light one.
 
 ## Typography
 
 ZenithDocs ships seven font presets, self-hosted through the Astro Fonts API. The default, `instrument`, sets Instrument Serif over Instrument Sans with Martian Mono for code. Pick another with the `fonts` option, and compare them on the [typography](/customization/typography/) page.
 
-Override the families with three tokens, whatever the preset:
-
-```css
-:root {
-  --font-body: 'Inter', system-ui, sans-serif;
-  --font-mono: 'JetBrains Mono', monospace;
-  --font-display: 'Playfair Display', serif;
-  --h1-min: 32;
-  --h1-max: 40;
-}
-```
-
-`--font-display` is used by `h1` and `h2` only, and falls back to `--font-body` when a preset gives headings no voice of their own. Set `fonts: false` to ship no font at all and use the system stack.
-
-Heading sizes are fluid: they scale between their `-min` and `-max` values, in pixels, depending on the viewport width.
-
-To make everything larger or smaller at once, change the two scales instead of each size:
-
-```css
-:root {
-  --zd-heading-scale: 1.15; /* h1 to h6 */
-  --zd-text-scale: 1.05; /* body text */
-}
-```
+The same page covers the three family tokens, `--font-body`, `--font-mono` and `--font-display`, [fonts of your own](/customization/typography/#setting-your-own), and the [scales](/customization/typography/#sizes) that make all text larger or smaller at once.
 
 ## Layout
+
+The width of the sidebar, the maximum width of the content column, and the radius of every rounded corner:
 
 ```css
 :root {

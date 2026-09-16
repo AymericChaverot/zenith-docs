@@ -51,23 +51,87 @@ Switching fonts here only affects this page, and only until you reload it. Nothi
 
 ## Setting your own
 
-Point the two font tokens at any family you like, and register it with the Astro Fonts API if you want it self-hosted.
+Three tokens decide the families, whatever the preset. Set them in a [`customCss`](/customization/theming/#add-a-stylesheet) file:
 
 ```css title="src/styles/fonts.css"
 :root {
-  --font-body: 'Inter Variable', system-ui, sans-serif;
-  --font-mono: 'JetBrains Mono Variable', monospace;
+  --font-body: 'Inter', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  --font-display: 'Playfair Display', serif;
 }
 ```
 
-To give headings their own voice, override the family per level:
+| Token            | Used for                                                  |
+| ---------------- | --------------------------------------------------------- |
+| `--font-body`    | Body text, the interface and headings from `h3` down      |
+| `--font-mono`    | Code blocks and inline code                               |
+| `--font-display` | `h1` and `h2`, falling back to `--font-body` when unset   |
+
+A token only names a family: the font itself still has to reach the browser. In an Astro project, declare it with the [Astro Fonts API](https://docs.astro.build/en/guides/fonts/) to have it self-hosted, load it from the `head` [slot](/customization/slots/), and point the token at its CSS variable:
+
+<Steps>
+
+### Declare the font
+
+```js title="astro.config.mjs"
+import { defineConfig, fontProviders } from 'astro/config';
+import zenith from 'zenith-docs';
+
+export default defineConfig({
+  fonts: [
+    { provider: fontProviders.fontsource(), name: 'Inter', cssVariable: '--font-inter' },
+  ],
+  integrations: [
+    zenith({
+      title: 'My Docs',
+      fonts: false,
+      customCss: ['./src/styles/fonts.css'],
+      slots: { head: './src/components/Fonts.astro' },
+    }),
+  ],
+});
+```
+
+### Load it on every page
+
+```astro title="src/components/Fonts.astro"
+---
+import { Font } from 'astro:assets';
+---
+
+<Font cssVariable="--font-inter" preload />
+```
+
+### Use it
+
+```css title="src/styles/fonts.css"
+:root {
+  --font-body: var(--font-inter);
+}
+```
+
+</Steps>
+
+With the [CLI](/cli/) there is no Astro configuration to declare fonts in: stick to a preset, to fonts installed on the reader's system, or to an `@font-face` rule of your own in the stylesheet.
+
+`fonts: false` ships no font at all. Without tokens of your own, text then uses the system font stack.
+
+## Sizes
+
+Heading sizes are fluid: each level scales between a `-min` and a `-max` value, in pixels, with the width of the viewport. To make everything larger or smaller at once, change the two scales rather than each size:
 
 ```css
 :root {
-  --display-font-family: 'Instrument Serif', serif;
-  --h1-font-family: 'Instrument Serif', serif;
-  --h2-font-family: 'Instrument Serif', serif;
+  --zd-heading-scale: 1.15; /* h1 to h6 */
+  --zd-text-scale: 1.05; /* body text */
 }
 ```
 
-Set `fonts: false` in the integration options to stop shipping Geist altogether and fall back to system fonts.
+A single level can also be set on its own, in which case the scale no longer applies to it:
+
+```css
+:root {
+  --h1-min: 32;
+  --h1-max: 40;
+}
+```
