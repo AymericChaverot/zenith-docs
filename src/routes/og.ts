@@ -3,6 +3,7 @@ import config from 'virtual:zenith/config';
 import * as assets from 'virtual:zenith/og-assets';
 import { renderOgImage } from '../og';
 import { getDocs, getDocsPaths, getRouteData, type DocsEntry } from '../route-data';
+import { baseUrl } from '../urls';
 
 export const getStaticPaths = (async () => {
   const paths = await getDocsPaths(await getDocs());
@@ -26,7 +27,7 @@ export const GET: APIRoute = async ({ props }) => {
 
   // Folders the page belongs to, falling back to its path, but never a bare `/`.
   const trail = data.breadcrumbs.map((crumb) => crumb.name).join(' / ');
-  const home = data.url === import.meta.env.BASE_URL;
+  const home = data.url === baseUrl();
 
   const png = await renderOgImage({
     config,

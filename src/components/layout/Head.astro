@@ -1,7 +1,7 @@
 ---
 import { Font } from 'astro:assets';
 import { FONT_PRESETS } from '../../fonts';
-import { withBase } from '../../urls';
+import { baseUrl, withBase } from '../../urls';
 
 const { config, title, description, url, entry, alternates, locale, ogImage } = Astro.locals.zenith;
 const absolute = (path: string) => (Astro.site ? new URL(path, Astro.site).href : path);
@@ -29,7 +29,7 @@ const noindex = entry.id === '404' || entry.data.draft;
     <link
       rel="alternate"
       type="text/markdown"
-      href={`${import.meta.env.BASE_URL}${entry.id}.md`}
+      href={`${baseUrl()}${entry.id}.md`}
       title="Markdown source"
     />
   )
@@ -45,7 +45,7 @@ const noindex = entry.id === '404' || entry.data.draft;
     </>
   )
 }
-{Astro.site && <link rel="sitemap" href={`${import.meta.env.BASE_URL}sitemap-index.xml`} />}
+{Astro.site && <link rel="sitemap" href={`${baseUrl()}sitemap-index.xml`} />}
 <meta name="generator" content={`ZenithDocs, ${Astro.generator}`} />
 <meta property="og:type" content="article" />
 <meta property="og:site_name" content={config.title} />
@@ -68,7 +68,7 @@ const noindex = entry.id === '404' || entry.data.draft;
   is:inline
   type="speculationrules"
   set:html={JSON.stringify({
-    prerender: [{ where: { href_matches: `${import.meta.env.BASE_URL}*` }, eagerness: 'moderate' }],
+    prerender: [{ where: { href_matches: `${baseUrl()}*` }, eagerness: 'moderate' }],
   })}
 />
 <script is:inline>

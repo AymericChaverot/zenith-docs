@@ -1,5 +1,6 @@
 ---
 import { flattenTree } from '../../page-tree';
+import { baseUrl } from '../../urls';
 import Icon from '../Icon.astro';
 import SidebarTree from '../SidebarTree.astro';
 import InjectionPoint from './InjectionPoint.astro';
@@ -20,7 +21,7 @@ if (tabs.length > 0 && hasRootContent) {
     name: t['nav.docs'],
     description: undefined,
     icon: 'book',
-    url: `${import.meta.env.BASE_URL}${locale.prefix}`,
+    url: `${baseUrl()}${locale.prefix}`,
     active: !sidebar.activeTab,
   });
 }

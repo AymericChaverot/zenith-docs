@@ -2,6 +2,7 @@
 import Page from '../components/layout/Page.astro';
 import { docsSchema } from '../content';
 import { defaultLocale, getRouteData, translationsFor } from '../route-data';
+import { baseUrl } from '../urls';
 
 const t = translationsFor(defaultLocale);
 const entry = {
@@ -16,14 +17,14 @@ const data = await getRouteData(entry, [], { locale: defaultLocale.key });
 // There is no 404 page per language: the language menu leads to each home page instead.
 const alternates = data.alternates.map(({ locale }) => ({
   locale,
-  url: `${import.meta.env.BASE_URL}${locale.prefix}`,
+  url: `${baseUrl()}${locale.prefix}`,
 }));
 Astro.locals.zenith = { ...data, alternates };
 ---
 
 <Page>
   <div class="zd-not-found">
-    <a class="zd-pagination-link" href={import.meta.env.BASE_URL}>
+    <a class="zd-pagination-link" href={baseUrl()}>
       {t['page.home']}
     </a>
   </div>

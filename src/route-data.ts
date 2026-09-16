@@ -26,6 +26,7 @@ import {
   type SidebarScope,
 } from './page-tree';
 import { getTranslations, type Translations } from './translations';
+import { baseUrl } from './urls';
 import {
   getDefaultVersion,
   getVersion,
@@ -85,7 +86,7 @@ export function translationsFor(locale: ResolvedLocale): Translations {
 
 /** URL prefix of a locale and version pair, for example `/fr/v1/`. */
 function prefixOf(locale: ResolvedLocale, version: ResolvedVersion): string {
-  return `${import.meta.env.BASE_URL}${locale.prefix}${version.prefix}`;
+  return `${baseUrl()}${locale.prefix}${version.prefix}`;
 }
 
 const scopeKey = (locale: ResolvedLocale, version: ResolvedVersion) =>
@@ -93,8 +94,8 @@ const scopeKey = (locale: ResolvedLocale, version: ResolvedVersion) =>
 
 /** Path of the Open Graph image of a page, matching the `og/[...slug].png` route. */
 export function ogImagePath(url: string): string {
-  const path = url.slice(import.meta.env.BASE_URL.length).replace(/\/$/, '');
-  return `${import.meta.env.BASE_URL}og/${path || 'index'}.png`;
+  const path = url.slice(baseUrl().length).replace(/\/$/, '');
+  return `${baseUrl()}og/${path || 'index'}.png`;
 }
 
 export async function getDocs(): Promise<DocsEntry[]> {

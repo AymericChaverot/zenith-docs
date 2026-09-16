@@ -3,6 +3,7 @@ import { renderPage, toPlainMarkdown } from '../llms';
 import { MARKDOWN_HEADERS } from '../llms-data';
 import { urlFromId } from '../page-tree';
 import { getDocs, type DocsEntry } from '../route-data';
+import { baseUrl } from '../urls';
 
 export const getStaticPaths = (async () => {
   const docs = await getDocs();
@@ -11,7 +12,7 @@ export const getStaticPaths = (async () => {
 
 export const GET: APIRoute = ({ props, site }) => {
   const { entry } = props as { entry: DocsEntry };
-  const path = urlFromId(entry.id, import.meta.env.BASE_URL);
+  const path = urlFromId(entry.id, baseUrl());
   const body = renderPage({
     title: entry.data.title,
     description: entry.data.description,
