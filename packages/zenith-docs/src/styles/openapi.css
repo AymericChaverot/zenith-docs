@@ -1,0 +1,186 @@
+/* OpenAPI reference, rendered by <APIPage> */
+
+.zd-api + .zd-api {
+  margin-top: 3rem;
+  padding-top: 2rem;
+  border-top: var(--border-width) solid var(--border);
+}
+
+.zd-api-header {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+  margin: 0 0 0.75rem;
+}
+
+.zd-api-method {
+  padding: 0.25rem 0.5rem;
+  border: var(--border-width) solid currentcolor;
+  border-radius: var(--radius-small);
+  color: var(--zd-api-color, var(--text-2));
+  background: color-mix(in oklab, var(--zd-api-color, var(--text-2)) 10%, transparent);
+  font-family: var(--mono-family);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+}
+
+.zd-api-method[data-method='GET'] {
+  --zd-api-color: var(--zd-color-note);
+}
+
+.zd-api-method[data-method='POST'] {
+  --zd-api-color: var(--zd-color-success);
+}
+
+.zd-api-method[data-method='PUT'],
+.zd-api-method[data-method='PATCH'] {
+  --zd-api-color: var(--zd-color-warning);
+}
+
+.zd-api-method[data-method='DELETE'] {
+  --zd-api-color: var(--zd-color-danger);
+}
+
+.zd-api-path {
+  padding: 0.25rem 0.5rem;
+  border: var(--border-width) solid var(--border);
+  border-radius: var(--radius-small);
+  background: var(--background-2);
+  font-family: var(--mono-family);
+  font-size: 0.8125rem;
+}
+
+.zd-api-param {
+  color: var(--accent);
+}
+
+.zd-api-summary {
+  margin: 0 0 0.25rem;
+  font-weight: var(--primary-bold);
+}
+
+.zd-api-text {
+  margin: 0.25rem 0 0;
+  color: var(--text-2);
+  font-size: 0.9375rem;
+}
+
+.zd-api-section {
+  margin-top: 1.75rem;
+}
+
+.zd-api-section-title {
+  margin: 0 0 0.75rem;
+  color: var(--text-2);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.zd-api-fields {
+  margin: 0;
+  padding: 0;
+  border: var(--border-width) solid var(--border);
+  border-radius: var(--radius-main);
+  list-style: none;
+}
+
+.zd-api-field {
+  padding: 0.875rem 1rem;
+}
+
+.zd-api-field + .zd-api-field {
+  border-top: var(--border-width) solid var(--border);
+}
+
+.zd-api-field-head {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: baseline;
+  margin: 0;
+}
+
+.zd-api-name {
+  font-family: var(--mono-family);
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+
+.zd-api-type {
+  color: var(--text-2);
+  font-family: var(--mono-family);
+  font-size: 0.75rem;
+}
+
+.zd-api-flag {
+  color: var(--zd-api-color, var(--text-2));
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.zd-api-flag[data-flag='required'] {
+  --zd-api-color: var(--zd-color-danger);
+}
+
+.zd-api-flag[data-flag='deprecated'] {
+  --zd-api-color: var(--zd-color-warning);
+}
+
+/* Nested attributes, folded away until asked for */
+.zd-api-nested {
+  margin-top: 0.75rem;
+}
+
+.zd-api-nested > summary {
+  color: var(--text-2);
+  font-size: 0.8125rem;
+  cursor: pointer;
+}
+
+.zd-api-nested > summary:hover {
+  color: var(--text-1);
+}
+
+.zd-api-nested > .zd-api-fields {
+  margin-top: 0.75rem;
+  background: var(--background-2);
+}
+
+.zd-api-status {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+  margin: 0 0 0.75rem;
+  color: var(--text-2);
+  font-size: 0.9375rem;
+}
+
+.zd-api-code {
+  padding: 0.125rem 0.5rem;
+  border-radius: 999px;
+  color: var(--zd-api-color, var(--text-2));
+  background: color-mix(in oklab, var(--zd-api-color, var(--text-2)) 12%, transparent);
+  font-family: var(--mono-family);
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.zd-api-status[data-kind='success'] {
+  --zd-api-color: var(--zd-color-success);
+}
+
+.zd-api-status[data-kind='error'] {
+  --zd-api-color: var(--zd-color-danger);
+}
+
+.zd-api .zd-code,
+.zd-api-section .zd-code {
+  margin-top: 1rem;
+}

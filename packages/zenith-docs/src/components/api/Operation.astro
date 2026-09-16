@@ -1,0 +1,84 @@
+---
+import { curlSample, exampleOf, preferredContent, type Operation } from '../../openapi/model';
+import CodeBlock from '../CodeBlock.astro';
+import Schema from './Schema.astro';
+import Parameters from './Parameters.astro';
+import Responses from './Responses.astro';
+
+interface Props {
+  operation: Operation;
+}
+
+const { operation } = Astro.props;
+const { t, title } = Astro.locals.zenith;
+
+// A page dedicated to one operation already carries its summary as a title.
+const summary = operation.summary === title ? undefined : operation.summary;
+
+const server = operation.servers[0] ?? '';
+const body = preferredContent(operation.body?.contents ?? []);
+const bodyExample = body?.example ?? (body?.schema && exampleOf(body.schema));
+const curl = curlSample(operation, server);
+
+/** `/rockets/{id}` reads better with its parameters set apart. */
+const segments = operation.path.split(/(\{[^}]+\})/).filter(Boolean);
+---
+
+<section class="zd-api" id={operation.id}>
+  <p class="zd-api-header">
+    <span class="zd-api-method" data-method={operation.method}>{operation.method}</span>
+    <code class="zd-api-path">
+      {segments.map((segment) =>
+        segment.startsWith('{') ? <span class="zd-api-param">{segment}</span> : segment,
+      )}
+    </code>
+  </p>
+
+  {operation.deprecated && <p class="zd-api-flag" data-flag="deprecated">{t['api.deprecated']}</p>}
+  {summary && <p class="zd-api-summary">{summary}</p>}
+  {operation.description && <p class="zd-api-text">{operation.description}</p>}
+
+  {
+    operation.security.length > 0 && (
+      <section class="zd-api-section">
+        <h3 class="zd-api-section-title">{t['api.authorizations']}</h3>
+        <ul class="zd-api-fields">
+          {operation.security.map(({ name, scheme, scopes }) => (
+            <li class="zd-api-field">
+              <p class="zd-api-field-head">
+                <code class="zd-api-name">{name}</code>
+                <span class="zd-api-type">
+                  {scheme.type === 'http' ? `${scheme.scheme ?? 'http'}${scheme.bearerFormat ? ` <${scheme.bearerFormat}>` : ''}` : scheme.type}
+                  {scheme.type === 'apiKey' && scheme.name ? ` · ${scheme.in} ${scheme.name}` : ''}
+                </span>
+              </p>
+              {scheme.description && <p class="zd-api-text">{scheme.description}</p>}
+              {scopes.length > 0 && <p class="zd-api-text">{scopes.join(', ')}</p>}
+            </li>
+          ))}
+        </ul>
+      </section>
+    )
+  }
+
+  {operation.parameters.length > 0 && <Parameters parameters={operation.parameters} />}
+
+  {
+    operation.body && (
+      <section class="zd-api-section">
+        <h3 class="zd-api-section-title">{t['api.body']}</h3>
+        {operation.body.description && <p class="zd-api-text">{operation.body.description}</p>}
+        {body?.schema && <Schema schema={body.schema} />}
+      </section>
+    )
+  }
+
+  <CodeBlock code={curl} lang="bash" title={t['api.request']} />
+  {
+    bodyExample !== undefined && bodyExample !== null && (
+      <CodeBlock code={JSON.stringify(bodyExample, null, 2)} lang="json" title={body?.type} />
+    )
+  }
+
+  {operation.responses.length > 0 && <Responses responses={operation.responses} />}
+</section>

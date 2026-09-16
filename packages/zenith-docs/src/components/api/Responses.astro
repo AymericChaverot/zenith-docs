@@ -1,0 +1,46 @@
+---
+import { exampleOf, preferredContent, type Operation } from '../../openapi/model';
+import CodeBlock from '../CodeBlock.astro';
+import Tab from '../Tab.astro';
+import Tabs from '../Tabs.astro';
+import Schema from './Schema.astro';
+
+interface Props {
+  responses: Operation['responses'];
+}
+
+const { responses } = Astro.props;
+const { t } = Astro.locals.zenith;
+
+/** 2xx is a success, 4xx and 5xx are errors, anything else is neutral. */
+const kindOf = (status: string) =>
+  status.startsWith('2') ? 'success' : /^[45]/.test(status) ? 'error' : 'info';
+
+const bodies = responses.map((response) => {
+  const content = preferredContent(response.contents);
+  const example = content?.example ?? (content?.schema && exampleOf(content.schema));
+  return {
+    ...response,
+    schema: content?.schema,
+    sample: example === undefined || example === null ? undefined : JSON.stringify(example, null, 2),
+  };
+});
+---
+
+<section class="zd-api-section">
+  <h3 class="zd-api-section-title">{t['api.responses']}</h3>
+  <Tabs items={bodies.map((response) => response.status)}>
+    {
+      bodies.map((response) => (
+        <Tab value={response.status}>
+          <p class="zd-api-status" data-kind={kindOf(response.status)}>
+            <span class="zd-api-code">{response.status}</span>
+            {response.description}
+          </p>
+          {response.schema ? <Schema schema={response.schema} /> : <p class="zd-api-text">{t['api.noBody']}</p>}
+          {response.sample && <CodeBlock code={response.sample} lang="json" title={t['api.response']} />}
+        </Tab>
+      ))
+    }
+  </Tabs>
+</section>

@@ -1,0 +1,51 @@
+---
+import { propertiesOf, typeName } from '../../openapi/model';
+import type { SchemaObject } from '../../openapi/spec';
+
+interface Props {
+  name: string;
+  schema?: SchemaObject;
+  required?: boolean;
+  /** Overrides the description of the schema, for parameters that carry their own. */
+  description?: string;
+  deprecated?: boolean;
+  depth?: number;
+}
+
+const { name, schema, required = false, description, deprecated, depth = 0 } = Astro.props;
+const { t } = Astro.locals.zenith;
+
+const text = description ?? schema?.description;
+const isDeprecated = deprecated ?? schema?.deprecated ?? false;
+
+// An array of objects is documented through the schema of its items.
+const nested = schema?.type === 'array' ? schema.items : schema;
+const children = depth < 4 ? propertiesOf(nested) : [];
+---
+
+<li class="zd-api-field">
+  <p class="zd-api-field-head">
+    <code class="zd-api-name">{name}</code>
+    <span class="zd-api-type">{typeName(schema)}</span>
+    {required && <span class="zd-api-flag" data-flag="required">{t['api.required']}</span>}
+    {isDeprecated && <span class="zd-api-flag" data-flag="deprecated">{t['api.deprecated']}</span>}
+  </p>
+  {text && <p class="zd-api-text">{text}</p>}
+  {
+    children.length > 0 && (
+      <details class="zd-api-nested">
+        <summary>{t['api.attributes']}</summary>
+        <ul class="zd-api-fields">
+          {children.map((child) => (
+            <Astro.self
+              name={child.name}
+              schema={child.schema}
+              required={child.required}
+              depth={depth + 1}
+            />
+          ))}
+        </ul>
+      </details>
+    )
+  }
+</li>

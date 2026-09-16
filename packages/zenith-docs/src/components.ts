@@ -1,3 +1,4 @@
+import APIPage from './components/api/APIPage.astro';
 import Accordion from './components/Accordion.astro';
 import Accordions from './components/Accordions.astro';
 import Callout from './components/Callout.astro';
@@ -12,10 +13,26 @@ import Steps from './components/Steps.astro';
 import Tab from './components/Tab.astro';
 import Tabs from './components/Tabs.astro';
 
-export { Accordion, Accordions, Callout, Card, Cards, File, Files, Folder, Icon, Step, Steps, Tab, Tabs };
+export {
+  APIPage,
+  Accordion,
+  Accordions,
+  Callout,
+  Card,
+  Cards,
+  File,
+  Files,
+  Folder,
+  Icon,
+  Step,
+  Steps,
+  Tab,
+  Tabs,
+};
 
 /** Components available in MDX pages without importing them. */
 export const mdxComponents = {
+  APIPage,
   Accordion,
   Accordions,
   Callout,

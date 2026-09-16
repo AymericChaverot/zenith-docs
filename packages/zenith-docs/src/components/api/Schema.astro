@@ -1,0 +1,23 @@
+---
+import { propertiesOf } from '../../openapi/model';
+import type { SchemaObject } from '../../openapi/spec';
+import Field from './Field.astro';
+
+interface Props {
+  schema?: SchemaObject;
+  depth?: number;
+}
+
+const { schema, depth = 0 } = Astro.props;
+const properties = propertiesOf(schema?.type === 'array' ? schema.items : schema);
+---
+
+{
+  properties.length > 0 && (
+    <ul class="zd-api-fields">
+      {properties.map(({ name, schema: property, required }) => (
+        <Field name={name} schema={property} required={required} depth={depth} />
+      ))}
+    </ul>
+  )
+}

@@ -1,0 +1,37 @@
+---
+import type { ParameterObject } from '../../openapi/spec';
+import Field from './Field.astro';
+
+interface Props {
+  parameters: ParameterObject[];
+}
+
+const { parameters } = Astro.props;
+const { t } = Astro.locals.zenith;
+
+const groups = (['path', 'query', 'header', 'cookie'] as const)
+  .map((location) => ({
+    title: t[`api.${location}`],
+    items: parameters.filter((parameter) => parameter.in === location),
+  }))
+  .filter((group) => group.items.length > 0);
+---
+
+{
+  groups.map((group) => (
+    <section class="zd-api-section">
+      <h3 class="zd-api-section-title">{group.title}</h3>
+      <ul class="zd-api-fields">
+        {group.items.map((parameter) => (
+          <Field
+            name={parameter.name}
+            schema={parameter.schema}
+            required={parameter.in === 'path' || parameter.required}
+            description={parameter.description}
+            deprecated={parameter.deprecated}
+          />
+        ))}
+      </ul>
+    </section>
+  ))
+}

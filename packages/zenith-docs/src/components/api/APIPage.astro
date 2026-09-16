@@ -1,0 +1,43 @@
+---
+import { resolve } from 'node:path';
+import { AstroError } from 'astro/errors';
+import config from 'virtual:zenith/config';
+import { root } from 'virtual:zenith/project';
+import { getOperations } from '../../openapi/model';
+import { loadSpec } from '../../openapi/spec';
+import Operation from './Operation.astro';
+
+interface Props {
+  /** Name declared in the `openapi` option, or a path from the project root. */
+  spec: string;
+  path?: string;
+  method?: string;
+  tag?: string;
+}
+
+const { spec, path, method, tag } = Astro.props;
+
+const file = config.openapi[spec] ?? (spec.includes('/') ? spec : undefined);
+if (!file) {
+  const names = Object.keys(config.openapi);
+  throw new AstroError(
+    `Unknown OpenAPI spec "${spec}"`,
+    names.length > 0
+      ? `Declared specs: ${names.join(', ')}.`
+      : 'Declare it in the `openapi` option, or pass a path from the project root.',
+  );
+}
+
+const document = await loadSpec(resolve(root, file));
+const operations = getOperations(document, { path, method, tag });
+if (operations.length === 0) {
+  throw new AstroError(
+    `No operation of "${spec}" matches`,
+    `Looked for ${[path && `path ${path}`, method && `method ${method}`, tag && `tag ${tag}`]
+      .filter(Boolean)
+      .join(', ')}.`,
+  );
+}
+---
+
+{operations.map((operation) => <Operation operation={operation} />)}
