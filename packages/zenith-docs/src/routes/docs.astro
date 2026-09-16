@@ -7,9 +7,13 @@ import { getDocs, getDocsPaths, getRouteData, type DocsEntry } from '../route-da
 
 export const getStaticPaths = (async () => getDocsPaths(await getDocs())) satisfies GetStaticPaths;
 
-const { entry } = Astro.props as { entry: DocsEntry };
+const { entry, locale, translated } = Astro.props as {
+  entry: DocsEntry;
+  locale: string;
+  translated: boolean;
+};
 const { Content, headings } = await render(entry as never);
-Astro.locals.zenith = await getRouteData(entry, headings);
+Astro.locals.zenith = await getRouteData(entry, headings, { locale, translated });
 ---
 
 <Page>
