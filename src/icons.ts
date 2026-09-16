@@ -13,6 +13,7 @@ export const icons = {
   },
   chevron: { body: '<path d="m9 18 6-6-6-6"/>' },
   close: { body: '<path d="M18 6 6 18M6 6l12 12"/>' },
+  cloud: { body: '<path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/>' },
   code: { body: '<path d="m16 18 6-6-6-6M8 6l-6 6 6 6"/>' },
   component: {
     body: '<path d="m12 2 4 4-4 4-4-4Z"/><path d="m6 8 4 4-4 4-4-4Z"/><path d="m18 8 4 4-4 4-4-4Z"/><path d="m12 14 4 4-4 4-4-4Z"/>',
