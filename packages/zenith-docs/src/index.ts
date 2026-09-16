@@ -21,7 +21,7 @@ import {
 } from './markdown/index';
 import { zenithShikiTransformers } from './markdown/shiki';
 import { buildSearchIndex } from './search';
-import { OVERRIDABLE_COMPONENTS, vitePluginZenith } from './virtual';
+import { OVERRIDABLE_COMPONENTS, SLOT_NAMES, vitePluginZenith } from './virtual';
 
 export type { ZenithConfig, ZenithUserConfig } from './config';
 
@@ -66,6 +66,16 @@ export default function zenith(userConfig: ZenithUserConfig): AstroIntegration {
     throw new AstroError(
       `Unknown component override: ${unknown.join(', ')}`,
       `Overridable components are: ${OVERRIDABLE_COMPONENTS.join(', ')}.`,
+    );
+  }
+
+  const unknownSlots = Object.keys(config.slots).filter(
+    (name) => !(SLOT_NAMES as readonly string[]).includes(name),
+  );
+  if (unknownSlots.length > 0) {
+    throw new AstroError(
+      `Unknown slot: ${unknownSlots.join(', ')}`,
+      `Available slots are: ${SLOT_NAMES.join(', ')}.`,
     );
   }
 

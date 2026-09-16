@@ -106,6 +106,11 @@ export const ZenithConfigSchema = z.object({
   customCss: z.array(z.string()).default([]),
   /** Replace built-in layout components, e.g. `{ Header: './src/components/Header.astro' }`. */
   components: z.record(z.string(), z.string()).default({}),
+  /**
+   * Components added at fixed places of the layout, without replacing anything,
+   * e.g. `{ banner: './src/components/Banner.astro' }`. Several per place are allowed.
+   */
+  slots: z.record(z.string(), z.union([z.string(), z.array(z.string())])).default({}),
 });
 
 export type ZenithConfig = z.output<typeof ZenithConfigSchema>;

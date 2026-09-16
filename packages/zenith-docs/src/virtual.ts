@@ -21,7 +21,40 @@ export const OVERRIDABLE_COMPONENTS = [
   'ThemeToggle',
 ] as const;
 
+/** Places of the layout where components can be added through the `slots` option. */
+export const SLOT_NAMES = [
+  'head',
+  'banner',
+  'headerEnd',
+  'sidebarTop',
+  'sidebarBottom',
+  'contentBefore',
+  'contentAfter',
+  'tocAfter',
+  'footer',
+] as const;
+
+export type SlotName = (typeof SLOT_NAMES)[number];
+
 const toPosix = (path: string) => path.replaceAll('\\', '/');
+
+/** One import per component, grouped by slot, so empty slots cost nothing. */
+export function slotsModule(
+  slots: Record<string, string | string[]>,
+  resolvePath: (path: string) => string,
+): string {
+  const imports: string[] = [];
+  const entries: string[] = [];
+  for (const name of SLOT_NAMES) {
+    const ids = [slots[name] ?? []].flat().map((path) => {
+      const id = `Slot${imports.length}`;
+      imports.push(`import ${id} from ${JSON.stringify(resolvePath(path))};`);
+      return id;
+    });
+    entries.push(`  ${name}: [${ids.join(', ')}],`);
+  }
+  return [...imports, `export default {\n${entries.join('\n')}\n};`].join('\n');
+}
 
 const require = createRequire(import.meta.url);
 
@@ -82,6 +115,7 @@ export const shikiThemes = ${JSON.stringify(shikiThemes)};`,
     'virtual:zenith/user-css': config.customCss
       .map((path) => `import ${JSON.stringify(resolveFromRoot(path))};`)
       .join('\n'),
+    'virtual:zenith/slots': slotsModule(config.slots, resolveFromRoot),
   };
 
   if (config.og) modules['virtual:zenith/og-assets'] = ogAssets();

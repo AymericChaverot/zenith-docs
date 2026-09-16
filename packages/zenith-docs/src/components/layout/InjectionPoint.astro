@@ -1,0 +1,28 @@
+---
+import slots from 'virtual:zenith/slots';
+import type { SlotName } from '../../virtual';
+
+interface Props {
+  name: SlotName;
+  /** Class of the element wrapping the components, which is only rendered when there are some. */
+  class?: string;
+  /** Keep what is injected out of the search index, such as banners and promotions. */
+  ignoreSearch?: boolean;
+}
+
+const { name, class: className, ignoreSearch = false } = Astro.props;
+const components = slots[name];
+---
+
+{
+  components.length > 0 &&
+    (className ? (
+      <div class={className} data-slot={name} data-pagefind-ignore={ignoreSearch ? '' : undefined}>
+        {components.map((Component) => (
+          <Component />
+        ))}
+      </div>
+    ) : (
+      components.map((Component) => <Component />)
+    ))
+}

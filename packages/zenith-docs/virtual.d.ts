@@ -24,6 +24,15 @@ declare module 'virtual:zenith/og-assets' {
 
 declare module 'virtual:zenith/user-css' {}
 
+declare module 'virtual:zenith/slots' {
+  /** Components added to each place of the layout, in the order they were declared. */
+  const slots: Record<
+    import('./src/virtual').SlotName,
+    ((props: Record<string, unknown>) => unknown)[]
+  >;
+  export default slots;
+}
+
 declare module 'virtual:zenith/components/*' {
   const Component: (props: Record<string, unknown>) => unknown;
   export default Component;
