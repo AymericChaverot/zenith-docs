@@ -40,6 +40,12 @@ const meta = `{
 }
 `;
 
+/** Options written into the generated config, one per line, indented to fit. */
+const configLines = ({ title, theme }, indent) =>
+  [`title: ${JSON.stringify(title)},`, ...(theme ? [`theme: ${JSON.stringify(theme)},`] : [])]
+    .map((line) => `${indent}${line}`)
+    .join('\n');
+
 const gitignore = `node_modules/
 dist/
 .astro/
@@ -47,7 +53,7 @@ dist/
 `;
 
 /** A config file and a folder of Markdown, run by the `zenith` CLI. */
-function cli({ name, title }) {
+function cli({ name, title, theme }) {
   return {
     'package.json': `${JSON.stringify(
       {
@@ -63,7 +69,7 @@ function cli({ name, title }) {
     'zenith.config.ts': `import { defineConfig } from 'zenith-docs/config';
 
 export default defineConfig({
-  title: ${JSON.stringify(title)},
+${configLines({ title, theme }, '  ')}
 });
 `,
     'content/index.md': firstPage('content'),
@@ -74,7 +80,7 @@ export default defineConfig({
 }
 
 /** An Astro project with the integration, for sites that need more than documentation. */
-function astro({ name, title }) {
+function astro({ name, title, theme }) {
   return {
     'package.json': `${JSON.stringify(
       {
@@ -94,7 +100,7 @@ import zenith from 'zenith-docs';
 export default defineConfig({
   integrations: [
     zenith({
-      title: ${JSON.stringify(title)},
+${configLines({ title, theme }, '      ')}
     }),
   ],
 });
@@ -120,4 +126,16 @@ export const collections = {
   };
 }
 
-export const TEMPLATES = { cli, astro };
+export const TEMPLATES = {
+  cli: { description: 'A config file and a folder of Markdown, run by the zenith CLI', files: cli },
+  astro: { description: 'An Astro project with the integration, for more than docs', files: astro },
+};
+
+/** Packaged themes of ZenithDocs, kept in sync by hand since nothing can be imported yet. */
+export const THEMES = {
+  zenith: 'Emerald, dither backdrop, Instrument fonts: the defaults',
+  slate: 'Neutral and sober, squarer corners',
+  terminal: 'Teal, sharp corners, a technical face',
+  paper: 'Amber, a serif for reading, roomy',
+  aurora: 'Violet, soft colour fields, rounded',
+};
