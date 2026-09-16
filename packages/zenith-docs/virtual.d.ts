@@ -13,6 +13,13 @@ declare module 'virtual:zenith/project' {
   export const root: string;
 }
 
+declare module 'virtual:zenith/og-assets' {
+  /** Absolute paths of the Geist WOFF files embedded in Open Graph images. */
+  export const fonts: { weight: import('./src/og').OgFontWeight; path: string }[];
+  /** Absolute path of the resvg WebAssembly binary. */
+  export const wasm: string;
+}
+
 declare module 'virtual:zenith/user-css' {}
 
 declare module 'virtual:zenith/components/*' {
