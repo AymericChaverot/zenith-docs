@@ -30,7 +30,7 @@ It is the same `zenith` command you then use in the project, run straight from G
 | `cli`, the default    | A `zenith.config.ts` and a `content/` folder, run by the [CLI](/cli/)         |
 | `astro`               | An Astro project with the integration, ready for pages of your own            |
 
-Run in a terminal, the command asks where to put the site, its title, the template, a [packaged theme](/customization/theming/#packaged-themes), and whether to install the dependencies:
+Run in a terminal, the command asks where to put the site, its title, the template, a [packaged theme](/customization/theming/#packaged-themes), whether to add a [Dockerfile](/deployment/#docker), and whether to install the dependencies:
 
 ```txt
   ◆ Where should the site go? (my-docs) acme-docs
@@ -43,10 +43,11 @@ Run in a terminal, the command asks where to put the site, its title, the templa
       1. none      Keep the defaults
       2. zenith    Emerald, dither backdrop, Instrument fonts: the defaults
       ...
+  ◆ Add a Dockerfile? (y/N)
   ◆ Install dependencies with pnpm? (Y/n)
 ```
 
-Every answer has a flag, for scripts and CI: `--template`, `--title`, `--theme` and `--install`. Add `--yes` to skip the questions and take the defaults for anything not given. The directory has to be empty.
+Every answer has a flag, for scripts and CI: `--template`, `--title`, `--theme`, `--docker` and `--install`. Add `--yes` to skip the questions and take the defaults for anything not given. The directory has to be empty.
 
 ## Add to an Astro project
 

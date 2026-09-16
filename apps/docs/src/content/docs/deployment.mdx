@@ -1,0 +1,147 @@
+---
+title: Deployment
+description: Ship the site as a small container image, or to any static host.
+icon: cloud
+---
+
+A ZenithDocs build is a folder of static files in `dist/`: HTML, CSS, a little JavaScript, the search index and the images. Anything that serves files can host it, with no server-side runtime.
+
+```sh
+npm run build
+```
+
+## Docker
+
+ZenithDocs writes a ready-to-use Dockerfile. Ask for it when creating the site, or add it to an existing one:
+
+<Tabs items={['New site', 'Existing site']} groupId="docker-setup">
+  <Tab value="New site">
+    ```sh
+    npx github:AymericChaverot/zenith-docs create my-docs --docker
+    ```
+  </Tab>
+  <Tab value="Existing site">
+    ```sh
+    npx zenith docker
+    ```
+  </Tab>
+</Tabs>
+
+Then build and run the image:
+
+```sh
+docker build -t my-docs .
+docker run --rm -p 8080:8080 my-docs
+```
+
+The site is served at `http://localhost:8080`.
+
+### What is in the image
+
+The Dockerfile has two stages. The first builds the site with Node and is thrown away; only the static files reach the second, which serves them.
+
+| Choice                                    | Why                                                                     |
+| ----------------------------------------- | ----------------------------------------------------------------------- |
+| `nginxinc/nginx-unprivileged:alpine-slim` | About 30 MB in all, with no Node, no package manager and no build tools |
+| Unprivileged user, port `8080`            | Runs on platforms that forbid root containers, such as OpenShift        |
+| Files compressed at build time            | nginx sends the `.gz` next to each file, and never compresses on the fly |
+| `immutable` cache on `/_astro/`           | Those files have a content hash in their name, so they never change     |
+| `404.html` as the error page              | Unknown URLs get the site's own not found page                          |
+| `text/markdown` for `.md` files           | The [Markdown version](/llms/) of each page opens instead of downloading |
+| A health check                            | Orchestrators can tell when the server is ready                         |
+
+Dependencies are installed before the content is copied, and cached between builds, so editing a page rebuilds the site without reinstalling anything. The package manager follows the lockfile: pnpm when `pnpm-lock.yaml` exists, npm otherwise.
+
+:::note
+With pnpm, `pnpm-workspace.yaml` must approve the esbuild build script, or pnpm refuses to install in the image. `create` writes it for you when run with pnpm:
+
+```yaml title="pnpm-workspace.yaml"
+allowBuilds:
+  esbuild: true
+```
+:::
+
+### Serving from a sub-path
+
+With [`base`](/reference/configuration/#base) set to `/docs`, the files have to sit in a `docs` folder of the server, and the error page moves with them. Two lines of the Dockerfile change, as its own comment says:
+
+```dockerfile title="Dockerfile"
+    error_page 404 /docs/404.html;
+
+COPY --from=build /app/dist /usr/share/nginx/html/docs
+```
+
+### Last updated dates
+
+[`lastUpdated`](/reference/configuration/#lastupdated) reads the git history, which `.dockerignore` leaves out of the image to keep builds fast. Remove the `.git` line from `.dockerignore` to use it.
+
+### Docker Compose
+
+```yaml title="compose.yaml"
+services:
+  docs:
+    build: .
+    ports:
+      - '8080:8080'
+    restart: unless-stopped
+```
+
+```sh
+docker compose up -d --build
+```
+
+### Publishing the image
+
+This workflow builds the image on every push to `main` and publishes it to the GitHub Container Registry, as `ghcr.io/<owner>/<repository>`:
+
+```yaml title=".github/workflows/image.yml"
+name: Image
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  image:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/${{ github.repository }}
+          tags: |
+            type=raw,value=latest
+            type=sha
+      - uses: docker/build-push-action@v6
+        with:
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+```
+
+`docker/metadata-action` also lowercases the image name, which the registry requires.
+
+## Static hosts
+
+Every static host needs the same two answers:
+
+| Setting          | Value           |
+| ---------------- | --------------- |
+| Build command    | `npm run build` |
+| Output directory | `dist`          |
+| Node.js version  | 22.18 or later  |
+
+Set [`site`](/reference/configuration/#site) to the URL the host gives you, so that canonical links, the sitemap and [social images](/open-graph/) use absolute URLs. A host that serves the site from a sub-path, like GitHub Pages without a custom domain, also needs [`base`](/reference/configuration/#base).
