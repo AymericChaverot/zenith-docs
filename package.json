@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "description": "Static, lightweight and themeable documentation engine for Astro",
+  "license": "MIT",
   "type": "module",
   "packageManager": "pnpm@12.4.2",
   "engines": {
@@ -15,7 +16,8 @@
   "files": [
     "src",
     "virtual.d.ts",
-    "README.md"
+    "README.md",
+    "LICENSE"
   ],
   "exports": {
     ".": "./src/index.ts",
