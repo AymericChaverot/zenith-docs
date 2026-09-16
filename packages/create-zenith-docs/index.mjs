@@ -9,7 +9,7 @@ import { TEMPLATES, THEMES } from './templates.mjs';
 const HELP = `Create a ZenithDocs site
 
 Usage
-  npm create zenith-docs [directory] [options]
+  npx github:AymericChaverot/zenith-docs#create [directory] [options]
 
 Run it in a terminal without options and it asks for what it needs.
 
