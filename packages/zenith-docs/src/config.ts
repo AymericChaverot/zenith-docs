@@ -77,6 +77,13 @@ export const ZenithConfigSchema = z.object({
     .optional(),
   /** Interface strings, keyed by locale, overriding the built-in ones. */
   translations: z.record(z.string(), z.record(z.string(), z.string())).default({}),
+  /**
+   * Documentation versions, keyed by content directory and URL prefix.
+   * The `root` key is the current version, served without a prefix.
+   */
+  versions: z
+    .record(z.string(), z.object({ label: z.string(), badge: z.string().optional() }))
+    .optional(),
   /** Directory holding the docs content, relative to the project root. */
   docsDir: z.string().default(DEFAULT_DOCS_DIR),
   /** Repository URL, shown as an icon link in the header. */
