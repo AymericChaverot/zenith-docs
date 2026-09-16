@@ -1,0 +1,40 @@
+---
+title: ZenithDocs v1
+description: The previous major version of ZenithDocs, kept online for existing sites.
+icon: book
+---
+
+This is the documentation of **v1**, kept online for sites that have not migrated yet. Use the version switcher in the header to read the current documentation.
+
+:::warning
+v1 only receives security fixes. New features land in v2.
+:::
+
+## Differences with v2
+
+| Topic          | v1                          | v2                                   |
+| -------------- | --------------------------- | ------------------------------------ |
+| Astro          | Astro 6                     | Astro 7, with the Sätteri pipeline   |
+| Search         | Not included                | Built in, with Pagefind              |
+| Languages      | One per site                | Several, with fallback               |
+| Markdown views | Not included                | `llms.txt` and a `.md` for each page |
+
+## Upgrading
+
+<Steps>
+  <Step>
+    ### Update the dependencies
+
+    Move to Astro 7 and the latest ZenithDocs.
+  </Step>
+  <Step>
+    ### Rename the collections
+
+    v1 read a single `content` collection. v2 reads `docs` and `meta`.
+  </Step>
+  <Step>
+    ### Check your theme
+
+    Custom CSS that targeted the old class names needs updating.
+  </Step>
+</Steps>

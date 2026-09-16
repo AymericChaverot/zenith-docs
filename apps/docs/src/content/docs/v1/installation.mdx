@@ -1,0 +1,43 @@
+---
+title: Installation
+description: Install ZenithDocs v1 in an Astro 6 project.
+icon: zap
+---
+
+:::warning
+These instructions are for **v1**. For a new project, follow the [current installation guide](/installation/).
+:::
+
+<Steps>
+
+### Install the package
+
+```sh
+npm install zenith-docs@1
+```
+
+### Add the integration
+
+```js title="astro.config.mjs"
+import { defineConfig } from 'astro/config';
+import zenith from 'zenith-docs';
+
+export default defineConfig({
+  integrations: [zenith({ title: 'My Docs' })],
+});
+```
+
+### Define the collection
+
+v1 reads a single `content` collection:
+
+```ts title="src/content/config.ts"
+import { defineCollection } from 'astro:content';
+import { docsSchema } from 'zenith-docs/schema';
+
+export const collections = {
+  content: defineCollection({ schema: docsSchema() }),
+};
+```
+
+</Steps>
