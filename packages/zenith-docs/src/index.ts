@@ -38,6 +38,13 @@ export default function zenith(userConfig: ZenithUserConfig): AstroIntegration {
     );
   }
 
+  if (config.versions && !('root' in config.versions)) {
+    throw new AstroError(
+      'Missing `root` version',
+      'The `versions` option needs a `root` entry: it is the current version, served without a URL prefix.',
+    );
+  }
+
   const unknown = Object.keys(config.components).filter(
     (name) => !(OVERRIDABLE_COMPONENTS as readonly string[]).includes(name),
   );
