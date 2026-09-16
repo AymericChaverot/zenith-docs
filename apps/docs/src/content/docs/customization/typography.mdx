@@ -6,25 +6,34 @@ icon: tag
 
 import FontPicker from '../../../components/FontPicker.astro';
 
-ZenithDocs self-hosts its fonts through the Astro Fonts API: nothing is fetched from a third party at runtime, and no layout shift is paid for it.
+ZenithDocs self-hosts its fonts through the Astro Fonts API: nothing is fetched from a third party at runtime, and no layout shift is paid for it. Seven presets are available through the `fonts` option, and only the one you pick is downloaded.
 
-## Try a pairing
+```js title="astro.config.mjs"
+zenith({
+  title: 'My Docs',
+  fonts: 'literata', // [!code highlight]
+});
+```
 
-The buttons below swap the fonts of this whole page, chrome included, so you can judge a pairing in place rather than on a specimen sheet. Scroll around after switching.
+## Try a preset
+
+The buttons below swap the fonts of this whole page, chrome included, so you can judge a preset in place rather than on a specimen sheet. Scroll around after switching.
 
 <FontPicker />
 
-| Pairing              | Headings           | Body               | Code            |
-| -------------------- | ------------------ | ------------------ | --------------- |
-| **Geist**            | Geist              | Geist              | Geist Mono      |
-| **Instrument**       | Instrument Serif   | Instrument Sans    | Martian Mono    |
-| **Newsreader + Onest** | Newsreader       | Onest              | IBM Plex Mono   |
-| **Schibsted Grotesk**| Schibsted Grotesk  | Schibsted Grotesk  | JetBrains Mono  |
-| **Space Grotesk**    | Space Grotesk      | Space Grotesk      | Space Mono      |
-| **Atkinson**         | Atkinson Hyperlegible | Atkinson Hyperlegible | JetBrains Mono |
-| **Literata**         | Literata           | Literata           | IBM Plex Mono   |
+They work by setting `--font-body`, `--font-mono` and `--font-display`, which is exactly what you would write in a `customCss` file to use a family of your own.
 
-The pairings with a serif use it for `h1` and `h2` only. Lumos keeps one family token per heading level, so `h3` and below stay on the body font, where a high-contrast serif would become hard to read at small sizes.
+| Preset         | Headings              | Body                  | Code            |
+| -------------- | --------------------- | --------------------- | --------------- |
+| `instrument`   | Instrument Serif      | Instrument Sans       | Martian Mono    |
+| `geist`        | Geist                 | Geist                 | Geist Mono      |
+| `newsreader`   | Newsreader            | Onest                 | IBM Plex Mono   |
+| `schibsted`    | Schibsted Grotesk     | Schibsted Grotesk     | JetBrains Mono  |
+| `space`        | Space Grotesk         | Space Grotesk         | Space Mono      |
+| `atkinson`     | Atkinson Hyperlegible | Atkinson Hyperlegible | JetBrains Mono  |
+| `literata`     | Literata              | Literata              | IBM Plex Mono   |
+
+The presets with a serif use it for `h1` and `h2` only. Lumos keeps one family token per heading level, so `h3` and below stay on the body font, where a high-contrast serif would become hard to read at small sizes.
 
 ### A heading three, to judge the smaller sizes
 

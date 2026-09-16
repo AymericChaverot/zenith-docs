@@ -96,16 +96,21 @@ Light and dark themes are defined with the Lumos `theme-light` and `theme-dark` 
 
 ## Typography
 
-ZenithDocs self-hosts [Geist](https://vercel.com/font) and Geist Mono through the Astro Fonts API. Set `fonts: false` to use system fonts instead, or point the font tokens to your own families:
+ZenithDocs ships seven font presets, self-hosted through the Astro Fonts API. The default, `instrument`, sets Instrument Serif over Instrument Sans with Martian Mono for code. Pick another with the `fonts` option, and compare them on the [typography](/customization/typography/) page.
+
+Override the families with three tokens, whatever the preset:
 
 ```css
 :root {
   --font-body: 'Inter', system-ui, sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
+  --font-display: 'Playfair Display', serif;
   --h1-min: 32;
   --h1-max: 40;
 }
 ```
+
+`--font-display` is used by `h1` and `h2` only, and falls back to `--font-body` when a preset gives headings no voice of their own. Set `fonts: false` to ship no font at all and use the system stack.
 
 Heading sizes are fluid: they scale between their `-min` and `-max` values, in pixels, depending on the viewport width.
 
