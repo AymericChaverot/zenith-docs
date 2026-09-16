@@ -1,40 +1,55 @@
 # ZenithDocs
 
-Moteur de documentation statique, léger et thémable, basé sur [Astro](https://astro.build) et le système de tokens [Lumos](https://lumosframework.com).
+A static, lightweight and themeable documentation engine, built on [Astro](https://astro.build) and the [Lumos](https://lumosframework.com) design tokens.
 
-## Démarrer
+- **Static by design**: every page is prerendered to HTML and CSS. The sidebar, table of contents, accordions and file trees work without JavaScript.
+- **One command to start**: a config file and a folder of Markdown are enough, no Astro project required.
+- **Batteries included**: full-text search, internationalization, versioning, OpenAPI reference pages, `llms.txt`, and an Open Graph image for every page.
+- **Themeable**: packaged themes, seven font pairings, CSS tokens, component overrides and slots, and a theme builder to try it all.
 
-ZenithDocs n'est pas publié sur npm : il s'installe directement depuis ce dépôt, dont la racine est le paquet. Il faut Node.js 22.18 ou plus, et Git.
+## Getting started
+
+ZenithDocs is not published to the npm registry: it installs straight from this repository, whose root is the package. It needs Node.js 22.18 or later, and Git.
 
 ```sh
 npx github:AymericChaverot/zenith-docs create my-docs
 ```
 
-La commande pose quelques questions (dossier, titre, gabarit, thème) et peut installer les dépendances. C'est la même commande `zenith` que celle utilisée ensuite dans le projet (`zenith dev`, `zenith build`). Pour l'ajouter à un projet Astro existant :
+The command asks for a directory, a title, a template and a theme, and can install the dependencies. It is the same `zenith` command you then use in the project: `zenith dev`, `zenith build`, `zenith preview`.
+
+To add ZenithDocs to an existing Astro project instead:
 
 ```sh
 npm install github:AymericChaverot/zenith-docs
 ```
 
-Ajouter `#v0.1.0` (un tag) ou un hash de commit fige une version.
+Append a tag, such as `#v0.1.0`, or a commit hash to pin a version.
 
-## Structure
+## Documentation
+
+The documentation site lives in [`apps/docs`](apps/docs). It is built with ZenithDocs, and demonstrates every feature as it documents it.
+
+## Repository layout
 
 ```
-src/                   intégration Astro et CLI `zenith`
-test/                  tests unitaires
-apps/docs              documentation de ZenithDocs, construite avec ZenithDocs
-examples/zero-config   site sans configuration Astro, via la CLI
+src/                   Astro integration, components and the zenith CLI
+test/                  unit tests
+apps/docs              documentation site, built with ZenithDocs
+examples/zero-config   site with no Astro configuration, run by the CLI
 ```
 
-La racine est à la fois le paquet `zenith-docs` et la racine du workspace pnpm. Le champ `files` du `package.json` limite ce qui est installé à `src/`, ni la démo ni les exemples ne sont téléchargés.
+The root is both the `zenith-docs` package and the root of the pnpm workspace. The `files` field of `package.json` limits what gets installed to `src/`: neither the documentation site nor the examples are downloaded.
 
-## Développement
+## Development
 
 ```sh
 corepack pnpm install
-corepack pnpm dev      # site de démo
-corepack pnpm test     # tests unitaires
-corepack pnpm check    # vérification des types
-corepack pnpm build    # build statique de la démo
+corepack pnpm dev      # documentation site
+corepack pnpm test     # unit tests
+corepack pnpm check    # type checking
+corepack pnpm build    # static build of the documentation site
 ```
+
+## License
+
+[MIT](LICENSE)
