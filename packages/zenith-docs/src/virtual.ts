@@ -6,6 +6,7 @@ import type { ZenithConfig } from './config';
 export const OVERRIDABLE_COMPONENTS = [
   'Head',
   'Header',
+  'LocaleSwitcher',
   'Search',
   'Sidebar',
   'TableOfContents',

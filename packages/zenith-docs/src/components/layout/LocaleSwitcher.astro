@@ -1,0 +1,32 @@
+---
+import Icon from '../Icon.astro';
+
+const { alternates, locale, t } = Astro.locals.zenith;
+---
+
+{
+  alternates.length > 1 && (
+    <details class="zd-locales">
+      <summary aria-label={t['locale.label']}>
+        <Icon name="languages" size={16} />
+        <span class="zd-locales-current">{locale.label}</span>
+        <Icon name="chevron" size={13} class="zd-chevron" />
+      </summary>
+      <ul class="zd-locales-list">
+        {alternates.map(({ locale: other, url }) => (
+          <li>
+            <a
+              class="zd-locales-link"
+              href={url}
+              hreflang={other.lang}
+              lang={other.lang}
+              aria-current={other.key === locale.key ? 'true' : undefined}
+            >
+              {other.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </details>
+  )
+}
