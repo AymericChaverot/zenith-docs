@@ -13,17 +13,17 @@ One command creates a ready-to-run project:
 <Tabs items={['npm', 'pnpm']} groupId="package-manager" persist>
   <Tab value="npm">
     ```sh
-    npx github:AymericChaverot/zenith-docs#create my-docs
+    npx github:AymericChaverot/zenith-docs create my-docs
     ```
   </Tab>
   <Tab value="pnpm">
     ```sh
-    pnpm dlx github:AymericChaverot/zenith-docs#create my-docs
+    pnpm dlx --allow-build=esbuild github:AymericChaverot/zenith-docs create my-docs
     ```
   </Tab>
 </Tabs>
 
-`#create` is a branch of the repository holding the project generator alone, kept up to date from `main` on every push.
+It is the same `zenith` command you then use in the project, run straight from GitHub. The first run downloads ZenithDocs and Astro, which can take a minute on a machine that has never installed them; later runs come from the cache. pnpm needs `--allow-build=esbuild` because it blocks install scripts that you have not approved.
 
 | Template              | What you get                                                                  |
 | --------------------- | ----------------------------------------------------------------------------- |
@@ -59,17 +59,17 @@ ZenithDocs is an Astro integration, so an existing project only needs a few step
 <Tabs items={['npm', 'pnpm']} groupId="package-manager" persist>
   <Tab value="npm">
     ```sh
-    npm install github:AymericChaverot/zenith-docs#zenith-docs
+    npm install github:AymericChaverot/zenith-docs
     ```
   </Tab>
   <Tab value="pnpm">
     ```sh
-    pnpm add github:AymericChaverot/zenith-docs#zenith-docs
+    pnpm add github:AymericChaverot/zenith-docs
     ```
   </Tab>
 </Tabs>
 
-The `zenith-docs` branch holds the package alone. Point at a commit instead of the branch, as in `#zenith-docs` replaced by `#<sha>`, to pin a version.
+This follows the `main` branch. Add a tag or a commit to pin a version, as in `github:AymericChaverot/zenith-docs#v0.1.0`.
 
 ### Add the integration
 
