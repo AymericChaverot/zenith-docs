@@ -1,0 +1,54 @@
+---
+title: Slots
+description: Add components at fixed places of the layout, without replacing anything.
+icon: component
+---
+
+[Component overrides](/customization/overrides/) replace a whole piece of the layout. Most of the time you only want to add something: an announcement above the header, a link at the bottom of the sidebar, a feedback prompt under each page. Slots do that, and keep every built-in component in place.
+
+```js title="astro.config.mjs"
+zenith({
+  title: 'My Docs',
+  slots: {
+    banner: './src/components/Announcement.astro',
+    sidebarBottom: ['./src/components/Sponsor.astro', './src/components/Status.astro'],
+  },
+});
+```
+
+A slot takes one component, or several rendered in order. The link at the bottom of this sidebar is one.
+
+## Available slots
+
+| Slot            | Where                                                  |
+| --------------- | ------------------------------------------------------ |
+| `head`          | At the end of `<head>`, for extra meta tags or scripts |
+| `banner`        | Above the header, across the whole page                |
+| `headerEnd`     | After the last action of the header                    |
+| `sidebarTop`    | Above the page tree, below the section tabs            |
+| `sidebarBottom` | Below the page tree                                    |
+| `contentBefore` | Between the title and the content of the page          |
+| `contentAfter`  | After the content, before the page footer              |
+| `tocAfter`      | Under the table of contents, on wide screens           |
+| `footer`        | Below everything                                       |
+
+An empty slot renders nothing at all, not even a wrapper. Content injected before and after the page is kept out of the search index, so a banner or a prompt never shows up in results.
+
+## Writing a slot component
+
+A slot component is a plain Astro component. It has access to everything ZenithDocs knows about the current page through `Astro.locals.zenith`: its title, URL, language, version, and the interface strings.
+
+```astro title="src/components/Feedback.astro"
+---
+const { title, editUrl } = Astro.locals.zenith;
+---
+
+<p class="feedback">
+  Something wrong on “{title}”?
+  {editUrl && <a href={editUrl}>Suggest a change</a>}
+</p>
+```
+
+:::note
+Slots live inside the built-in components. If you [override](/customization/overrides/) the `Header` or the `Sidebar`, the slots they contain go with them: render `InjectionPoint` from `zenith-docs/components/layout/InjectionPoint.astro` in your own component to keep them.
+:::

@@ -1,4 +1,4 @@
 {
   "title": "Customization",
-  "pages": ["theming", "typography", "builder", "overrides"]
+  "pages": ["theming", "typography", "builder", "overrides", "slots"]
 }
