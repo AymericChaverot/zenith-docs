@@ -1,0 +1,14 @@
+{
+  "name": "zero-config-example",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "zenith dev",
+    "build": "zenith build",
+    "preview": "zenith preview"
+  },
+  "dependencies": {
+    "astro": "^7.3.2",
+    "zenith-docs": "workspace:*"
+  }
+}
