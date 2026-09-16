@@ -1,0 +1,76 @@
+---
+import { Font } from 'astro:assets';
+
+/**
+ * Families of the presets this site does not ship, loaded only by the pages that
+ * preview them. Instrument and Martian Mono already come from the `fonts` option.
+ *
+ * Setting `data-fonts-preview` on the root element swaps the three override tokens,
+ * exactly as a `customCss` file would.
+ */
+const families = [
+  '--font-geist',
+  '--font-geist-mono',
+  '--font-newsreader',
+  '--font-onest',
+  '--font-ibm-plex-mono',
+  '--font-schibsted-grotesk',
+  '--font-jetbrains-mono',
+  '--font-space-grotesk',
+  '--font-space-mono',
+  '--font-atkinson',
+  '--font-literata',
+];
+---
+
+{families.map((family) => <Font cssVariable={family as never} />)}
+
+<style is:global>
+  :root[data-fonts-preview='geist'] {
+    --font-body: var(--font-geist);
+    --font-mono: var(--font-geist-mono);
+    --font-display: var(--font-geist);
+    --h1-font-weight: 600;
+    --h2-font-weight: 600;
+  }
+
+  :root[data-fonts-preview='newsreader'] {
+    --font-body: var(--font-onest);
+    --font-mono: var(--font-ibm-plex-mono);
+    --font-display: var(--font-newsreader);
+    --h1-font-weight: 600;
+    --h2-font-weight: 600;
+  }
+
+  :root[data-fonts-preview='schibsted'] {
+    --font-body: var(--font-schibsted-grotesk);
+    --font-mono: var(--font-jetbrains-mono);
+    --font-display: var(--font-schibsted-grotesk);
+    --h1-font-weight: 600;
+    --h2-font-weight: 600;
+  }
+
+  :root[data-fonts-preview='space'] {
+    --font-body: var(--font-space-grotesk);
+    --font-mono: var(--font-space-mono);
+    --font-display: var(--font-space-grotesk);
+    --h1-font-weight: 600;
+    --h2-font-weight: 600;
+  }
+
+  :root[data-fonts-preview='atkinson'] {
+    --font-body: var(--font-atkinson);
+    --font-mono: var(--font-jetbrains-mono);
+    --font-display: var(--font-atkinson);
+    --h1-font-weight: 700;
+    --h2-font-weight: 700;
+  }
+
+  :root[data-fonts-preview='literata'] {
+    --font-body: var(--font-literata);
+    --font-mono: var(--font-ibm-plex-mono);
+    --font-display: var(--font-literata);
+    --h1-font-weight: 600;
+    --h2-font-weight: 600;
+  }
+</style>
