@@ -26,6 +26,15 @@ const families = [
 {families.map((family) => <Font cssVariable={family as never} />)}
 
 <style is:global>
+  /* The site runs Instrument, whose headings are sized up: previews use the standard scale. */
+  :root[data-fonts-preview] {
+    --h1-min: calc(36 * var(--zd-heading-scale));
+    --h1-max: calc(44 * var(--zd-heading-scale));
+    --h2-min: calc(26 * var(--zd-heading-scale));
+    --h2-max: calc(30 * var(--zd-heading-scale));
+    --h1-letter-spacing: normal;
+  }
+
   :root[data-fonts-preview='geist'] {
     --font-body: var(--font-geist);
     --font-mono: var(--font-geist-mono);
