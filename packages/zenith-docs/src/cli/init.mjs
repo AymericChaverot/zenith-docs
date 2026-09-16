@@ -1,6 +1,6 @@
 import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
 import { basename, join } from 'node:path';
-import { DEFAULT_DOCS_DIR } from './project.ts';
+import { DEFAULT_DOCS_DIR } from './project.mjs';
 
 const CONFIG = `import { defineConfig } from 'zenith-docs/config';
 
@@ -17,9 +17,14 @@ description: The first page of the documentation.
 Welcome. Edit \`${DEFAULT_DOCS_DIR}/index.md\` to change this page, and add more files next to it.
 `;
 
-/** Creates a config file and a first page, leaving anything that already exists alone. */
-export function init(root: string): void {
-  const written: string[] = [];
+/**
+ * Creates a config file and a first page, leaving anything that already exists alone.
+ *
+ * @param {string} root
+ */
+export function init(root) {
+  /** @type {string[]} */
+  const written = [];
   const config = join(root, 'zenith.config.ts');
 
   if (!existsSync(config)) {
@@ -42,11 +47,15 @@ export function init(root: string): void {
   );
 }
 
-/** `my-great-docs` reads better as `My Great Docs`. */
-function titleOf(root: string): string {
+/**
+ * `my-great-docs` reads better as `My Great Docs`.
+ *
+ * @param {string} root
+ */
+function titleOf(root) {
   return basename(root)
     .split(/[-_\s]+/)
     .filter(Boolean)
-    .map((word) => word[0]?.toUpperCase() + word.slice(1))
+    .map((word) => word[0].toUpperCase() + word.slice(1))
     .join(' ');
 }

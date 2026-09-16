@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 import { readFileSync } from 'node:fs';
 import { parseArgs } from 'node:util';
-import { init } from './init.ts';
-import { generateProject, loadProject } from './project.ts';
+import { init } from './init.mjs';
+import { generateProject, loadProject } from './project.mjs';
 
 const HELP = `zenith — documentation sites, without a build to configure
 
@@ -23,7 +23,8 @@ Options
   -v, --version         Show the version
 `;
 
-async function main(argv: string[]) {
+/** @param {string[]} argv */
+async function main(argv) {
   const { values, positionals } = parseArgs({
     args: argv,
     allowPositionals: true,
@@ -40,8 +41,7 @@ async function main(argv: string[]) {
 
   if (values.version) {
     const manifest = new URL('../../package.json', import.meta.url);
-    const { version } = JSON.parse(readFileSync(manifest, 'utf8')) as { version: string };
-    console.log(version);
+    console.log(JSON.parse(readFileSync(manifest, 'utf8')).version);
     return;
   }
 
@@ -78,7 +78,7 @@ async function main(argv: string[]) {
   else await astro.preview(inline);
 }
 
-main(process.argv.slice(2)).catch((error: unknown) => {
+main(process.argv.slice(2)).catch((error) => {
   console.error(`\n${error instanceof Error ? error.message : String(error)}\n`);
   process.exit(1);
 });
