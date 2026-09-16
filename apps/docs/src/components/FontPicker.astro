@@ -1,11 +1,13 @@
 ---
 import { Font } from 'astro:assets';
 
-/** Families loaded only on this page, so the rest of the site keeps its two fonts. */
+/**
+ * Families of the presets this site does not use, loaded only by this page.
+ * Instrument and Martian Mono already come from the `fonts` option.
+ */
 const families = [
-  '--font-instrument-sans',
-  '--font-instrument-serif',
-  '--font-martian-mono',
+  '--font-geist',
+  '--font-geist-mono',
   '--font-newsreader',
   '--font-onest',
   '--font-ibm-plex-mono',
@@ -17,22 +19,22 @@ const families = [
   '--font-literata',
 ];
 
-const pairings = [
-  { key: 'geist', label: 'Geist', note: 'Current' },
-  { key: 'editorial', label: 'Instrument', note: 'Serif headings' },
-  { key: 'warm', label: 'Newsreader + Onest', note: 'Warm' },
-  { key: 'grotesque', label: 'Schibsted Grotesk', note: 'Neutral' },
-  { key: 'technical', label: 'Space Grotesk', note: 'Technical' },
-  { key: 'accessible', label: 'Atkinson', note: 'Legibility' },
-  { key: 'reading', label: 'Literata', note: 'Serif body' },
+const presets = [
+  { key: 'instrument', label: 'Instrument', note: 'Default' },
+  { key: 'geist', label: 'Geist', note: 'Neutral' },
+  { key: 'newsreader', label: 'Newsreader + Onest', note: 'Warm' },
+  { key: 'schibsted', label: 'Schibsted Grotesk', note: 'Sober' },
+  { key: 'space', label: 'Space Grotesk', note: 'Technical' },
+  { key: 'atkinson', label: 'Atkinson', note: 'Legibility' },
+  { key: 'literata', label: 'Literata', note: 'Serif body' },
 ];
 ---
 
 {families.map((family) => <Font cssVariable={family as never} />)}
 
-<div class="font-picker" role="group" aria-label="Font pairing">
+<div class="font-picker" role="group" aria-label="Font preset">
   {
-    pairings.map(({ key, label, note }) => (
+    presets.map(({ key, label, note }) => (
       <button type="button" data-font-choice={key}>
         <span class="font-label">{label}</span>
         <span class="font-note">{note}</span>
@@ -43,15 +45,19 @@ const pairings = [
 
 <script>
   const buttons = document.querySelectorAll<HTMLButtonElement>('[data-font-choice]');
+  const root = document.documentElement;
   const sync = () => {
-    const current = document.documentElement.dataset.fonts ?? 'geist';
+    const current = root.dataset.fontsPreview ?? root.dataset.fonts ?? 'instrument';
     for (const button of buttons) {
       button.ariaPressed = String(button.dataset.fontChoice === current);
     }
   };
   for (const button of buttons) {
     button.addEventListener('click', () => {
-      document.documentElement.dataset.fonts = button.dataset.fontChoice;
+      const choice = button.dataset.fontChoice;
+      // The preset of the site needs no override, the others set the same tokens you would.
+      if (choice === root.dataset.fonts) delete root.dataset.fontsPreview;
+      else root.dataset.fontsPreview = choice;
       sync();
     });
   }
@@ -94,46 +100,54 @@ const pairings = [
   }
 
   /*
-   * Each pairing sets the body and code families, and the big headings when it
-   * wants a different voice for them. Lumos keeps one family token per heading
-   * level, so h3 and below stay on the body font and remain readable.
+   * Each preview sets the three override tokens, exactly as a `customCss` file would.
+   * These rules are unlayered, so they win over the preset of the site.
    */
-  :root[data-fonts='editorial'] {
-    --font-body: var(--font-instrument-sans);
-    --font-mono: var(--font-martian-mono);
-    --display-font-family: var(--font-instrument-serif);
-    --h1-font-family: var(--font-instrument-serif);
-    --h2-font-family: var(--font-instrument-serif);
-    /* Instrument Serif ships a single weight */
-    --h1-font-weight: 400;
-    --h2-font-weight: 400;
+  :root[data-fonts-preview='geist'] {
+    --font-body: var(--font-geist);
+    --font-mono: var(--font-geist-mono);
+    --font-display: var(--font-geist);
+    --h1-font-weight: 600;
+    --h2-font-weight: 600;
   }
 
-  :root[data-fonts='warm'] {
+  :root[data-fonts-preview='newsreader'] {
     --font-body: var(--font-onest);
     --font-mono: var(--font-ibm-plex-mono);
-    --display-font-family: var(--font-newsreader);
-    --h1-font-family: var(--font-newsreader);
-    --h2-font-family: var(--font-newsreader);
+    --font-display: var(--font-newsreader);
+    --h1-font-weight: 600;
+    --h2-font-weight: 600;
   }
 
-  :root[data-fonts='grotesque'] {
+  :root[data-fonts-preview='schibsted'] {
     --font-body: var(--font-schibsted-grotesk);
     --font-mono: var(--font-jetbrains-mono);
+    --font-display: var(--font-schibsted-grotesk);
+    --h1-font-weight: 600;
+    --h2-font-weight: 600;
   }
 
-  :root[data-fonts='technical'] {
+  :root[data-fonts-preview='space'] {
     --font-body: var(--font-space-grotesk);
     --font-mono: var(--font-space-mono);
+    --font-display: var(--font-space-grotesk);
+    --h1-font-weight: 600;
+    --h2-font-weight: 600;
   }
 
-  :root[data-fonts='accessible'] {
+  :root[data-fonts-preview='atkinson'] {
     --font-body: var(--font-atkinson);
     --font-mono: var(--font-jetbrains-mono);
+    --font-display: var(--font-atkinson);
+    --h1-font-weight: 700;
+    --h2-font-weight: 700;
   }
 
-  :root[data-fonts='reading'] {
+  :root[data-fonts-preview='literata'] {
     --font-body: var(--font-literata);
     --font-mono: var(--font-ibm-plex-mono);
+    --font-display: var(--font-literata);
+    --h1-font-weight: 600;
+    --h2-font-weight: 600;
   }
 </style>
