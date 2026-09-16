@@ -4,7 +4,28 @@ description: Restyle ZenithDocs with CSS custom properties.
 icon: palette
 ---
 
-ZenithDocs styles are built on the design tokens of [Lumos](https://lumosframework.com). Changing a handful of custom properties is enough to make the site yours.
+ZenithDocs styles are built on the design tokens of [Lumos](https://lumosframework.com). Changing a handful of custom properties is enough to make the site yours. To try everything below at once and leave with the files to paste, use the [theme builder](/customization/builder/).
+
+## Packaged themes
+
+A theme sets an accent, a backdrop and a font preset that go together, and a few tokens of its own, such as corner radii.
+
+```js title="astro.config.mjs"
+zenith({
+  title: 'My Docs',
+  theme: 'paper', // [!code highlight]
+});
+```
+
+| Theme      | Accent  | Backdrop | Fonts        | Also                                   |
+| ---------- | ------- | -------- | ------------ | -------------------------------------- |
+| `zenith`   | emerald | dither   | `instrument` | The defaults, named                    |
+| `slate`    | neutral | grid     | `schibsted`  | Squarer corners                        |
+| `terminal` | teal    | grain    | `space`      | Sharp corners, thinner scrollbars      |
+| `paper`    | amber   | none     | `literata`   | Rounder corners, narrower reading width |
+| `aurora`   | violet  | aurora   | `geist`      | Rounder corners                        |
+
+A theme only fills in what you leave unset: `theme: 'paper', accent: 'rose'` keeps everything from Paper except the accent. Its other tokens can be overridden in a `customCss` file like any other.
 
 ## Accent presets
 
