@@ -11,6 +11,8 @@ declare module 'virtual:zenith/config' {
 declare module 'virtual:zenith/project' {
   /** Absolute path of the Astro project root, with forward slashes. */
   export const root: string;
+  /** Shiki themes of the site, used to highlight code outside the Markdown pipeline. */
+  export const shikiThemes: Record<string, string>;
 }
 
 declare module 'virtual:zenith/og-assets' {

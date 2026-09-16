@@ -1,0 +1,19 @@
+---
+import { Code } from 'astro:components';
+import { shikiThemes } from 'virtual:zenith/project';
+
+interface Props {
+  code: string;
+  lang?: string;
+  title?: string;
+}
+
+const { code, lang = 'bash', title } = Astro.props;
+const { t } = Astro.locals.zenith;
+---
+
+<figure class:list={['zd-code', title && 'zd-code-titled']}>
+  {title && <figcaption class="zd-code-title">{title}</figcaption>}
+  <Code code={code} lang={lang as never} themes={shikiThemes} defaultColor={false} />
+  <button type="button" class="zd-copy" aria-label={t['code.copy']} data-copy></button>
+</figure>

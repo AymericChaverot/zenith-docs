@@ -66,14 +66,19 @@ function ogAssets(): string {
 export const wasm = ${JSON.stringify(wasm)};`;
 }
 
-export function vitePluginZenith(config: ZenithConfig, root: URL) {
+export function vitePluginZenith(
+  config: ZenithConfig,
+  root: URL,
+  shikiThemes: Record<string, string> = {},
+) {
   const rootPath = fileURLToPath(root);
   const resolveFromRoot = (path: string) =>
     path.startsWith('.') || path.startsWith('/') ? toPosix(resolve(rootPath, path)) : path;
 
   const modules: Record<string, string> = {
     'virtual:zenith/config': `export default ${JSON.stringify(config)};`,
-    'virtual:zenith/project': `export const root = ${JSON.stringify(toPosix(rootPath))};`,
+    'virtual:zenith/project': `export const root = ${JSON.stringify(toPosix(rootPath))};
+export const shikiThemes = ${JSON.stringify(shikiThemes)};`,
     'virtual:zenith/user-css': config.customCss
       .map((path) => `import ${JSON.stringify(resolveFromRoot(path))};`)
       .join('\n'),

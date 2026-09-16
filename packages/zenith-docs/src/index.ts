@@ -137,6 +137,11 @@ export default function zenith(userConfig: ZenithUserConfig): AstroIntegration {
 
         const { shikiConfig } = astroConfig.markdown;
         const hasUserThemes = Object.keys(shikiConfig.themes ?? {}).length > 0;
+        // API samples are highlighted outside the Markdown pipeline, with the same themes.
+        const shikiThemes = hasUserThemes
+          ? (shikiConfig.themes as Record<string, string>)
+          : { light: 'vitesse-light', dark: 'vitesse-dark' };
+
         updateConfig({
           markdown: {
             shikiConfig: {
@@ -168,7 +173,7 @@ export default function zenith(userConfig: ZenithUserConfig): AstroIntegration {
               ]
             : [],
           vite: {
-            plugins: [vitePluginZenith(resolvedConfig, astroConfig.root)],
+            plugins: [vitePluginZenith(resolvedConfig, astroConfig.root, shikiThemes)],
           },
         });
       },
