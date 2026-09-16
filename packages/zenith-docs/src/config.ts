@@ -56,8 +56,8 @@ export const ZenithConfigSchema = z.object({
         'horizon-glow',
       ]),
     ])
-    .default('aurora')
-    .transform((value) => (value === true ? 'aurora' : value === false ? 'none' : value)),
+    .default('dither')
+    .transform((value) => (value === true ? 'dither' : value === false ? 'none' : value)),
   /** Side the backdrop is anchored to. */
   backdropPosition: z.enum(['left', 'center', 'right']).default('left'),
   /** Self-host Geist and Geist Mono. Set to `false` to use system fonts. */
@@ -107,5 +107,16 @@ export const ZenithConfigSchema = z.object({
   components: z.record(z.string(), z.string()).default({}),
 });
 
-export type ZenithUserConfig = z.input<typeof ZenithConfigSchema>;
 export type ZenithConfig = z.output<typeof ZenithConfigSchema>;
+
+export type ZenithUserConfig = z.input<typeof ZenithConfigSchema> & {
+  /** Deployed URL, used for canonical links, the sitemap and social images. CLI only. */
+  site?: string;
+  /** Path the site is served from, such as `/docs`. CLI only. */
+  base?: string;
+};
+
+/** Identity function that types a `zenith.config.ts` file. */
+export function defineConfig(config: ZenithUserConfig): ZenithUserConfig {
+  return config;
+}
