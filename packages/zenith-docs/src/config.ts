@@ -35,6 +35,8 @@ export const ZenithConfigSchema = z.object({
   llms: z.boolean().default(true),
   /** Generate an Open Graph image for every page, shown when a link is shared. */
   og: z.boolean().default(true),
+  /** OpenAPI specs rendered by `<APIPage>`, keyed by name, as paths from the project root. */
+  openapi: z.record(z.string(), z.string()).default({}),
   /** Accent color preset. Use `customCss` for anything else. */
   accent: z.enum(['emerald', 'teal', 'amber', 'rose', 'violet', 'neutral']).default('emerald'),
   /** Decorative background at the top of pages. `true` means `aurora`, `false` means `none`. */
