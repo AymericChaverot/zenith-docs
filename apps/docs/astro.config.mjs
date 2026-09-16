@@ -3,6 +3,7 @@ import { defineConfig } from 'astro/config';
 import zenith from 'zenith-docs';
 
 export default defineConfig({
+  site: 'https://zenith-docs.dev',
   integrations: [
     zenith({
       title: 'ZenithDocs',
