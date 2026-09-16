@@ -1,7 +1,7 @@
 ---
 title: ZenithDocs
 description: A static, lightweight and themeable documentation engine built on Astro and Lumos.
-icon: rocket
+icon: home
 ---
 
 ZenithDocs turns a folder of Markdown and MDX files into a fast documentation site. Every page is prerendered to plain HTML and CSS, and JavaScript is only shipped for the few interactions that need it.
@@ -10,14 +10,50 @@ ZenithDocs turns a folder of Markdown and MDX files into a fast documentation si
   <Card title="Installation" href="/installation/" icon="zap">
     Add ZenithDocs to an Astro project in a couple of minutes.
   </Card>
+  <Card title="Project structure" href="/project-structure/" icon="folder">
+    Where pages live and how they become URLs.
+  </Card>
   <Card title="Writing content" href="/writing/markdown/" icon="file">
     Markdown, code blocks and built-in components.
   </Card>
+  <Card title="Reference" href="/reference/" icon="book">
+    Every option, frontmatter field and icon name.
+  </Card>
+</Cards>
+
+## Features
+
+Each one is documented on its own page, and used by this site.
+
+<Cards>
+  <Card title="Search" href="/search/" icon="search">
+    A static index built with Pagefind, loaded only when the dialog opens.
+  </Card>
+  <Card title="Internationalization" href="/i18n/" icon="languages">
+    One directory per language, with a fallback for untranslated pages.
+  </Card>
+  <Card title="Versioning" href="/versioning/" icon="layers">
+    Keep older releases online, each with its own navigation.
+  </Card>
+  <Card title="OpenAPI" href="/openapi/" icon="braces">
+    API reference pages rendered from a spec at build time.
+  </Card>
+  <Card title="LLMs and AI tools" href="/llms/" icon="sparkles">
+    `llms.txt`, `llms-full.txt` and a Markdown version of every page.
+  </Card>
+  <Card title="Open Graph images" href="/open-graph/" icon="image">
+    A social preview image generated for every page.
+  </Card>
+</Cards>
+
+## Customization
+
+<Cards>
   <Card title="Theming" href="/customization/theming/" icon="palette">
     Restyle everything with a handful of CSS custom properties.
   </Card>
-  <Card title="Reference" href="/reference/" icon="settings">
-    Every configuration option and frontmatter field.
+  <Card title="Component overrides" href="/customization/overrides/" icon="settings">
+    Replace the header, the sidebar or any other piece of the layout.
   </Card>
 </Cards>
 
@@ -31,7 +67,7 @@ Big documentation frameworks come with a lot of features, and often a lot of Jav
 - **Built on Astro 7**: Markdown goes through the Rust-based Sätteri pipeline and code is highlighted at build time with Shiki.
 
 :::tip[Dogfooding]
-This site is built with ZenithDocs. Browse its source in `apps/docs` to see how it is put together.
+This site is built with ZenithDocs, and demonstrates every feature as it documents it. Browse its source in `apps/docs` to see how it is put together, and the [kitchen sink](/writing/kitchen-sink/) for every component on one page.
 :::
 
 ## JavaScript budget
@@ -43,3 +79,5 @@ This site is built with ZenithDocs. Browse its source in `apps/docs` to see how 
 | Copy code button      | A tiny inline script                 |
 | Table of contents     | A small scroll-spy module            |
 | Tabs                  | A small web component, only if used  |
+| Search                | Pagefind, fetched when you open it   |
+| API reference         | None beyond the tabs above           |
