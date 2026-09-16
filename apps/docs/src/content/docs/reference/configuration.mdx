@@ -1,22 +1,46 @@
 ---
 title: Configuration
-description: Options of the ZenithDocs integration.
+description: Every option of ZenithDocs, for the integration and the CLI.
 icon: sliders
 ---
 
-Options are passed to the integration in `astro.config.mjs`.
+The same options work in both setups: passed to the integration in `astro.config.mjs`, or exported from `zenith.config.ts` with the [CLI](/cli/). Paths are relative to the project root either way.
 
-```js title="astro.config.mjs"
-zenith({
-  title: 'My Docs',
-  description: 'Documentation for my project.',
-  logo: { src: './src/assets/logo.svg' },
-  accent: 'violet',
-  github: 'https://github.com/me/my-project',
-  editLink: { baseUrl: 'https://github.com/me/my-project/edit/main/' },
-  lastUpdated: true,
-});
-```
+<Tabs items={['Integration', 'CLI']} groupId="setup" persist>
+  <Tab value="Integration">
+    ```js title="astro.config.mjs"
+    import { defineConfig } from 'astro/config';
+    import zenith from 'zenith-docs';
+
+    export default defineConfig({
+      site: 'https://docs.example.com',
+      integrations: [
+        zenith({
+          title: 'My Docs',
+          description: 'Documentation for my project.',
+          github: 'https://github.com/me/my-project',
+          editLink: { baseUrl: 'https://github.com/me/my-project/edit/main/' },
+        }),
+      ],
+    });
+    ```
+  </Tab>
+  <Tab value="CLI">
+    ```ts title="zenith.config.ts"
+    import { defineConfig } from 'zenith-docs/config';
+
+    export default defineConfig({
+      site: 'https://docs.example.com',
+      title: 'My Docs',
+      description: 'Documentation for my project.',
+      github: 'https://github.com/me/my-project',
+      editLink: { baseUrl: 'https://github.com/me/my-project/edit/main/' },
+    });
+    ```
+  </Tab>
+</Tabs>
+
+The rest of this documentation shows options in their integration form, `zenith({ … })`. With the CLI, write the same keys in `zenith.config.ts`.
 
 ## Site
 
@@ -25,6 +49,18 @@ zenith({
 **Type:** `string` (required)
 
 The site name, shown in the header and appended to page titles.
+
+### `site`
+
+**Type:** `string` · CLI only
+
+The URL the site is deployed at, such as `https://docs.example.com`. Canonical links, the sitemap, `llms.txt` and [Open Graph images](/open-graph/) need it to produce absolute URLs. With the integration, set Astro's own `site` option instead.
+
+### `base`
+
+**Type:** `string` · CLI only
+
+The path the site is served from, when it is not the root of the domain, such as `/docs`. With the integration, set Astro's own `base` option instead.
 
 ### `description`
 
@@ -41,6 +77,8 @@ A logo shown next to the title. `src` is either a path relative to the project r
 ### `favicon`
 
 **Type:** `string` · **Default:** `'/favicon.svg'`
+
+URL of the favicon, usually a file of `public/`.
 
 ### `lang`
 
@@ -84,13 +122,15 @@ Extra links shown in the header, and at the bottom of the sidebar on small scree
 
 ### `docsDir`
 
-**Type:** `string` · **Default:** `'src/content/docs'`
+**Type:** `string` · **Default:** `'src/content/docs'`, or `'content'` with the CLI
 
-Directory holding the content. Pass the same value to `docsLoader()` and `metaLoader()`.
+Directory holding the content, relative to the project root. With the integration, pass the same value to `docsLoader()` and `metaLoader()` as `base`.
 
 ### `tableOfContents`
 
 **Type:** `false | { minHeadingLevel?: number; maxHeadingLevel?: number }` · **Default:** `{ minHeadingLevel: 2, maxHeadingLevel: 3 }`
+
+Heading levels listed in the "On this page" column. `false` removes it from every page; the `toc` [frontmatter field](/reference/frontmatter/) does it for a single page.
 
 ### `search`
 
@@ -126,7 +166,7 @@ Adds an "Edit this page" link. The path of the file, relative to the project roo
 
 **Type:** `boolean` · **Default:** `false`
 
-Shows the date of the last commit that touched each page.
+Shows the date of the last commit that touched each page. The site has to be built from a git checkout with its history: a shallow clone, the default in many CI services, dates every page to the last commit.
 
 ## Customization
 
