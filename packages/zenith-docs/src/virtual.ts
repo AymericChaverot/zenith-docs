@@ -7,6 +7,7 @@ export const OVERRIDABLE_COMPONENTS = [
   'Head',
   'Header',
   'LocaleSwitcher',
+  'VersionSwitcher',
   'Search',
   'Sidebar',
   'TableOfContents',

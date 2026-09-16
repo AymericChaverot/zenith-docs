@@ -25,6 +25,7 @@ export const DEFAULT_TRANSLATIONS = {
   'page.home': 'Back to the homepage',
   'theme.toggle': 'Toggle dark mode',
   'locale.label': 'Language',
+  'version.label': 'Version',
   'code.copy': 'Copy code',
   'callout.note': 'Note',
   'callout.info': 'Info',

@@ -1,0 +1,31 @@
+---
+import Icon from '../Icon.astro';
+
+const { version, versionLinks, t } = Astro.locals.zenith;
+---
+
+{
+  versionLinks.length > 1 && (
+    <details class="zd-versions">
+      <summary aria-label={t['version.label']}>
+        <Icon name="layers" size={15} />
+        <span>{version.label}</span>
+        <Icon name="chevron" size={13} class="zd-chevron" />
+      </summary>
+      <ul class="zd-versions-list">
+        {versionLinks.map(({ version: other, url }) => (
+          <li>
+            <a
+              class="zd-versions-link"
+              href={url}
+              aria-current={other.key === version.key ? 'true' : undefined}
+            >
+              {other.label}
+              {other.badge && <span class="zd-version-badge">{other.badge}</span>}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </details>
+  )
+}

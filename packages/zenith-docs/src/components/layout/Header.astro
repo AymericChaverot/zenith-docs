@@ -1,5 +1,6 @@
 ---
 import LocaleSwitcher from 'virtual:zenith/components/LocaleSwitcher';
+import VersionSwitcher from 'virtual:zenith/components/VersionSwitcher';
 import Search from 'virtual:zenith/components/Search';
 import ThemeToggle from 'virtual:zenith/components/ThemeToggle';
 import Icon from '../Icon.astro';
@@ -49,6 +50,7 @@ const home = `${import.meta.env.BASE_URL}${locale.prefix}`;
   }
   <div class="zd-header-actions">
     <Search />
+    <VersionSwitcher />
     <LocaleSwitcher />
     {
       config.github && (
