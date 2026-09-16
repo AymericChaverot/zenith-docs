@@ -6,12 +6,16 @@ icon: home
 
 ZenithDocs turns a folder of Markdown and MDX files into a fast documentation site. Every page is prerendered to plain HTML and CSS, and JavaScript is only shipped for the few interactions that need it.
 
+```sh
+npx github:AymericChaverot/zenith-docs create my-docs
+```
+
 <Cards>
   <Card title="Installation" href="/installation/" icon="zap">
-    Add ZenithDocs to an Astro project in a couple of minutes.
+    Create a site with one command, or add ZenithDocs to an Astro project.
   </Card>
-  <Card title="Project structure" href="/project-structure/" icon="folder">
-    Where pages live and how they become URLs.
+  <Card title="CLI" href="/cli/" icon="terminal">
+    A config file and a folder of Markdown, no Astro project needed.
   </Card>
   <Card title="Writing content" href="/writing/markdown/" icon="file">
     Markdown, code blocks and built-in components.
@@ -50,10 +54,16 @@ Each one is documented on its own page, and used by this site.
 
 <Cards>
   <Card title="Theming" href="/customization/theming/" icon="palette">
-    Restyle everything with a handful of CSS custom properties.
+    Packaged themes, accents, backdrops and design tokens.
   </Card>
-  <Card title="Component overrides" href="/customization/overrides/" icon="settings">
-    Replace the header, the sidebar or any other piece of the layout.
+  <Card title="Typography" href="/customization/typography/" icon="type">
+    Seven font pairings, self-hosted, or fonts of your own.
+  </Card>
+  <Card title="Theme builder" href="/customization/builder/" icon="wand">
+    Try every option on a live page, and copy the result.
+  </Card>
+  <Card title="Overrides and slots" href="/customization/overrides/" icon="settings">
+    Add to the layout, or replace any piece of it.
   </Card>
 </Cards>
 
@@ -67,7 +77,7 @@ Big documentation frameworks come with a lot of features, and often a lot of Jav
 - **Built on Astro 7**: Markdown goes through the Rust-based Sätteri pipeline and code is highlighted at build time with Shiki.
 
 :::tip[Dogfooding]
-This site is built with ZenithDocs, and demonstrates every feature as it documents it. Browse its source in `apps/docs` to see how it is put together, and the [kitchen sink](/writing/kitchen-sink/) for every component on one page.
+This site is built with ZenithDocs, and demonstrates every feature as it documents it. Browse its source in [`apps/docs`](https://github.com/AymericChaverot/zenith-docs/tree/main/apps/docs) to see how it is put together, and the [kitchen sink](/writing/kitchen-sink/) for every component on one page.
 :::
 
 ## JavaScript budget
