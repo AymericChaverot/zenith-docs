@@ -5,6 +5,7 @@ A static, lightweight and themeable documentation engine, built on [Astro](https
 - **Static by design**: every page is prerendered to HTML and CSS. The sidebar, table of contents, accordions and file trees work without JavaScript.
 - **One command to start**: a config file and a folder of Markdown are enough, no Astro project required.
 - **Batteries included**: full-text search, internationalization, versioning, OpenAPI reference pages, `llms.txt`, and an Open Graph image for every page.
+- **Ready to ship**: a static build for any host, or a Dockerfile for an image of about 30 MB.
 - **Themeable**: packaged themes, seven font pairings, CSS tokens, component overrides and slots, and a theme builder to try it all.
 
 ## Getting started
@@ -23,11 +24,11 @@ To add ZenithDocs to an existing Astro project instead:
 npm install github:AymericChaverot/zenith-docs
 ```
 
-Append a tag, such as `#v0.1.0`, or a commit hash to pin a version.
+Append a release tag, such as `#v0.1.0`, to pin a version. Sites made with `create` are pinned to the release that created them.
 
 ## Documentation
 
-The documentation site lives in [`apps/docs`](apps/docs). It is built with ZenithDocs, and demonstrates every feature as it documents it.
+Read it at **[aymericchaverot.github.io/zenith-docs](https://aymericchaverot.github.io/zenith-docs/)**. The site lives in [`apps/docs`](apps/docs): it is built with ZenithDocs, and demonstrates every feature as it documents it.
 
 ## Repository layout
 
