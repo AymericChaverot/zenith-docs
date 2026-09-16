@@ -6,20 +6,28 @@ icon: home
 
 ZenithDocs transforme un dossier de fichiers Markdown et MDX en un site de documentation rapide. Chaque page est prérendue en HTML et CSS, et le JavaScript n'est envoyé que pour les rares interactions qui en ont besoin.
 
+```sh
+npx github:AymericChaverot/zenith-docs create my-docs
+```
+
 <Cards>
   <Card title="Installation" href="/fr/installation/" icon="zap">
-    Ajoutez ZenithDocs à un projet Astro en quelques minutes.
+    Créez un site en une commande, ou ajoutez ZenithDocs à un projet Astro.
   </Card>
   <Card title="Rédaction" href="/fr/writing/markdown/" icon="file">
     Markdown, blocs de code et composants intégrés.
   </Card>
   <Card title="Thème" href="/fr/customization/theming/" icon="palette">
-    Changez toute l'apparence avec quelques variables CSS.
+    Thèmes prêts à l'emploi, couleurs, polices et tokens CSS.
   </Card>
-  <Card title="Référence" href="/fr/reference/" icon="settings">
+  <Card title="Référence" href="/fr/reference/" icon="book">
     Toutes les options de configuration et de frontmatter.
   </Card>
 </Cards>
+
+:::tip[Traduction partielle]
+Seules cette page et l'installation sont traduites. Les autres restent accessibles en français : elles s'affichent en anglais, avec un bandeau qui le signale. C'est la démonstration du [repli de l'internationalisation](/fr/i18n/#untranslated-pages).
+:::
 
 ## Pourquoi ZenithDocs ?
 
@@ -30,16 +38,14 @@ Les gros frameworks de documentation apportent beaucoup de fonctionnalités, et 
 - **Thémable** : les styles reposent sur les tokens Lumos et les couches CSS, donc votre propre CSS l'emporte toujours.
 - **Bâti sur Astro 7** : le Markdown passe par le pipeline Sätteri écrit en Rust, et le code est coloré au build par Shiki.
 
-:::tip[Cette page est traduite]
-Les pages sans traduction restent accessibles en français : elles s'affichent dans la langue par défaut, avec un bandeau qui le signale.
-:::
-
 ## Budget JavaScript
 
-| Fonctionnalité            | JavaScript                                 |
-| ------------------------- | ------------------------------------------ |
-| Sidebar et menu mobile    | Aucun, grâce à l'API Popover               |
-| Thème sombre              | Un court script en ligne                   |
-| Bouton copier le code     | Un court script en ligne                   |
-| Sommaire                  | Un petit module de suivi du défilement     |
-| Onglets                   | Un petit composant web, seulement si utilisé |
+| Fonctionnalité             | JavaScript                                   |
+| -------------------------- | -------------------------------------------- |
+| Sidebar et menu mobile     | Aucun, grâce à l'API Popover                 |
+| Thème sombre               | Un court script en ligne                     |
+| Bouton copier le code      | Un court script en ligne                     |
+| Sommaire                   | Un petit module de suivi du défilement       |
+| Onglets                    | Un petit composant web, seulement si utilisé |
+| Recherche                  | Pagefind, chargé à l'ouverture               |
+| Référence d'API            | Rien de plus que les onglets                 |
