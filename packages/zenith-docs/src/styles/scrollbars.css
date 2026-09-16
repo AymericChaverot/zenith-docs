@@ -1,0 +1,68 @@
+/*
+ * Scrollbars, for the page and for every box that scrolls: the sidebar, the
+ * table of contents, code blocks and the search results.
+ *
+ * The track is left transparent so whatever sits behind shows through, and the
+ * thumb is mixed from the text color rather than given one. It therefore follows
+ * the light and dark themes, and any background set through `customCss`, without
+ * being redefined anywhere.
+ */
+
+:root {
+  --zd-scrollbar-size: 0.625rem;
+  /* Breathing room around the thumb, so it never touches the edge of the box */
+  --zd-scrollbar-inset: 0.1875rem;
+  --zd-scrollbar-thumb: color-mix(in oklab, var(--text) 16%, transparent);
+  --zd-scrollbar-thumb-hover: color-mix(in oklab, var(--text) 32%, transparent);
+  --zd-scrollbar-thumb-active: color-mix(in oklab, var(--text) 45%, transparent);
+}
+
+/*
+ * A pale thumb on a dark page reads as fainter than a dark thumb on a pale one,
+ * at the same amount of mixing, so the dark theme gets a little more of it.
+ */
+.theme-dark,
+.theme-light .theme-invert {
+  --zd-scrollbar-thumb: color-mix(in oklab, var(--text) 24%, transparent);
+  --zd-scrollbar-thumb-hover: color-mix(in oklab, var(--text) 42%, transparent);
+  --zd-scrollbar-thumb-active: color-mix(in oklab, var(--text) 55%, transparent);
+}
+
+::-webkit-scrollbar {
+  width: var(--zd-scrollbar-size);
+  height: var(--zd-scrollbar-size);
+}
+
+::-webkit-scrollbar-track,
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  border: var(--zd-scrollbar-inset) solid transparent;
+  border-radius: var(--zd-scrollbar-size);
+  background-color: var(--zd-scrollbar-thumb);
+  /* Paint only inside the border, which is what turns it into padding */
+  background-clip: content-box;
+}
+
+/* The thumb only asserts itself while the pointer is over what it scrolls. */
+:hover::-webkit-scrollbar-thumb {
+  background-color: var(--zd-scrollbar-thumb-hover);
+}
+
+::-webkit-scrollbar-thumb:active {
+  background-color: var(--zd-scrollbar-thumb-active);
+}
+
+/*
+ * Firefox has no pseudo-elements for scrollbars. Chrome and Safari understand
+ * these two properties as well, but honouring them makes them ignore every rule
+ * above, so they are kept for the engines that have nothing else.
+ */
+@supports not selector(::-webkit-scrollbar) {
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--zd-scrollbar-thumb) transparent;
+  }
+}
