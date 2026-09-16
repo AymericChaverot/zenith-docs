@@ -119,6 +119,29 @@ Heading sizes are fluid: they scale between their `-min` and `-max` values, in p
 }
 ```
 
+## Scrollbars
+
+The page, the sidebar, the table of contents, code blocks and the search results all share one thin scrollbar style: a rounded thumb over a transparent track, so the background shows through.
+
+The thumb is mixed from `--text` instead of being given a color of its own, which means it follows the light and dark themes, and any background you set, without being redefined.
+
+```css
+:root {
+  --zd-scrollbar-size: 0.75rem;
+  --zd-scrollbar-thumb: color-mix(in oklab, var(--accent) 30%, transparent);
+}
+```
+
+| Token                         | Used for                                  |
+| ----------------------------- | ----------------------------------------- |
+| `--zd-scrollbar-size`         | Width of the scrollbar                    |
+| `--zd-scrollbar-inset`        | Space kept around the thumb               |
+| `--zd-scrollbar-thumb`        | Thumb at rest                             |
+| `--zd-scrollbar-thumb-hover`  | Thumb while the pointer is over the box   |
+| `--zd-scrollbar-thumb-active` | Thumb while it is being dragged           |
+
+Firefox has no fine-grained control over scrollbars, so it gets `scrollbar-width: thin` and the same thumb color, without the rounding.
+
 ## Cascade layers
 
 Built-in styles are split into layers, from lowest to highest priority:
