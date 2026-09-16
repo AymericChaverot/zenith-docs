@@ -1,7 +1,8 @@
 ---
 /** Added to the bottom of the sidebar through the `slots` option. */
 const { locale } = Astro.locals.zenith;
-const href = `${import.meta.env.BASE_URL}${locale.prefix}customization/builder/`;
+const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
+const href = `${base}${locale.prefix}customization/builder/`;
 ---
 
 <a class="sidebar-promo" href={href}>
