@@ -67,6 +67,9 @@ export const icons = {
   tag: {
     body: '<path d="M12.6 2.6A2 2 0 0 0 11.2 2H4a2 2 0 0 0-2 2v7.2c0 .5.2 1 .6 1.4l8.8 8.8a2 2 0 0 0 2.8 0l7.2-7.2a2 2 0 0 0 0-2.8Z"/><circle cx="7.5" cy="7.5" r="1.5"/>',
   },
+  terminal: {
+    body: '<path d="m4 17 6-6-6-6M12 19h8"/>',
+  },
   zap: { body: '<path d="M13 2 3 14h9l-1 8 10-12h-9Z"/>' },
 } satisfies Record<string, { body: string; filled?: boolean }>;
 
