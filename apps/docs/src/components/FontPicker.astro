@@ -1,0 +1,139 @@
+---
+import { Font } from 'astro:assets';
+
+/** Families loaded only on this page, so the rest of the site keeps its two fonts. */
+const families = [
+  '--font-instrument-sans',
+  '--font-instrument-serif',
+  '--font-martian-mono',
+  '--font-newsreader',
+  '--font-onest',
+  '--font-ibm-plex-mono',
+  '--font-schibsted-grotesk',
+  '--font-jetbrains-mono',
+  '--font-space-grotesk',
+  '--font-space-mono',
+  '--font-atkinson',
+  '--font-literata',
+];
+
+const pairings = [
+  { key: 'geist', label: 'Geist', note: 'Current' },
+  { key: 'editorial', label: 'Instrument', note: 'Serif headings' },
+  { key: 'warm', label: 'Newsreader + Onest', note: 'Warm' },
+  { key: 'grotesque', label: 'Schibsted Grotesk', note: 'Neutral' },
+  { key: 'technical', label: 'Space Grotesk', note: 'Technical' },
+  { key: 'accessible', label: 'Atkinson', note: 'Legibility' },
+  { key: 'reading', label: 'Literata', note: 'Serif body' },
+];
+---
+
+{families.map((family) => <Font cssVariable={family as never} />)}
+
+<div class="font-picker" role="group" aria-label="Font pairing">
+  {
+    pairings.map(({ key, label, note }) => (
+      <button type="button" data-font-choice={key}>
+        <span class="font-label">{label}</span>
+        <span class="font-note">{note}</span>
+      </button>
+    ))
+  }
+</div>
+
+<script>
+  const buttons = document.querySelectorAll<HTMLButtonElement>('[data-font-choice]');
+  const sync = () => {
+    const current = document.documentElement.dataset.fonts ?? 'geist';
+    for (const button of buttons) {
+      button.ariaPressed = String(button.dataset.fontChoice === current);
+    }
+  };
+  for (const button of buttons) {
+    button.addEventListener('click', () => {
+      document.documentElement.dataset.fonts = button.dataset.fontChoice;
+      sync();
+    });
+  }
+  sync();
+</script>
+
+<style is:global>
+  .font-picker {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-block: 1.25rem;
+  }
+
+  .font-picker button {
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+    align-items: flex-start;
+    padding: 0.5rem 0.875rem;
+    border: var(--border-width) solid var(--border);
+    border-radius: var(--radius-small);
+    color: var(--text-2);
+    text-align: left;
+  }
+
+  .font-picker button[aria-pressed='true'] {
+    border-color: var(--accent);
+    color: var(--text);
+  }
+
+  .font-label {
+    font-size: 0.9375rem;
+    font-weight: var(--primary-bold);
+  }
+
+  .font-note {
+    font-size: 0.75rem;
+    opacity: 0.7;
+  }
+
+  /*
+   * Each pairing sets the body and code families, and the big headings when it
+   * wants a different voice for them. Lumos keeps one family token per heading
+   * level, so h3 and below stay on the body font and remain readable.
+   */
+  :root[data-fonts='editorial'] {
+    --font-body: var(--font-instrument-sans);
+    --font-mono: var(--font-martian-mono);
+    --display-font-family: var(--font-instrument-serif);
+    --h1-font-family: var(--font-instrument-serif);
+    --h2-font-family: var(--font-instrument-serif);
+    /* Instrument Serif ships a single weight */
+    --h1-font-weight: 400;
+    --h2-font-weight: 400;
+  }
+
+  :root[data-fonts='warm'] {
+    --font-body: var(--font-onest);
+    --font-mono: var(--font-ibm-plex-mono);
+    --display-font-family: var(--font-newsreader);
+    --h1-font-family: var(--font-newsreader);
+    --h2-font-family: var(--font-newsreader);
+  }
+
+  :root[data-fonts='grotesque'] {
+    --font-body: var(--font-schibsted-grotesk);
+    --font-mono: var(--font-jetbrains-mono);
+  }
+
+  :root[data-fonts='technical'] {
+    --font-body: var(--font-space-grotesk);
+    --font-mono: var(--font-space-mono);
+  }
+
+  :root[data-fonts='accessible'] {
+    --font-body: var(--font-atkinson);
+    --font-mono: var(--font-jetbrains-mono);
+  }
+
+  :root[data-fonts='reading'] {
+    --font-body: var(--font-literata);
+    --font-mono: var(--font-ibm-plex-mono);
+  }
+</style>
