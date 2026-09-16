@@ -1,0 +1,28 @@
+---
+title: Icons
+description: Every name accepted by the icon field.
+icon: grid
+---
+
+import { icons } from 'zenith-docs/icons';
+
+ZenithDocs ships a small set of icons, adapted from [Lucide](https://lucide.dev). Use a name below in the `icon` field of a page, of a `meta.json` file, or of a `<Card>`. An unknown name renders nothing, so check the spelling here.
+
+<Cards>{Object.keys(icons).map((name) => <Card title={name} icon={name} />)}</Cards>
+
+## Using an icon
+
+```mdx
+---
+title: Getting started
+icon: rocket
+---
+
+Press <Icon name="search" /> to search.
+```
+
+`<Icon>` is available in every page without importing it. It takes a `name`, an optional `size` in pixels, and an optional `label` when the icon carries meaning on its own.
+
+## Adding your own
+
+The set is deliberately small. For anything else, use an inline SVG, or your own component through the [component overrides](/customization/overrides/).
