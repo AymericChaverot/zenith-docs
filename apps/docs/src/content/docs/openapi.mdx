@@ -1,0 +1,56 @@
+---
+title: OpenAPI
+description: Render API reference pages from an OpenAPI document.
+icon: zap
+---
+
+Point ZenithDocs at an OpenAPI document and drop `<APIPage>` in a page: operations are rendered at build time, as static HTML.
+
+```js title="astro.config.mjs"
+zenith({
+  title: 'My Docs',
+  openapi: {
+    rockets: './src/openapi/rockets.yaml',
+  },
+});
+```
+
+```mdx title="src/content/docs/api/list-rockets.mdx"
+---
+title: List rockets
+---
+
+<APIPage spec="rockets" path="/rockets" method="get" />
+```
+
+JSON and YAML documents both work, and OpenAPI 3.0 and 3.1 are supported. See the [Rockets API](/reference/api/list-rockets/) for the result.
+
+## Choosing operations
+
+| Props                   | Renders                                    |
+| ----------------------- | ------------------------------------------ |
+| `spec`                  | Every operation of the document            |
+| `spec` `path` `method`  | One operation                              |
+| `spec` `tag`            | Every operation carrying that tag          |
+
+`spec` is a name declared in the `openapi` option, or a path from the project root.
+
+:::tip
+Prefer one operation per page. Each one then gets its own URL, its own entry in the search index, its own [social image](/open-graph/) and a place in the sidebar, which is what readers link to.
+:::
+
+## What is rendered
+
+The method and path, the summary and description, the authorizations, the parameters grouped by location, the request body, and every documented response with its schema and an example. A `curl` call is built for each operation, with path parameters filled in.
+
+Nested objects are folded behind a disclosure rather than flattened, so a deep schema stays readable. Arrays are documented through the schema of their items, and `allOf` branches are merged into a single list of properties.
+
+Everything is static: no JavaScript ships for the reference beyond the tabs already used elsewhere.
+
+## Bundling references
+
+References are resolved inside the document. A `$ref` pointing at another file stops the build with an explicit error, because silently dropping half a schema is worse than failing. Bundle the document first, for example with `redocly bundle`, and pass the result.
+
+## What is not covered
+
+There is no request playground: sending live calls needs a client, a proxy and credentials, none of which belong in a static site. `webhooks`, `callbacks` and `links` are not rendered yet.
