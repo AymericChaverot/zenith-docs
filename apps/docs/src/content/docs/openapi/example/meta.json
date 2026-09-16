@@ -1,6 +1,5 @@
 {
-  "title": "Rockets API",
-  "description": "An example OpenAPI reference",
+  "title": "Example: Rockets API",
   "icon": "rocket",
   "pages": ["list-rockets", "create-rocket", "get-rocket", "list-launches"]
 }

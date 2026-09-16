@@ -23,7 +23,26 @@ title: List rockets
 <APIPage spec="rockets" path="/rockets" method="get" />
 ```
 
-JSON and YAML documents both work, and OpenAPI 3.0 and 3.1 are supported. See the [Rockets API](/reference/api/list-rockets/) for the result.
+JSON and YAML documents both work, and OpenAPI 3.0 and 3.1 are supported.
+
+## Live example
+
+This site ships a small, made-up API to show the result: the Rockets API, described in [`rockets.yaml`](https://github.com/AymericChaverot/zenith-docs/blob/main/apps/docs/src/openapi/rockets.yaml). Each of its pages is a single `<APIPage>` line.
+
+<Cards>
+  <Card title="List rockets" href="/openapi/example/list-rockets/" icon="rocket">
+    One operation, with query parameters and a paginated response.
+  </Card>
+  <Card title="Create a rocket" href="/openapi/example/create-rocket/" icon="rocket">
+    A request body and several responses.
+  </Card>
+  <Card title="Retrieve a rocket" href="/openapi/example/get-rocket/" icon="rocket">
+    Every operation of a path, without a method.
+  </Card>
+  <Card title="List launches" href="/openapi/example/list-launches/" icon="rocket">
+    Nested objects, folded away.
+  </Card>
+</Cards>
 
 ## Choosing operations
 
