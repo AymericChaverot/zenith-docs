@@ -4,7 +4,45 @@ description: Add ZenithDocs to a new or existing Astro project.
 icon: zap
 ---
 
-ZenithDocs is an Astro integration. It needs Astro 7 and Node.js 22.12 or later.
+ZenithDocs needs Astro 7 and Node.js 22.12 or later.
+
+## Create a new site
+
+The quickest start creates a ready-to-run project:
+
+<Tabs items={['pnpm', 'npm', 'yarn', 'bun']} groupId="package-manager" persist>
+  <Tab value="pnpm">
+    ```sh
+    pnpm create zenith-docs my-docs
+    ```
+  </Tab>
+  <Tab value="npm">
+    ```sh
+    npm create zenith-docs my-docs
+    ```
+  </Tab>
+  <Tab value="yarn">
+    ```sh
+    yarn create zenith-docs my-docs
+    ```
+  </Tab>
+  <Tab value="bun">
+    ```sh
+    bun create zenith-docs my-docs
+    ```
+  </Tab>
+</Tabs>
+
+| Template              | What you get                                                                  |
+| --------------------- | ----------------------------------------------------------------------------- |
+| `cli`, the default    | A `zenith.config.ts` and a `content/` folder, run by the [CLI](/cli/)         |
+| `astro`               | An Astro project with the integration, ready for pages of your own            |
+
+Pick one with `--template astro`, and set the title with `--title "My Docs"`. The directory has to be empty.
+
+## Add to an Astro project
+
+ZenithDocs is an Astro integration, so an existing project only needs a few steps.
 
 <Steps>
 
