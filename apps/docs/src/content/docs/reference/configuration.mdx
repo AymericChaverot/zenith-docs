@@ -46,7 +46,7 @@ The rest of this documentation shows options in their integration form, `zenith(
 
 ### `title`
 
-**Type:** `string` (required)
+**Type:** `string` · **Default:** `'ZenithDocs'`, or the name of the project directory with the CLI
 
 The site name, shown in the header and appended to page titles.
 
@@ -70,15 +70,15 @@ Default meta description, used when a page has none.
 
 ### `logo`
 
-**Type:** `{ src: string; alt?: string; replacesTitle?: boolean }`
+**Type:** `{ src: string; alt?: string; replacesTitle?: boolean } | false` · **Default:** the ZenithDocs logo
 
-A logo shown next to the title. `src` is either a path relative to the project root, like `./src/assets/logo.svg`, or a public URL, like `/logo.png`. SVG files are inlined in the page, so they can use `currentColor` and follow the color scheme. Set `replacesTitle` to hide the text title.
+A logo shown next to the title, and on [Open Graph images](/open-graph/). `src` is either a path relative to the project root, like `./src/assets/logo.svg`, or a public URL, like `/logo.png`. SVG files are inlined in the page, so they can use `currentColor` and follow the color scheme. Set `replacesTitle` to hide the text title, or `logo: false` to show no logo at all.
 
 ### `favicon`
 
 **Type:** `string` · **Default:** `'/favicon.svg'`
 
-URL of the favicon, usually a file of `public/`.
+URL of the favicon, written from the root of the site: the `base` path is added for you. When the option is unset and `public/favicon.svg` does not exist, ZenithDocs serves its own icon at that URL, so a new site never points to a missing file.
 
 ### `lang`
 
