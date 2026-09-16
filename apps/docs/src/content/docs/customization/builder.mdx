@@ -1,0 +1,21 @@
+---
+title: Theme builder
+description: Try every theming option on this page, and leave with the files to reproduce it.
+icon: sliders
+---
+
+import ThemeBuilder from '../../../components/ThemeBuilder.astro';
+
+Every control below applies to this page as you use it, chrome included. The two files at the bottom update as you go: paste them into your project and you get what you are looking at.
+
+<ThemeBuilder />
+
+## Why two files
+
+A stylesheet cannot do everything. Fonts have to be declared in the config to be self-hosted by the Astro Fonts API, and the backdrop is an attribute on the page rather than a style, so it is an option too. Everything that *is* a plain token — corner radius, content width, colors — belongs in the stylesheet, where it stays yours.
+
+Anything you see in the snippets can also be written by hand: see [theming](/customization/theming/) for the full list of tokens, and [typography](/customization/typography/) for the font presets.
+
+:::note
+Nothing here is saved. Reload the page and it returns to the theme of this site.
+:::

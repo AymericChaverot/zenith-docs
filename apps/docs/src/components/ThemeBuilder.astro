@@ -1,0 +1,340 @@
+---
+import { THEMES } from 'zenith-docs/themes';
+import FontPreviewStyles from './FontPreviewStyles.astro';
+
+/**
+ * Applies every theming option to this page and writes out what to paste to get the
+ * same result. Options go to the config, tokens go to a stylesheet, because a font
+ * has to be declared to be self-hosted and the backdrop is an attribute, not a style.
+ */
+const controls = [
+  {
+    key: 'theme',
+    label: 'Theme',
+    options: ['', ...Object.keys(THEMES)],
+    labels: ['None', ...Object.values(THEMES).map((theme) => theme.label)],
+  },
+  {
+    key: 'accent',
+    label: 'Accent',
+    options: ['emerald', 'teal', 'amber', 'rose', 'violet', 'neutral'],
+  },
+  {
+    key: 'backdrop',
+    label: 'Backdrop',
+    options: [
+      'dither',
+      'aurora',
+      'grid',
+      'dots',
+      'rays',
+      'grain',
+      'horizon',
+      'horizon-glow',
+      'glow',
+      'none',
+    ],
+  },
+  { key: 'backdropPosition', label: 'Backdrop position', options: ['left', 'center', 'right'] },
+  {
+    key: 'fonts',
+    label: 'Fonts',
+    options: ['instrument', 'geist', 'newsreader', 'schibsted', 'space', 'atkinson', 'literata'],
+  },
+];
+
+const sliders = [
+  { key: 'radius', label: 'Corner radius', min: 0, max: 24, step: 1, value: 12, unit: 'px' },
+  { key: 'width', label: 'Content width', min: 36, max: 64, step: 1, value: 48, unit: 'rem' },
+];
+---
+
+<FontPreviewStyles />
+
+<div class="builder" data-themes={JSON.stringify(THEMES)}>
+  {
+    controls.map(({ key, label, options, labels }) => (
+      <div class="builder-row">
+        <span class="builder-label">{label}</span>
+        <div class="builder-options" role="group" aria-label={label}>
+          {options.map((option, index) => (
+            <button type="button" data-control={key} data-value={option}>
+              {labels?.[index] ?? option}
+            </button>
+          ))}
+        </div>
+      </div>
+    ))
+  }
+  {
+    sliders.map(({ key, label, min, max, step, value, unit }) => (
+      <div class="builder-row">
+        <span class="builder-label">
+          <label for={`builder-${key}`}>{label}</label>
+        </span>
+        <div class="builder-options">
+          <input
+            type="range"
+            id={`builder-${key}`}
+            data-slider={key}
+            min={min}
+            max={max}
+            step={step}
+            value={value}
+          />
+          <output data-output={key}>{`${value}${unit}`}</output>
+        </div>
+      </div>
+    ))
+  }
+  <div class="builder-row">
+    <span class="builder-label">&nbsp;</span>
+    <div class="builder-options">
+      <button type="button" data-reset>Reset</button>
+    </div>
+  </div>
+</div>
+
+<p class="builder-note">Paste these two into your project to get exactly what you see.</p>
+
+<figure class="zd-code zd-code-titled builder-output">
+  <figcaption class="zd-code-title">astro.config.mjs</figcaption>
+  <pre><code data-snippet="config"></code></pre>
+  <button type="button" class="zd-copy" aria-label="Copy code" data-copy></button>
+</figure>
+
+<figure class="zd-code zd-code-titled builder-output">
+  <figcaption class="zd-code-title">src/styles/theme.css</figcaption>
+  <pre><code data-snippet="css"></code></pre>
+  <button type="button" class="zd-copy" aria-label="Copy code" data-copy></button>
+</figure>
+
+<script>
+  interface Theme {
+    accent: string;
+    backdrop: string;
+    backdropPosition?: string;
+    fonts: string;
+  }
+
+  const root = document.documentElement;
+  const builder = document.querySelector<HTMLElement>('.builder');
+  const themes: Record<string, Theme> = JSON.parse(builder?.dataset.themes ?? '{}');
+
+  /** What the site ships with, so the snippets only carry what you changed. */
+  const DEFAULTS = {
+    theme: '',
+    accent: 'emerald',
+    backdrop: 'dither',
+    backdropPosition: 'left',
+    fonts: 'instrument',
+    radius: 12,
+    width: 48,
+  };
+
+  const state = { ...DEFAULTS };
+
+  /** Radius and width set by the chosen theme, read from its stylesheet rather than copied. */
+  let tokenBase = { radius: DEFAULTS.radius, width: DEFAULTS.width };
+
+  const toPx = (value: string) =>
+    value.endsWith('rem') ? parseFloat(value) * 16 : parseFloat(value) || 0;
+
+  const readThemeTokens = () => {
+    root.style.removeProperty('--radius-main');
+    root.style.removeProperty('--radius-small');
+    root.style.removeProperty('--zd-content-width');
+    if (state.theme) root.dataset.theme = state.theme;
+    else delete root.dataset.theme;
+    const styles = getComputedStyle(root);
+    tokenBase = {
+      radius: Math.round(toPx(styles.getPropertyValue('--radius-main').trim())),
+      width: Math.round(toPx(styles.getPropertyValue('--zd-content-width').trim()) / 16),
+    };
+    state.radius = tokenBase.radius;
+    state.width = tokenBase.width;
+    for (const slider of document.querySelectorAll<HTMLInputElement>('[data-slider]')) {
+      slider.value = String(state[slider.dataset.slider as 'radius' | 'width']);
+    }
+  };
+
+  const apply = () => {
+    root.dataset.accent = state.accent;
+    root.dataset.backdrop = state.backdrop;
+    root.dataset.backdropPosition = state.backdropPosition;
+    if (state.theme) root.dataset.theme = state.theme;
+    else delete root.dataset.theme;
+
+    // The site ships Instrument, the other presets are previewed with override tokens.
+    if (state.fonts === 'instrument') delete root.dataset.fontsPreview;
+    else root.dataset.fontsPreview = state.fonts;
+
+    root.style.setProperty('--radius-main', `${state.radius}px`);
+    root.style.setProperty('--radius-small', `${Math.round(state.radius / 2)}px`);
+    root.style.setProperty('--zd-content-width', `${state.width}rem`);
+
+    for (const button of document.querySelectorAll<HTMLButtonElement>('[data-control]')) {
+      const control = button.dataset.control as keyof typeof state;
+      button.ariaPressed = String(String(state[control]) === button.dataset.value);
+    }
+    for (const output of document.querySelectorAll<HTMLOutputElement>('[data-output]')) {
+      const key = output.dataset.output as 'radius' | 'width';
+      output.textContent = key === 'radius' ? `${state.radius}px` : `${state.width}rem`;
+    }
+
+    write();
+  };
+
+  const write = () => {
+    const options: string[] = [];
+    if (state.theme) options.push(`theme: '${state.theme}'`);
+
+    // A theme already sets these, so only mention what differs from it.
+    const base = state.theme ? { ...DEFAULTS, ...themes[state.theme] } : DEFAULTS;
+    for (const key of ['accent', 'backdrop', 'backdropPosition', 'fonts'] as const) {
+      if (state[key] !== (base[key] ?? DEFAULTS[key])) options.push(`${key}: '${state[key]}'`);
+    }
+
+    // Tokens are compared with the theme, which already carries its own radius and width.
+    const tokens: string[] = [];
+    if (state.radius !== tokenBase.radius) {
+      tokens.push(`  --radius-main: ${state.radius}px;`);
+      tokens.push(`  --radius-small: ${Math.round(state.radius / 2)}px;`);
+    }
+    if (state.width !== tokenBase.width) tokens.push(`  --zd-content-width: ${state.width}rem;`);
+
+    const config = document.querySelector('[data-snippet="config"]');
+    if (config) {
+      config.textContent = [
+        "import { defineConfig } from 'astro/config';",
+        "import zenith from 'zenith-docs';",
+        '',
+        'export default defineConfig({',
+        '  integrations: [',
+        '    zenith({',
+        "      title: 'My Docs',",
+        ...options.map((option) => `      ${option},`),
+        // The stylesheet is only worth loading when it overrides something.
+        ...(tokens.length > 0 ? ["      customCss: ['./src/styles/theme.css'],"] : []),
+        '    }),',
+        '  ],',
+        '});',
+      ].join('\n');
+    }
+
+    const css = document.querySelector('[data-snippet="css"]');
+    if (css) {
+      css.textContent =
+        tokens.length > 0
+          ? `:root {\n${tokens.join('\n')}\n}`
+          : '/* Nothing to override: every change above is a config option, so this file is not needed. */';
+    }
+  };
+
+  for (const button of document.querySelectorAll<HTMLButtonElement>('[data-control]')) {
+    button.addEventListener('click', () => {
+      const control = button.dataset.control as keyof typeof state;
+      const value = button.dataset.value ?? '';
+      Object.assign(state, { [control]: value });
+      // Picking a theme moves the options it covers, which you can then change again.
+      if (control === 'theme' && value && themes[value]) {
+        Object.assign(state, {
+          accent: themes[value].accent,
+          backdrop: themes[value].backdrop,
+          backdropPosition: themes[value].backdropPosition ?? DEFAULTS.backdropPosition,
+          fonts: themes[value].fonts,
+        });
+      }
+      if (control === 'theme') readThemeTokens();
+      apply();
+    });
+  }
+
+  for (const slider of document.querySelectorAll<HTMLInputElement>('[data-slider]')) {
+    slider.addEventListener('input', () => {
+      Object.assign(state, { [slider.dataset.slider as string]: Number(slider.value) });
+      apply();
+    });
+  }
+
+  document.querySelector('[data-reset]')?.addEventListener('click', () => {
+    Object.assign(state, DEFAULTS);
+    readThemeTokens();
+    apply();
+  });
+
+  readThemeTokens();
+  apply();
+</script>
+
+<style is:global>
+  .builder {
+    display: grid;
+    gap: 0.75rem;
+    margin-block: 1.5rem;
+    padding: 1rem;
+    border: var(--border-width) solid var(--border);
+    border-radius: var(--radius-main);
+    background: var(--background-2);
+  }
+
+  .builder-row {
+    display: grid;
+    grid-template-columns: 9rem 1fr;
+    gap: 0.75rem;
+    align-items: center;
+  }
+
+  .builder-label {
+    color: var(--text-2);
+    font-size: 0.8125rem;
+  }
+
+  .builder-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.375rem;
+    align-items: center;
+  }
+
+  .builder-options button {
+    padding: 0.25rem 0.625rem;
+    border: var(--border-width) solid var(--border);
+    border-radius: var(--radius-round, 999px);
+    color: var(--text-2);
+    font-size: 0.8125rem;
+    text-transform: capitalize;
+  }
+
+  .builder-options button[aria-pressed='true'] {
+    border-color: var(--accent);
+    color: var(--text);
+  }
+
+  .builder-options input[type='range'] {
+    width: min(16rem, 100%);
+    accent-color: var(--accent);
+  }
+
+  .builder-options output {
+    color: var(--text-2);
+    font-family: var(--mono-family);
+    font-size: 0.75rem;
+  }
+
+  .builder-note {
+    margin-bottom: 0.5rem;
+    color: var(--text-2);
+  }
+
+  .builder-output pre {
+    padding: 0.875rem 1rem;
+  }
+
+  @media (max-width: 40rem) {
+    .builder-row {
+      grid-template-columns: 1fr;
+      gap: 0.375rem;
+    }
+  }
+</style>
