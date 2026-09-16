@@ -36,10 +36,6 @@ export default defineConfig({
         root: { label: 'English' },
         fr: { label: 'Français' },
       },
-      versions: {
-        root: { label: 'v2', badge: 'Latest' },
-        v1: { label: 'v1' },
-      },
     }),
   ],
 });
