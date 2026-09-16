@@ -10,6 +10,7 @@ import { fontProviders } from 'astro/config';
 import { AstroError } from 'astro/errors';
 import { ZenithConfigSchema, type ZenithUserConfig } from './config';
 import { FONT_PRESETS, FONT_VARIABLES, type FontFamily, type FontPreset } from './fonts';
+import { THEMED_OPTIONS, THEMES } from './themes';
 import { getDefaultLocale, localeOf, resolveLocales } from './locales';
 import { resolveLogo } from './logo';
 import { getTranslations, type Translations } from './translations';
@@ -31,6 +32,18 @@ export default function zenith(userConfig: ZenithUserConfig): AstroIntegration {
     throw new AstroError('Invalid ZenithDocs configuration', issues.join('\n'));
   }
   const config = parsed.data;
+
+  // A theme only fills the options left unset: zod has already applied its own
+  // defaults, so the raw config is what says whether the author chose a value.
+  if (config.theme) {
+    const theme = THEMES[config.theme];
+    for (const option of THEMED_OPTIONS) {
+      const value = theme[option as keyof typeof theme];
+      if (!(option in userConfig) && value !== undefined) {
+        Object.assign(config, { [option]: value });
+      }
+    }
+  }
 
   if (config.locales && !('root' in config.locales)) {
     throw new AstroError(

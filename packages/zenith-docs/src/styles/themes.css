@@ -1,0 +1,31 @@
+/*
+ * Packaged themes: what a theme changes beyond the accent, the backdrop and the fonts,
+ * which are options and are applied through `data-accent`, `data-backdrop` and `data-fonts`.
+ *
+ * Nothing here is out of reach: every token can be set again in a `customCss` file,
+ * which is unlayered and therefore wins.
+ */
+
+:root[data-theme='slate'] {
+  --radius-main: 0.5rem;
+  --radius-small: 0.25rem;
+}
+
+:root[data-theme='terminal'] {
+  --radius-main: 0;
+  --radius-small: 0;
+  --zd-scrollbar-size: 0.5rem;
+  --letter-spacing-tight: -0.01em;
+}
+
+:root[data-theme='paper'] {
+  --radius-main: 1rem;
+  --radius-small: 0.5rem;
+  --line-height-huge: 1.8;
+  --zd-content-width: 44rem;
+}
+
+:root[data-theme='aurora'] {
+  --radius-main: 1rem;
+  --radius-small: 0.5rem;
+}

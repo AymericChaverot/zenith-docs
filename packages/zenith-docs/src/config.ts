@@ -1,5 +1,8 @@
 import { z } from 'astro/zod';
-import { FONT_PRESET_NAMES } from './fonts';
+// Explicit extensions: the CLI loads this module with Node, which does not guess them.
+import { FONT_PRESET_NAMES } from './fonts.ts';
+import { ACCENTS, BACKDROP_POSITIONS, BACKDROPS } from './options.ts';
+import { THEME_NAMES } from './themes.ts';
 
 export const DEFAULT_DOCS_DIR = 'src/content/docs';
 
@@ -38,29 +41,20 @@ export const ZenithConfigSchema = z.object({
   og: z.boolean().default(true),
   /** OpenAPI specs rendered by `<APIPage>`, keyed by name, as paths from the project root. */
   openapi: z.record(z.string(), z.string()).default({}),
+  /**
+   * Packaged theme: an accent, a backdrop and a font preset that go together.
+   * Any of those options you set yourself takes precedence over the theme.
+   */
+  theme: z.enum(THEME_NAMES).optional(),
   /** Accent color preset. Use `customCss` for anything else. */
-  accent: z.enum(['emerald', 'teal', 'amber', 'rose', 'violet', 'neutral']).default('emerald'),
-  /** Decorative background at the top of pages. `true` means `aurora`, `false` means `none`. */
+  accent: z.enum(ACCENTS).default('emerald'),
+  /** Decorative background at the top of pages. `true` means `dither`, `false` means `none`. */
   backdrop: z
-    .union([
-      z.boolean(),
-      z.enum([
-        'none',
-        'glow',
-        'grid',
-        'dots',
-        'dither',
-        'aurora',
-        'rays',
-        'grain',
-        'horizon',
-        'horizon-glow',
-      ]),
-    ])
+    .union([z.boolean(), z.enum(BACKDROPS)])
     .default('dither')
     .transform((value) => (value === true ? 'dither' : value === false ? 'none' : value)),
   /** Side the backdrop is anchored to. */
-  backdropPosition: z.enum(['left', 'center', 'right']).default('left'),
+  backdropPosition: z.enum(BACKDROP_POSITIONS).default('left'),
   /**
    * Font preset, self-hosted. `true` means `instrument`, `false` uses system fonts.
    * Override the families with `--font-body`, `--font-mono` and `--font-display`.
