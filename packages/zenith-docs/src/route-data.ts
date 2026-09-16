@@ -26,6 +26,14 @@ import {
   type SidebarScope,
 } from './page-tree';
 import { getTranslations, type Translations } from './translations';
+import {
+  getDefaultVersion,
+  getVersion,
+  resolveVersions,
+  stripVersion,
+  versionOf,
+  type ResolvedVersion,
+} from './versions';
 
 export interface DocsEntry {
   id: string;
@@ -53,8 +61,12 @@ export interface RouteData {
   lastUpdated?: Date;
   locale: ResolvedLocale;
   locales: ResolvedLocale[];
-  /** The same page in every language. */
+  /** The same page in every language, keeping the current version. */
   alternates: { locale: ResolvedLocale; url: string }[];
+  version: ResolvedVersion;
+  versions: ResolvedVersion[];
+  /** The same page in every version, falling back to the version home page. */
+  versionLinks: { version: ResolvedVersion; url: string; exists: boolean }[];
   /** False when the page falls back to the default language. */
   translated: boolean;
   t: Translations;
@@ -62,10 +74,20 @@ export interface RouteData {
 
 export const locales = resolveLocales(config);
 export const defaultLocale = getDefaultLocale(locales);
+export const versions = resolveVersions(config);
+export const defaultVersion = getDefaultVersion(versions);
 
 export function translationsFor(locale: ResolvedLocale): Translations {
   return getTranslations(locale.lang, config.translations[locale.key]);
 }
+
+/** URL prefix of a locale and version pair, for example `/fr/v1/`. */
+function prefixOf(locale: ResolvedLocale, version: ResolvedVersion): string {
+  return `${import.meta.env.BASE_URL}${locale.prefix}${version.prefix}`;
+}
+
+const scopeKey = (locale: ResolvedLocale, version: ResolvedVersion) =>
+  `${locale.key}|${version.key}`;
 
 export async function getDocs(): Promise<DocsEntry[]> {
   const docs = (await getCollection('docs' as never)) as unknown as CollectionEntry<never>[];
@@ -87,25 +109,32 @@ function contentPath(entry: DocsEntry): string {
   return (entry.filePath ?? `${entry.id}.md`).replaceAll('\\', '/').replace(`${docsDir}/`, '');
 }
 
-/** Group entries by locale, keyed by their path without the locale prefix. */
-function groupByLocale(docs: DocsEntry[]): Map<string, Map<string, DocsEntry>> {
-  const groups = new Map<string, Map<string, DocsEntry>>();
+/** Split a content path into its locale, its version and the rest. */
+export function scopeOf(path: string) {
+  const locale = localeOf(path, locales);
+  const withoutLocale = stripLocale(path, locale);
+  const version = versionOf(withoutLocale, versions);
+  return { locale, version, id: stripVersion(withoutLocale, version) };
+}
+
+type Groups = Map<string, Map<string, DocsEntry>>;
+
+function groupByScope(docs: DocsEntry[]): Groups {
+  const groups: Groups = new Map();
   for (const entry of docs) {
-    const locale = localeOf(entry.id, locales);
-    const group = groups.get(locale.key) ?? new Map<string, DocsEntry>();
-    group.set(stripLocale(entry.id, locale), entry);
-    groups.set(locale.key, group);
+    const { locale, version, id } = scopeOf(entry.id);
+    const key = scopeKey(locale, version);
+    const group = groups.get(key) ?? new Map<string, DocsEntry>();
+    group.set(id, entry);
+    groups.set(key, group);
   }
   return groups;
 }
 
-/** Pages of a locale, falling back to the default language for missing translations. */
-function withFallback(
-  groups: Map<string, Map<string, DocsEntry>>,
-  locale: ResolvedLocale,
-): Map<string, { entry: DocsEntry; translated: boolean }> {
-  const own = groups.get(locale.key) ?? new Map();
-  const base = groups.get(defaultLocale.key) ?? new Map();
+/** Pages of a scope, falling back to the default language of the same version. */
+function withFallback(groups: Groups, locale: ResolvedLocale, version: ResolvedVersion) {
+  const own = groups.get(scopeKey(locale, version)) ?? new Map<string, DocsEntry>();
+  const base = groups.get(scopeKey(defaultLocale, version)) ?? new Map<string, DocsEntry>();
   const pages = new Map<string, { entry: DocsEntry; translated: boolean }>();
   for (const id of new Set([...base.keys(), ...own.keys()])) {
     const entry = own.get(id) ?? base.get(id);
@@ -114,36 +143,53 @@ function withFallback(
   return pages;
 }
 
+let groupsCache: Promise<Groups> | undefined;
+
+function getGroups(): Promise<Groups> {
+  if (import.meta.env.DEV) return getDocs().then(groupByScope);
+  return (groupsCache ??= getDocs().then(groupByScope));
+}
+
 export async function getDocsPaths(docs: DocsEntry[]) {
-  const groups = groupByLocale(docs);
+  const groups = groupByScope(docs);
   return locales.flatMap((locale) =>
-    [...withFallback(groups, locale)].map(([id, { entry, translated }]) => {
-      const slug = slugFromId(id);
-      const prefix = locale.prefix.slice(0, -1);
-      return {
-        params: { slug: [prefix, slug].filter(Boolean).join('/') || undefined },
-        props: { entry, locale: locale.key, translated },
-      };
-    }),
+    versions.flatMap((version) =>
+      [...withFallback(groups, locale, version)].map(([id, { entry, translated }]) => ({
+        params: {
+          slug:
+            [locale.prefix.slice(0, -1), version.prefix.slice(0, -1), slugFromId(id)]
+              .filter(Boolean)
+              .join('/') || undefined,
+        },
+        props: { entry, locale: locale.key, version: version.key, translated },
+      })),
+    ),
   );
 }
 
 const trees = new Map<string, Promise<PageTree>>();
 
-export function getPageTree(locale: ResolvedLocale): Promise<PageTree> {
-  if (import.meta.env.DEV) return loadPageTree(locale);
-  const cached = trees.get(locale.key) ?? loadPageTree(locale);
-  trees.set(locale.key, cached);
+export function getPageTree(
+  locale: ResolvedLocale,
+  version: ResolvedVersion = defaultVersion,
+): Promise<PageTree> {
+  if (import.meta.env.DEV) return loadPageTree(locale, version);
+  const key = scopeKey(locale, version);
+  const cached = trees.get(key) ?? loadPageTree(locale, version);
+  trees.set(key, cached);
   return cached;
 }
 
-async function loadPageTree(locale: ResolvedLocale): Promise<PageTree> {
-  const [docs, metas] = await Promise.all([getDocs(), getMetas()]);
-  const pages = withFallback(groupByLocale(docs), locale);
+async function loadPageTree(
+  locale: ResolvedLocale,
+  version: ResolvedVersion,
+): Promise<PageTree> {
+  const [groups, metas] = await Promise.all([getGroups(), getMetas()]);
+  const pages = withFallback(groups, locale, version);
 
   const treeDocs = [...pages].map(([id, { entry }]) => ({
     id,
-    path: stripLocale(contentPath(entry), localeOf(entry.id, locales)),
+    path: scopeOf(contentPath(entry)).id,
     title: entry.data.sidebar.label ?? entry.data.title,
     icon: entry.data.icon,
     hidden: entry.data.sidebar.hidden,
@@ -153,28 +199,31 @@ async function loadPageTree(locale: ResolvedLocale): Promise<PageTree> {
   const metaByDir = new Map<string, PageTreeMeta>();
   for (const key of [defaultLocale.key, locale.key]) {
     for (const meta of metas) {
-      const metaLocale = localeOf(meta.id, locales);
-      if (metaLocale.key !== key) continue;
-      metaByDir.set(stripLocale(meta.id, metaLocale).replace(/\/?meta\.json$/, ''), meta.data);
+      const scope = scopeOf(meta.id);
+      if (scope.locale.key !== key || scope.version.key !== version.key) continue;
+      metaByDir.set(scope.id.replace(/\/?meta\.json$/, ''), meta.data);
     }
   }
 
-  return buildPageTree(treeDocs, metaByDir, {
-    base: `${import.meta.env.BASE_URL}${locale.prefix}`,
-  });
+  return buildPageTree(treeDocs, metaByDir, { base: prefixOf(locale, version) });
 }
 
 export async function getRouteData(
   entry: DocsEntry,
   headings: MarkdownHeading[],
-  { locale: localeKey = defaultLocale.key, translated = true } = {},
+  {
+    locale: localeKey = defaultLocale.key,
+    version: versionKey = defaultVersion.key,
+    translated = true,
+  } = {},
 ): Promise<RouteData> {
   const locale = getLocale(locales, localeKey);
+  const version = getVersion(versions, versionKey);
   const t = translationsFor(locale);
-  const tree = await getPageTree(locale);
+  const [tree, groups] = await Promise.all([getPageTree(locale, version), getGroups()]);
 
-  const id = stripLocale(entry.id, localeOf(entry.id, locales));
-  const url = urlFromId(id, `${import.meta.env.BASE_URL}${locale.prefix}`);
+  const { id } = scopeOf(entry.id);
+  const url = urlFromId(id, prefixOf(locale, version));
   const sidebar = getSidebarScope(tree, url);
   const { previous, next } = getNeighbours(sidebar.pages, url);
 
@@ -212,8 +261,15 @@ export async function getRouteData(
     locales,
     alternates: locales.map((other) => ({
       locale: other,
-      url: urlFromId(id, `${import.meta.env.BASE_URL}${other.prefix}`),
+      url: urlFromId(id, prefixOf(other, version)),
     })),
+    version,
+    versions,
+    versionLinks: versions.map((other) => {
+      const exists = withFallback(groups, locale, other).has(id);
+      const prefix = prefixOf(locale, other);
+      return { version: other, url: exists ? urlFromId(id, prefix) : prefix, exists };
+    }),
     translated,
     t,
   };
