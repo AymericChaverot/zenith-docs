@@ -1,6 +1,7 @@
 ---
 title: Configuration
 description: Options of the ZenithDocs integration.
+icon: sliders
 ---
 
 Options are passed to the integration in `astro.config.mjs`.
@@ -108,6 +109,12 @@ Generates `llms.txt`, `llms-full.txt` and a `.md` version of every page. See [LL
 **Type:** `boolean` · **Default:** `true`
 
 Generates a social preview image for every page. See [Open Graph images](/open-graph/).
+
+### `openapi`
+
+**Type:** `Record<string, string>`
+
+OpenAPI documents rendered by `<APIPage>`, keyed by the name used in pages, as paths from the project root. See [OpenAPI](/openapi/).
 
 ### `editLink`
 
