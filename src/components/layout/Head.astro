@@ -16,13 +16,15 @@ const noindex = entry.id === '404' || entry.data.draft;
 {pageDescription && <meta name="description" content={pageDescription} />}
 {canonical && <link rel="canonical" href={canonical} />}
 {
-  alternates.length > 1 &&
+  !noindex &&
+    alternates.length > 1 &&
     alternates.map(({ locale: other, url: alternate }) => (
       <link rel="alternate" hreflang={other.lang} href={absolute(alternate)} />
     ))
 }
 {
-  config.llms && (
+  config.llms &&
+    !noindex && (
     <link
       rel="alternate"
       type="text/markdown"
