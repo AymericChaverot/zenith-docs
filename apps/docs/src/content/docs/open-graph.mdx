@@ -1,0 +1,60 @@
+---
+title: Open Graph images
+description: A social preview image is generated for every page at build time.
+icon: image
+---
+
+Every page gets its own 1200×630 preview image, the one social networks and chat apps show when its link is shared. Images are generated during the build, written next to the page as `og/<page>.png`, and referenced with the `og:image` and `twitter:image` meta tags.
+
+Nothing is required to turn this on: it follows the `og` option, which defaults to `true`.
+
+## What the card shows
+
+| Element              | Source                                                |
+| -------------------- | ----------------------------------------------------- |
+| Logo and site name   | The `logo` and `title` options                        |
+| Title                | The page `title`, in a smaller size when it is long   |
+| Description          | The page `description`, when it has one               |
+| Folders              | The breadcrumb trail, or the path for a top-level page |
+| Badges               | Language and version, when the site has several       |
+
+Colors follow the [accent](/customization/theming/#accent-presets) of the site, so a card looks like the page it points to.
+
+:::note
+Set the `site` option in `astro.config.mjs`. Social networks only fetch absolute URLs, and that option is what turns `/og/index.png` into `https://example.com/og/index.png`.
+:::
+
+## Translations and versions
+
+One image is generated per page, per language and per version, each with its own title and badges. A French page of the previous version is previewed by `/og/fr/v1/installation.png`, labelled `Français` and `v1`.
+
+Untranslated pages are covered too: they fall back to the default language, so their card carries the text that is actually served.
+
+## Build cost
+
+Rendering is done in-process with [satori](https://github.com/vercel/satori) and a WebAssembly build of [resvg](https://github.com/yisibl/resvg-js), with no browser and no network. Count about 90 ms per image, and a second of setup for the first one.
+
+Turn it off if you do not need it:
+
+```js title="astro.config.mjs"
+zenith({
+  title: 'My Docs',
+  og: false,
+});
+```
+
+## Using your own images
+
+With `og: false`, no image is generated and no meta tag is added. Override the [`Head` component](/customization/overrides/) to point at images you provide yourself:
+
+```astro title="src/components/Head.astro"
+---
+import Default from 'zenith-docs/components/layout/Head.astro';
+const { url, title } = Astro.locals.zenith;
+---
+
+<Default />
+<meta property="og:image" content={new URL(`/social${url}cover.png`, Astro.site)} />
+<meta property="og:image:alt" content={title} />
+<meta name="twitter:card" content="summary_large_image" />
+```
