@@ -16,6 +16,10 @@ A stylesheet cannot do everything. Fonts have to be declared in the config to be
 
 Anything you see in the snippets can also be written by hand: see [theming](/customization/theming/) for the full list of tokens, and [typography](/customization/typography/) for the font presets.
 
+## Custom colors
+
+The color picker next to the accent presets takes any color. The stylesheet uses it as is in light mode, and derives the dark mode accent from it with `oklch(from …)`: the same hue and chroma, with the lightness raised so it stays readable on a dark background. That syntax works in every current browser, from Chrome 119, Safari 16.4 and Firefox 128.
+
 :::note
 Nothing here is saved. Reload the page and it returns to the theme of this site.
 :::

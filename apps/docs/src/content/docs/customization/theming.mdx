@@ -135,6 +135,15 @@ Override the families with three tokens, whatever the preset:
 
 Heading sizes are fluid: they scale between their `-min` and `-max` values, in pixels, depending on the viewport width.
 
+To make everything larger or smaller at once, change the two scales instead of each size:
+
+```css
+:root {
+  --zd-heading-scale: 1.15; /* h1 to h6 */
+  --zd-text-scale: 1.05; /* body text */
+}
+```
+
 ## Layout
 
 ```css
