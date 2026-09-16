@@ -791,3 +791,36 @@ html {
     border-top: var(--border-width) solid var(--border);
   }
 }
+
+/* Slots: containers around injected components, only rendered when a slot is used */
+.zd-slot-banner {
+  position: relative;
+  z-index: 1;
+}
+
+.zd-slot-sidebar-top {
+  margin-bottom: 1rem;
+}
+
+.zd-slot-sidebar-bottom {
+  margin-top: 1.5rem;
+}
+
+.zd-slot-content-before {
+  margin-bottom: 1.5rem;
+}
+
+.zd-slot-content-after {
+  margin-top: 2.5rem;
+}
+
+.zd-slot-toc-after {
+  margin-top: 1.5rem;
+}
+
+.zd-slot-footer {
+  position: relative;
+  max-width: var(--zd-layout-width);
+  margin-inline: auto;
+  padding: 2rem 1.5rem;
+}

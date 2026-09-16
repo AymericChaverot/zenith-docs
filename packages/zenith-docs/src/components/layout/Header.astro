@@ -4,6 +4,7 @@ import VersionSwitcher from 'virtual:zenith/components/VersionSwitcher';
 import Search from 'virtual:zenith/components/Search';
 import ThemeToggle from 'virtual:zenith/components/ThemeToggle';
 import Icon from '../Icon.astro';
+import InjectionPoint from './InjectionPoint.astro';
 
 const { config, locale, t } = Astro.locals.zenith;
 const showTitle = !config.logo?.replacesTitle;
@@ -60,5 +61,6 @@ const home = `${import.meta.env.BASE_URL}${locale.prefix}`;
       )
     }
     <ThemeToggle />
+    <InjectionPoint name="headerEnd" />
   </div>
 </header>

@@ -2,6 +2,7 @@
 import { flattenTree } from '../../page-tree';
 import Icon from '../Icon.astro';
 import SidebarTree from '../SidebarTree.astro';
+import InjectionPoint from './InjectionPoint.astro';
 
 const { config, locale, sidebar, t, tree, url } = Astro.locals.zenith;
 
@@ -49,6 +50,7 @@ if (tabs.length > 0 && hasRootContent) {
       </nav>
     )
   }
+  <InjectionPoint name="sidebarTop" class="zd-slot-sidebar-top" />
   <nav aria-label={t['nav.pages']}>
     <SidebarTree nodes={sidebar.nodes} url={url} />
   </nav>
@@ -65,6 +67,7 @@ if (tabs.length > 0 && hasRootContent) {
       </ul>
     )
   }
+  <InjectionPoint name="sidebarBottom" class="zd-slot-sidebar-bottom" />
 </aside>
 <script is:inline>
   // Keep the sidebar scroll position across page loads.

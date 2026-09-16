@@ -11,6 +11,7 @@ import Pagination from 'virtual:zenith/components/Pagination';
 import Sidebar from 'virtual:zenith/components/Sidebar';
 import TableOfContents from 'virtual:zenith/components/TableOfContents';
 import Icon from '../Icon.astro';
+import InjectionPoint from './InjectionPoint.astro';
 
 const { config, entry, toc, locale, t, translated } = Astro.locals.zenith;
 const full = entry.data.full;
@@ -31,10 +32,12 @@ const hasToc = toc.length > 0 && !full;
 >
   <head>
     <Head />
+    <InjectionPoint name="head" />
   </head>
   <body>
     {config.backdrop !== 'none' && <div class="zd-backdrop" aria-hidden="true" />}
     <a class="zd-skip" href="#zd-content">{t.skip}</a>
+    <InjectionPoint name="banner" class="zd-slot-banner" />
     <Header />
     <div class="zd-layout" data-toc={hasToc ? '' : undefined}>
       <Sidebar />
@@ -70,9 +73,11 @@ const hasToc = toc.length > 0 && !full;
               </aside>
             )
           }
+          <InjectionPoint name="contentBefore" class="zd-slot-content-before" ignoreSearch />
           <div class="zd-prose">
             <slot />
           </div>
+          <InjectionPoint name="contentAfter" class="zd-slot-content-after" ignoreSearch />
           <div data-pagefind-ignore>
             <PageFooter />
             <Pagination />
@@ -83,10 +88,12 @@ const hasToc = toc.length > 0 && !full;
         hasToc && (
           <aside class="zd-toc-aside">
             <TableOfContents />
+            <InjectionPoint name="tocAfter" class="zd-slot-toc-after" />
           </aside>
         )
       }
     </div>
+    <InjectionPoint name="footer" class="zd-slot-footer" />
     <script is:inline>
       document.addEventListener('click', (event) => {
         const button = event.target instanceof Element && event.target.closest('[data-copy]');
