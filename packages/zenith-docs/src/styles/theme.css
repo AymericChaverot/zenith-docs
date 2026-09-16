@@ -29,6 +29,8 @@
     --font-mono,
     var(--zd-font-mono, ui-monospace, 'Cascadia Code', 'SF Mono', Menlo, Consolas, monospace)
   );
+  /* Large headings, falling back to the body family for presets without a display face */
+  --display-family: var(--font-display, var(--zd-font-display, var(--primary-family)));
   --primary-regular: 400;
   --primary-medium: 500;
   --primary-bold: 600;
@@ -39,6 +41,9 @@
   --h1-min: 30;
   --h1-max: 36;
   --h1-font-weight: var(--primary-bold);
+  --h1-font-family: var(--display-family);
+  --h2-font-family: var(--display-family);
+  --display-font-family: var(--display-family);
   --h2-min: 22;
   --h2-max: 25;
   --h2-font-weight: var(--primary-bold);
@@ -94,6 +99,13 @@
   --zd-icon-danger: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M7.86 2h8.28L22 7.86v8.28L16.14 22H7.86L2 16.14V7.86ZM15 9l-6 6M9 9l6 6'/%3E%3C/svg%3E");
   --zd-icon-copy: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='9' y='9' width='13' height='13' rx='2'/%3E%3Cpath d='M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1'/%3E%3C/svg%3E");
   --zd-icon-check: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6 9 17l-5-5'/%3E%3C/svg%3E");
+}
+
+/* Instrument Serif ships a single weight, so its headings cannot be bold. */
+:root[data-fonts='instrument'] {
+  --h1-font-weight: 400;
+  --h2-font-weight: 400;
+  --h1-letter-spacing: -0.02em;
 }
 
 /* Accent presets */
