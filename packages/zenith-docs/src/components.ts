@@ -41,6 +41,7 @@ export const mdxComponents = {
   File,
   Files,
   Folder,
+  Icon,
   Step,
   Steps,
   Tab,
