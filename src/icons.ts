@@ -70,6 +70,10 @@ export const icons = {
   terminal: {
     body: '<path d="m4 17 6-6-6-6M12 19h8"/>',
   },
+  type: { body: '<path d="M4 7V4h16v3M9 20h6M12 4v16"/>' },
+  wand: {
+    body: '<path d="M15 4V2M15 16v-2M8 9h2M20 9h2M17.8 11.8 19 13M15 9h.01M17.8 6.2 19 5M3 21l9-9M12.2 6.2 11 5"/>',
+  },
   zap: { body: '<path d="M13 2 3 14h9l-1 8 10-12h-9Z"/>' },
 } satisfies Record<string, { body: string; filled?: boolean }>;
 
