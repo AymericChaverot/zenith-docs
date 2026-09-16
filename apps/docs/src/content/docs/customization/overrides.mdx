@@ -23,11 +23,11 @@ Overrides read the current page from `Astro.locals.zenith`: title, table of cont
 ---
 import Default from 'zenith-docs/components/layout/PageFooter.astro';
 
-const { lastUpdated } = Astro.locals.zenith;
+const { title } = Astro.locals.zenith;
 ---
 
 <Default />
-<p>Found a typo? Let us know!</p>
+<p>Found a typo in “{title}”? Let us know!</p>
 ```
 
 Importing the default component lets you add to it rather than rewrite it.
@@ -38,6 +38,9 @@ Importing the default component lets you add to it rather than rewrite it.
 | ----------------- | ----------------------------------------------- |
 | `Head`            | Tags in `<head>`: title, meta, theme script     |
 | `Header`          | The top bar                                     |
+| `Search`          | The search field and its dialog                 |
+| `LocaleSwitcher`  | The language menu, when there are several       |
+| `VersionSwitcher` | The version menu, when there are several        |
 | `ThemeToggle`     | The dark mode switch                            |
 | `Sidebar`         | Sidebar tabs and the navigation tree            |
 | `TableOfContents` | The "On this page" list                         |
