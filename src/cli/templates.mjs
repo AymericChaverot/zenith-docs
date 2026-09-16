@@ -4,13 +4,20 @@
  * reading TypeScript.
  */
 
+import { readFileSync } from 'node:fs';
+
 const ASTRO_VERSION = '^7.3.2';
+
+const { version } = JSON.parse(readFileSync(new URL('../../package.json', import.meta.url), 'utf8'));
 
 /**
  * ZenithDocs is not on the npm registry: it installs straight from its GitHub repository,
- * whose root is the package. `ZENITH_DOCS_SOURCE` points elsewhere, for a fork or a tag.
+ * whose root is the package. New sites are pinned to the release tag of the version that
+ * created them, so later changes on `main` never break them. `ZENITH_DOCS_SOURCE` points
+ * elsewhere, for a fork or a local copy.
  */
-const ZENITH_VERSION = process.env.ZENITH_DOCS_SOURCE ?? 'github:AymericChaverot/zenith-docs';
+export const ZENITH_VERSION =
+  process.env.ZENITH_DOCS_SOURCE ?? `github:AymericChaverot/zenith-docs#v${version}`;
 
 const firstPage = (docsDir) => `---
 title: Introduction
