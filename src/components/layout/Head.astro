@@ -1,6 +1,7 @@
 ---
 import { Font } from 'astro:assets';
 import { FONT_PRESETS } from '../../fonts';
+import { withBase } from '../../urls';
 
 const { config, title, description, url, entry, alternates, locale, ogImage } = Astro.locals.zenith;
 const absolute = (path: string) => (Astro.site ? new URL(path, Astro.site).href : path);
@@ -34,7 +35,7 @@ const noindex = entry.id === '404' || entry.data.draft;
   )
 }
 {noindex && <meta name="robots" content="noindex" />}
-<link rel="icon" href={config.favicon} />
+<link rel="icon" href={withBase(config.favicon)} />
 {
   config.fonts && (
     <>

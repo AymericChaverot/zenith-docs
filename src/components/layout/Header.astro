@@ -3,6 +3,7 @@ import LocaleSwitcher from 'virtual:zenith/components/LocaleSwitcher';
 import VersionSwitcher from 'virtual:zenith/components/VersionSwitcher';
 import Search from 'virtual:zenith/components/Search';
 import ThemeToggle from 'virtual:zenith/components/ThemeToggle';
+import { withBase } from '../../urls';
 import Icon from '../Icon.astro';
 import InjectionPoint from './InjectionPoint.astro';
 
@@ -32,7 +33,7 @@ const home = `${import.meta.env.BASE_URL}${locale.prefix}`;
         />
       ) : (
         config.logo && (
-          <img class="zd-logo" src={config.logo.src} alt={showTitle ? '' : config.logo.alt || config.title} />
+          <img class="zd-logo" src={withBase(config.logo.src)} alt={showTitle ? '' : config.logo.alt || config.title} />
         )
       )
     }
