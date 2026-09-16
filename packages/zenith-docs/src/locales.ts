@@ -1,14 +1,11 @@
 import type { ZenithConfig } from './config';
+import { resolvePrefix, segmentOf, stripSegment, type PrefixedSegment } from './prefixes';
 
-export interface ResolvedLocale {
-  /** Key in the `locales` option, and directory name. `root` means no prefix. */
-  key: string;
+export interface ResolvedLocale extends PrefixedSegment {
   label: string;
   /** BCP-47 tag used for the `lang` attribute. */
   lang: string;
   dir: 'ltr' | 'rtl';
-  /** URL and directory prefix, `''` for the root locale, `'fr/'` otherwise. */
-  prefix: string;
 }
 
 export function resolveLocales(config: ZenithConfig): ResolvedLocale[] {
@@ -20,7 +17,7 @@ export function resolveLocales(config: ZenithConfig): ResolvedLocale[] {
     label: locale.label,
     lang: locale.lang ?? (key === 'root' ? config.lang : key),
     dir: locale.dir,
-    prefix: key === 'root' ? '' : `${key}/`,
+    prefix: resolvePrefix(key),
   }));
 }
 
@@ -34,17 +31,10 @@ export function getLocale(locales: ResolvedLocale[], key: string): ResolvedLocal
 
 /** The locale a content path belongs to, based on its first segment. */
 export function localeOf(path: string, locales: ResolvedLocale[]): ResolvedLocale {
-  const segment = path.split('/')[0];
-  const match = locales.find((locale) => locale.key !== 'root' && locale.key === segment);
-  return match ?? getDefaultLocale(locales);
+  return segmentOf(path, locales, getDefaultLocale(locales));
 }
 
-/**
- * Remove the locale prefix from a content path. The index page of a locale directory has the
- * locale itself as its id, so `fr` becomes `index`.
- */
+/** Remove the locale prefix from a content path. */
 export function stripLocale(path: string, locale: ResolvedLocale): string {
-  if (!locale.prefix) return path;
-  if (path === locale.key) return 'index';
-  return path.startsWith(locale.prefix) ? path.slice(locale.prefix.length) : path;
+  return stripSegment(path, locale);
 }
