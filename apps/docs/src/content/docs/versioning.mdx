@@ -4,6 +4,10 @@ description: Keep the documentation of older releases online, next to the curren
 icon: layers
 ---
 
+:::note
+ZenithDocs has a single version so far, so this site has no version switcher. Everything below is covered by the test suite.
+:::
+
 Declare your versions with the `versions` option. Each key is both a content directory and a URL prefix, except `root`, which is the current version served without a prefix.
 
 ```js title="astro.config.mjs"
@@ -39,7 +43,7 @@ The current version lives at the root of the docs directory, and each older vers
 
 `installation.mdx` is served at `/installation/`, and `v1/installation.mdx` at `/v1/installation/`.
 
-To cut a new version, copy the current directory: `cp -r src/content/docs src/content/docs/v2`, then add `v2` to the `versions` option. Each version is then edited independently.
+Before starting work on a new major version, archive the current one: copy its pages into a directory named after it, such as `v2/`, leaving out the directories of older versions and of other languages. Add `v2` to the `versions` option, then keep editing the root for the new version. Each version is edited independently from then on.
 
 ## Switching versions
 
