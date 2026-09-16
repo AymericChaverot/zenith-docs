@@ -1,0 +1,38 @@
+---
+/** Added to the bottom of the sidebar through the `slots` option. */
+const { locale } = Astro.locals.zenith;
+const href = `${import.meta.env.BASE_URL}${locale.prefix}customization/builder/`;
+---
+
+<a class="sidebar-promo" href={href}>
+  <span class="sidebar-promo-title">Theme builder</span>
+  <span class="sidebar-promo-text">Try every option, copy the result.</span>
+</a>
+
+<style>
+  .sidebar-promo {
+    display: grid;
+    gap: 0.125rem;
+    margin-inline: 0.5rem;
+    padding: 0.75rem;
+    border: var(--border-width) solid var(--border);
+    border-radius: var(--radius-main);
+    background: color-mix(in oklab, var(--accent) 6%, transparent);
+    color: var(--text);
+    text-decoration: none;
+  }
+
+  .sidebar-promo:hover {
+    border-color: var(--accent);
+  }
+
+  .sidebar-promo-title {
+    font-size: 0.875rem;
+    font-weight: var(--primary-bold);
+  }
+
+  .sidebar-promo-text {
+    color: var(--text-2);
+    font-size: 0.8125rem;
+  }
+</style>

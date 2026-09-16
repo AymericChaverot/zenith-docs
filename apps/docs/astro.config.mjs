@@ -29,6 +29,9 @@ export default defineConfig({
       openapi: {
         rockets: './src/openapi/rockets.yaml',
       },
+      slots: {
+        sidebarBottom: './src/components/SidebarPromo.astro',
+      },
       locales: {
         root: { label: 'English' },
         fr: { label: 'Français' },
