@@ -1,5 +1,7 @@
 import './global';
 
+import { relative } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { isSatteriProcessor } from '@astrojs/markdown-satteri';
 import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
@@ -7,7 +9,9 @@ import type { AstroIntegration } from 'astro';
 import { fontProviders } from 'astro/config';
 import { AstroError } from 'astro/errors';
 import { ZenithConfigSchema, type ZenithUserConfig } from './config';
+import { getDefaultLocale, localeOf, resolveLocales } from './locales';
 import { resolveLogo } from './logo';
+import { getTranslations, type Translations } from './translations';
 import {
   directivesRestorationPlugin,
   zenithHastPlugins,
@@ -26,6 +30,13 @@ export default function zenith(userConfig: ZenithUserConfig): AstroIntegration {
     throw new AstroError('Invalid ZenithDocs configuration', issues.join('\n'));
   }
   const config = parsed.data;
+
+  if (config.locales && !('root' in config.locales)) {
+    throw new AstroError(
+      'Missing `root` locale',
+      'The `locales` option needs a `root` entry: it is the default language, served without a URL prefix.',
+    );
+  }
 
   const unknown = Object.keys(config.components).filter(
     (name) => !(OVERRIDABLE_COMPONENTS as readonly string[]).includes(name),
@@ -66,11 +77,34 @@ export default function zenith(userConfig: ZenithUserConfig): AstroIntegration {
           }
         }
 
+        // Callout titles and labels follow the language of the file being processed.
+        const locales = resolveLocales(config);
+        const docsRoot = fileURLToPath(
+          new URL(`${config.docsDir.replace(/^\.\//, '').replace(/\/$/, '')}/`, astroConfig.root),
+        );
+        const cache = new Map<string, Translations>();
+        const translationsForFile = (fileURL: URL | undefined) => {
+          const path = fileURL ? relative(docsRoot, fileURLToPath(fileURL)) : '';
+          const locale =
+            path && !path.startsWith('..')
+              ? localeOf(path.replaceAll('\\', '/'), locales)
+              : getDefaultLocale(locales);
+          let translations = cache.get(locale.key);
+          if (!translations) {
+            translations = getTranslations(locale.lang, config.translations[locale.key]);
+            cache.set(locale.key, translations);
+          }
+          return translations;
+        };
+
         const processor = astroConfig.markdown.processor;
         if (processor && isSatteriProcessor(processor)) {
           processor.options.features.directive = true;
-          processor.options.mdastPlugins.push(...zenithMdastPlugins(), directivesRestorationPlugin());
-          processor.options.hastPlugins.push(...zenithHastPlugins());
+          processor.options.mdastPlugins.push(
+            ...zenithMdastPlugins(translationsForFile),
+            directivesRestorationPlugin(),
+          );
+          processor.options.hastPlugins.push(...zenithHastPlugins(translationsForFile));
         } else {
           logger.warn(
             'ZenithDocs Markdown features (callouts, heading anchors, code titles) require the Sätteri processor.',

@@ -9,15 +9,24 @@ import type {
   MdastPluginDefinition,
   MdastPluginEntry,
 } from 'satteri';
-import { resolveCallout, type CalloutType } from '../callouts';
+import { resolveCallout, type CalloutType, type ResolvedCallout } from '../callouts';
+import { DEFAULT_TRANSLATIONS, type Translations } from '../translations';
 
-export function zenithMdastPlugins(): MdastPluginEntry[] {
-  return [calloutsPlugin()];
+/** Interface strings for the file being processed. */
+export type TranslationsForFile = (fileURL: URL | undefined) => Translations;
+
+const defaultTranslations: TranslationsForFile = () => DEFAULT_TRANSLATIONS as Translations;
+
+const calloutTitle = (t: Translations, callout: ResolvedCallout) =>
+  (t as Record<string, string>)[`callout.${callout.name}`] ?? callout.title;
+
+export function zenithMdastPlugins(t: TranslationsForFile = defaultTranslations): MdastPluginEntry[] {
+  return [({ fileURL }) => calloutsPlugin(t(fileURL))];
 }
 
-export function zenithHastPlugins(): HastPluginEntry[] {
-  // A factory so each file gets its own slugger.
-  return [() => [headingsPlugin(), codeBlocksPlugin()]];
+export function zenithHastPlugins(t: TranslationsForFile = defaultTranslations): HastPluginEntry[] {
+  // A factory so each file gets its own slugger and its own language.
+  return [({ fileURL }) => [headingsPlugin(t(fileURL)), codeBlocksPlugin(t(fileURL))]];
 }
 
 /** Turn unclaimed directives back into text so content like `10:30` isn't lost. */
@@ -40,7 +49,7 @@ export function directivesRestorationPlugin(): MdastPluginDefinition {
 }
 
 /** `:::warning[Title]` directives and GitHub `> [!NOTE]` alerts. */
-function calloutsPlugin(): MdastPluginDefinition {
+function calloutsPlugin(t: Translations): MdastPluginDefinition {
   return {
     name: 'zenith-callouts',
     containerDirective(node) {
@@ -54,7 +63,7 @@ function calloutsPlugin(): MdastPluginDefinition {
         title = [...first.children];
         children.shift();
       }
-      return callout(resolved.type, title ?? resolved.title, children);
+      return callout(resolved.type, title ?? calloutTitle(t, resolved), children);
     },
     blockquote(node) {
       const first = node.children[0];
@@ -74,7 +83,7 @@ function calloutsPlugin(): MdastPluginDefinition {
         ...(remaining.length > 0 ? [{ ...first, children: remaining }] : []),
         ...node.children.slice(1),
       ];
-      return callout(resolved.type, resolved.title, children);
+      return callout(resolved.type, calloutTitle(t, resolved), children);
     },
   };
 }
@@ -88,7 +97,7 @@ function callout(type: CalloutType, title: PhrasingContent[] | string, children:
 }
 
 /** Custom `## Title [#id]` ids and anchor links next to headings. */
-function headingsPlugin(): HastPluginDefinition {
+function headingsPlugin(t: Translations): HastPluginDefinition {
   const slugger = new GithubSlugger();
   return {
     name: 'zenith-headings',
@@ -127,7 +136,7 @@ function headingsPlugin(): HastPluginDefinition {
               properties: {
                 class: 'zd-anchor',
                 href: `#${id}`,
-                'aria-label': `Link to this section`,
+                'aria-label': t['page.anchor'],
                 'data-pagefind-ignore': '',
               },
               children: [],
@@ -140,7 +149,7 @@ function headingsPlugin(): HastPluginDefinition {
 }
 
 /** Wrap highlighted `<pre>` blocks with a title bar and a copy button. */
-function codeBlocksPlugin(): HastPluginDefinition {
+function codeBlocksPlugin(t: Translations): HastPluginDefinition {
   return {
     name: 'zenith-code-blocks',
     element: {
@@ -163,7 +172,12 @@ function codeBlocksPlugin(): HastPluginDefinition {
         children.push({ ...node, properties } as Element, {
           type: 'element',
           tagName: 'button',
-          properties: { type: 'button', class: 'zd-copy', 'aria-label': 'Copy code', 'data-copy': '' },
+          properties: {
+            type: 'button',
+            class: 'zd-copy',
+            'aria-label': t['code.copy'],
+            'data-copy': '',
+          },
           children: [],
         });
 
