@@ -7,11 +7,10 @@
 const ASTRO_VERSION = '^7.3.2';
 
 /**
- * ZenithDocs is not on the npm registry: it installs from the `zenith-docs` branch of the
- * repository, which holds the package alone. `ZENITH_DOCS_SOURCE` points elsewhere, for a fork.
+ * ZenithDocs is not on the npm registry: it installs straight from its GitHub repository,
+ * whose root is the package. `ZENITH_DOCS_SOURCE` points elsewhere, for a fork or a tag.
  */
-const ZENITH_VERSION =
-  process.env.ZENITH_DOCS_SOURCE ?? 'github:AymericChaverot/zenith-docs#zenith-docs';
+const ZENITH_VERSION = process.env.ZENITH_DOCS_SOURCE ?? 'github:AymericChaverot/zenith-docs';
 
 const firstPage = (docsDir) => `---
 title: Introduction

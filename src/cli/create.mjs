@@ -1,4 +1,5 @@
-#!/usr/bin/env node
+// `zenith create`: writes a new site. It runs before anything is installed in the target,
+// through `npx`, so it only uses Node built-ins.
 import { spawnSync } from 'node:child_process';
 import { existsSync, mkdirSync, readdirSync, writeFileSync } from 'node:fs';
 import { basename, dirname, join, relative, resolve } from 'node:path';
@@ -9,7 +10,7 @@ import { TEMPLATES, THEMES } from './templates.mjs';
 const HELP = `Create a ZenithDocs site
 
 Usage
-  npx github:AymericChaverot/zenith-docs#create [directory] [options]
+  npx github:AymericChaverot/zenith-docs create [directory] [options]
 
 Run it in a terminal without options and it asks for what it needs.
 
@@ -22,7 +23,8 @@ Options
   -h, --help             Show this message
 `;
 
-async function main(argv) {
+/** @param {string[]} argv Arguments after `create`. */
+export async function create(argv) {
   const { values, positionals } = parseArgs({
     args: argv,
     allowPositionals: true,
@@ -185,8 +187,3 @@ function toTitle(directory) {
     .map((word) => word[0].toUpperCase() + word.slice(1))
     .join(' ');
 }
-
-main(process.argv.slice(2)).catch((error) => {
-  console.error(`\n  ${error instanceof Error ? error.message : String(error)}\n`);
-  process.exit(1);
-});

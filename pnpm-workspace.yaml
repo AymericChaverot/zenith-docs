@@ -1,5 +1,5 @@
+# The root is the zenith-docs package itself, so it installs straight from GitHub.
 packages:
-  - packages/*
   - apps/*
   - examples/*
 allowBuilds:

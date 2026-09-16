@@ -1,19 +1,24 @@
 #!/usr/bin/env node
 import { readFileSync } from 'node:fs';
 import { parseArgs } from 'node:util';
+import { create } from './create.mjs';
 import { init } from './init.mjs';
 import { generateProject, loadProject } from './project.mjs';
 
 const HELP = `zenith — documentation sites, without a build to configure
 
 Usage
+  npx github:AymericChaverot/zenith-docs create [directory]
   zenith <command> [options]
 
 Commands
+  create     Create a new site in a directory, asking for what it needs
+  init       Add a config file and a first page to the current directory
   dev        Start the development server
   build      Build the site into dist/
   preview    Serve the built site
-  init       Create a config file and a first page
+
+Run \`zenith create --help\` for the options of create.
 
 Options
   -p, --port <number>   Port of the dev or preview server
@@ -25,6 +30,12 @@ Options
 
 /** @param {string[]} argv */
 async function main(argv) {
+  // `create` has options of its own, so it parses the rest of the line itself.
+  if (argv[0] === 'create') {
+    await create(argv.slice(1));
+    return;
+  }
+
   const { values, positionals } = parseArgs({
     args: argv,
     allowPositionals: true,
