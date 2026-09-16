@@ -2,6 +2,7 @@
 import { readFileSync } from 'node:fs';
 import { parseArgs } from 'node:util';
 import { create } from './create.mjs';
+import { docker } from './docker.mjs';
 import { init } from './init.mjs';
 import { generateProject, loadProject } from './project.mjs';
 
@@ -14,11 +15,12 @@ Usage
 Commands
   create     Create a new site in a directory, asking for what it needs
   init       Add a config file and a first page to the current directory
+  docker     Add a Dockerfile that builds the site and serves it with nginx
   dev        Start the development server
   build      Build the site into dist/
   preview    Serve the built site
 
-Run \`zenith create --help\` for the options of create.
+Run \`zenith create --help\` or \`zenith docker --help\` for their options.
 
 Options
   -p, --port <number>   Port of the dev or preview server
@@ -30,9 +32,13 @@ Options
 
 /** @param {string[]} argv */
 async function main(argv) {
-  // `create` has options of its own, so it parses the rest of the line itself.
+  // `create` and `docker` have options of their own, so they parse the rest of the line.
   if (argv[0] === 'create') {
     await create(argv.slice(1));
+    return;
+  }
+  if (argv[0] === 'docker') {
+    docker(argv.slice(1), process.cwd());
     return;
   }
 
