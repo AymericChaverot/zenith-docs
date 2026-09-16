@@ -9,6 +9,7 @@
     "./content": "./src/content.ts",
     "./components": "./src/components.ts",
     "./components/*": "./src/components/*",
+    "./icons": "./src/icons.ts",
     "./routes/*": "./src/routes/*",
     "./styles/*": "./src/styles/*",
     "./markdown": "./src/markdown/index.ts",
