@@ -1,0 +1,74 @@
+---
+title: CLI
+description: Run a documentation site from a config file and a folder of Markdown.
+icon: zap
+---
+
+ZenithDocs can be used two ways. As an [Astro integration](/installation/), inside a project you control, or through its CLI, which needs no Astro project at all:
+
+<Files>
+  <Folder name="my-docs" defaultOpen>
+    <File name="zenith.config.ts" />
+    <Folder name="content" defaultOpen>
+      <File name="index.md" />
+      <File name="guide.md" />
+    </Folder>
+  </Folder>
+</Files>
+
+```bash
+zenith dev
+```
+
+No `astro.config.mjs`, no `content.config.ts`, no `src` directory.
+
+## Commands
+
+| Command          | What it does                                    |
+| ---------------- | ----------------------------------------------- |
+| `zenith dev`     | Starts the development server                   |
+| `zenith build`   | Builds the site into `dist/`                    |
+| `zenith preview` | Serves the built site                           |
+| `zenith init`    | Creates a config file and a first page          |
+
+`dev` and `preview` accept `--port`, `--host` and `--open`. Every command accepts `--help`.
+
+## The config file
+
+`zenith.config.ts` exports the same options as the integration, plus `site` and `base`, which the integration reads from `astro.config.mjs` instead.
+
+```ts title="zenith.config.ts"
+import { defineConfig } from 'zenith-docs/config';
+
+export default defineConfig({
+  title: 'My Docs',
+  site: 'https://docs.example.com',
+  accent: 'violet',
+});
+```
+
+Pages are read from `content/` unless `docsDir` says otherwise. `public/` is served as-is if it exists, and the build lands in `dist/`.
+
+:::note
+The config file is loaded by Node, which removes type annotations but does not compile TypeScript. A plain exported object is fine; `enum`, `namespace` and other syntax that needs real compiling is not. Use `zenith.config.mjs` if you hit that.
+:::
+
+## What is generated
+
+Astro needs a couple of files that this layout does not have, so the CLI writes them into `.zenith/` and rewrites them on every run:
+
+<Files>
+  <Folder name=".zenith" defaultOpen>
+    <File name="astro.config.mjs" />
+    <File name="content.config.ts" />
+    <Folder name="pages" />
+  </Folder>
+</Files>
+
+The directory ignores itself in git, so there is nothing to add to your `.gitignore`. Editing anything in it is pointless: the next command overwrites it.
+
+## Choosing between the two
+
+Use the CLI when the site is only documentation. Use the [integration](/installation/) as soon as you want the rest of Astro: your own pages and routes, other integrations, framework components, or a landing page in front of the docs.
+
+Moving from one to the other is mostly mechanical: create an `astro.config.mjs` with the integration, move `zenith.config.ts` into it, and add the `content.config.ts` that the CLI was generating for you.
