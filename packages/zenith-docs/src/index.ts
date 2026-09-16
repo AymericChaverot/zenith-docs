@@ -9,6 +9,7 @@ import type { AstroIntegration } from 'astro';
 import { fontProviders } from 'astro/config';
 import { AstroError } from 'astro/errors';
 import { ZenithConfigSchema, type ZenithUserConfig } from './config';
+import { FONT_PRESETS, FONT_VARIABLES, type FontFamily, type FontPreset } from './fonts';
 import { getDefaultLocale, localeOf, resolveLocales } from './locales';
 import { resolveLogo } from './logo';
 import { getTranslations, type Translations } from './translations';
@@ -135,6 +136,25 @@ export default function zenith(userConfig: ZenithUserConfig): AstroIntegration {
 
         const resolvedConfig = { ...config, logo: resolveLogo(config.logo, astroConfig) };
 
+        // One entry per family of the preset, under the variables the theme reads.
+        const preset: FontPreset | undefined = config.fonts ? FONT_PRESETS[config.fonts] : undefined;
+        const fontFamily = (family: FontFamily, cssVariable: string) => ({
+          provider: fontProviders.fontsource(),
+          name: family.name,
+          cssVariable,
+          weights: family.weights,
+          styles: family.styles ?? ['normal'],
+          subsets: ['latin'],
+          fallbacks: family.fallbacks,
+        });
+        const fonts = preset
+          ? [
+              fontFamily(preset.sans, FONT_VARIABLES.sans),
+              fontFamily(preset.mono, FONT_VARIABLES.mono),
+              ...(preset.display ? [fontFamily(preset.display, FONT_VARIABLES.display)] : []),
+            ]
+          : [];
+
         const { shikiConfig } = astroConfig.markdown;
         const hasUserThemes = Object.keys(shikiConfig.themes ?? {}).length > 0;
         // API samples are highlighted outside the Markdown pipeline, with the same themes.
@@ -150,28 +170,7 @@ export default function zenith(userConfig: ZenithUserConfig): AstroIntegration {
               transformers: zenithShikiTransformers(),
             },
           },
-          fonts: config.fonts
-            ? [
-                {
-                  provider: fontProviders.fontsource(),
-                  name: 'Geist',
-                  cssVariable: '--zd-font-sans',
-                  weights: ['100 900'],
-                  styles: ['normal'],
-                  subsets: ['latin'],
-                  fallbacks: ['system-ui', 'sans-serif'],
-                },
-                {
-                  provider: fontProviders.fontsource(),
-                  name: 'Geist Mono',
-                  cssVariable: '--zd-font-mono',
-                  weights: ['100 900'],
-                  styles: ['normal'],
-                  subsets: ['latin'],
-                  fallbacks: ['ui-monospace', 'monospace'],
-                },
-              ]
-            : [],
+          fonts,
           vite: {
             plugins: [vitePluginZenith(resolvedConfig, astroConfig.root, shikiThemes)],
           },

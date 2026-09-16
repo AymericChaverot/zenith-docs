@@ -1,5 +1,6 @@
 ---
 import { Font } from 'astro:assets';
+import { FONT_PRESETS } from '../../fonts';
 
 const { config, title, description, url, entry, alternates, locale, ogImage } = Astro.locals.zenith;
 const absolute = (path: string) => (Astro.site ? new URL(path, Astro.site).href : path);
@@ -37,6 +38,7 @@ const noindex = entry.id === '404' || entry.data.draft;
     <>
       <Font cssVariable={'--zd-font-sans' as never} preload />
       <Font cssVariable={'--zd-font-mono' as never} />
+      {'display' in FONT_PRESETS[config.fonts] && <Font cssVariable={'--zd-font-display' as never} preload />}
     </>
   )
 }

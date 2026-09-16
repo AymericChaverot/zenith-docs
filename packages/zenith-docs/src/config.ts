@@ -1,4 +1,5 @@
 import { z } from 'astro/zod';
+import { FONT_PRESET_NAMES } from './fonts';
 
 export const DEFAULT_DOCS_DIR = 'src/content/docs';
 
@@ -60,8 +61,14 @@ export const ZenithConfigSchema = z.object({
     .transform((value) => (value === true ? 'dither' : value === false ? 'none' : value)),
   /** Side the backdrop is anchored to. */
   backdropPosition: z.enum(['left', 'center', 'right']).default('left'),
-  /** Self-host Geist and Geist Mono. Set to `false` to use system fonts. */
-  fonts: z.boolean().default(true),
+  /**
+   * Font preset, self-hosted. `true` means `instrument`, `false` uses system fonts.
+   * Override the families with `--font-body`, `--font-mono` and `--font-display`.
+   */
+  fonts: z
+    .union([z.boolean(), z.enum(FONT_PRESET_NAMES)])
+    .default('instrument')
+    .transform((value) => (value === true ? ('instrument' as const) : value)),
   favicon: z.string().default('/favicon.svg'),
   lang: z.string().default('en'),
   /**
