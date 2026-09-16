@@ -8,7 +8,7 @@ export interface ResolvedLocale extends PrefixedSegment {
   dir: 'ltr' | 'rtl';
 }
 
-export function resolveLocales(config: ZenithConfig): ResolvedLocale[] {
+export function resolveLocales(config: Pick<ZenithConfig, 'lang' | 'locales'>): ResolvedLocale[] {
   if (!config.locales) {
     return [{ key: 'root', label: config.lang, lang: config.lang, dir: 'ltr', prefix: '' }];
   }

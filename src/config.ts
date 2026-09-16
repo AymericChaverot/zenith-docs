@@ -11,6 +11,12 @@ const LinkSchema = z.object({
   href: z.string(),
 });
 
+const LogoSchema = z.object({
+  src: z.string(),
+  alt: z.string().default(''),
+  replacesTitle: z.boolean().default(false),
+});
+
 const TableOfContentsSchema = z.object({
   minHeadingLevel: z.number().int().min(1).max(6).default(2),
   maxHeadingLevel: z.number().int().min(1).max(6).default(3),
@@ -18,21 +24,14 @@ const TableOfContentsSchema = z.object({
 
 export const ZenithConfigSchema = z.object({
   /** Site name, shown in the header and used as the title suffix. */
-  title: z.string(),
+  title: z.string().default('ZenithDocs'),
   description: z.string().optional(),
   /**
    * Logo shown in the header: a path relative to the project root (`./src/assets/logo.svg`)
    * or a public URL (`/logo.png`). SVG files are inlined, so they can use `currentColor`.
+   * Defaults to the ZenithDocs logo, `false` shows none.
    */
-  logo: z
-    .object({
-      src: z.string(),
-      alt: z.string().default(''),
-      replacesTitle: z.boolean().default(false),
-      /** SVG markup, filled in by ZenithDocs. */
-      svg: z.string().optional(),
-    })
-    .optional(),
+  logo: z.union([z.literal(false), LogoSchema]).optional(),
   /** Build a static search index with Pagefind, and show the search dialog. */
   search: z.boolean().default(true),
   /** Generate `llms.txt`, `llms-full.txt` and a `.md` version of every page. */
@@ -63,7 +62,8 @@ export const ZenithConfigSchema = z.object({
     .union([z.boolean(), z.enum(FONT_PRESET_NAMES)])
     .default('instrument')
     .transform((value) => (value === true ? ('instrument' as const) : value)),
-  favicon: z.string().default('/favicon.svg'),
+  /** Favicon URL. Defaults to `public/favicon.svg` when it exists, and to the ZenithDocs icon otherwise. */
+  favicon: z.string().optional(),
   lang: z.string().default('en'),
   /**
    * Languages of the site, keyed by content directory and URL prefix.
@@ -113,7 +113,19 @@ export const ZenithConfigSchema = z.object({
   slots: z.record(z.string(), z.union([z.string(), z.array(z.string())])).default({}),
 });
 
-export type ZenithConfig = z.output<typeof ZenithConfigSchema>;
+/** Options as validated, before assets are resolved. */
+export type ZenithParsedConfig = z.output<typeof ZenithConfigSchema>;
+
+export type ZenithLogo = z.output<typeof LogoSchema> & {
+  /** SVG markup, inlined so the logo can use `currentColor`. */
+  svg?: string;
+};
+
+/** Options as components receive them, with the logo and favicon resolved. */
+export type ZenithConfig = Omit<ZenithParsedConfig, 'logo' | 'favicon'> & {
+  logo?: ZenithLogo;
+  favicon: string;
+};
 
 export type ZenithUserConfig = z.input<typeof ZenithConfigSchema> & {
   /** Deployed URL, used for canonical links, the sitemap and social images. CLI only. */

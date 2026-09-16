@@ -8,11 +8,11 @@ import sitemap from '@astrojs/sitemap';
 import type { AstroIntegration } from 'astro';
 import { fontProviders } from 'astro/config';
 import { AstroError } from 'astro/errors';
-import { ZenithConfigSchema, type ZenithUserConfig } from './config';
+import { ZenithConfigSchema, type ZenithConfig, type ZenithUserConfig } from './config';
 import { FONT_PRESETS, FONT_VARIABLES, type FontFamily, type FontPreset } from './fonts';
 import { THEMED_OPTIONS, THEMES } from './themes';
 import { getDefaultLocale, localeOf, resolveLocales } from './locales';
-import { resolveLogo } from './logo';
+import { resolveFavicon, resolveLogo } from './logo';
 import { getTranslations, type Translations } from './translations';
 import {
   directivesRestorationPlugin,
@@ -25,7 +25,7 @@ import { OVERRIDABLE_COMPONENTS, SLOT_NAMES, vitePluginZenith } from './virtual'
 
 export type { ZenithConfig, ZenithUserConfig } from './config';
 
-export default function zenith(userConfig: ZenithUserConfig): AstroIntegration {
+export default function zenith(userConfig: ZenithUserConfig = {}): AstroIntegration {
   const parsed = ZenithConfigSchema.safeParse(userConfig);
   if (!parsed.success) {
     const issues = parsed.error.issues.map((issue) => `- ${issue.path.join('.')}: ${issue.message}`);
@@ -108,6 +108,15 @@ export default function zenith(userConfig: ZenithUserConfig): AstroIntegration {
           }
         }
 
+        const { favicon, serveDefault } = resolveFavicon(config.favicon, astroConfig);
+        if (serveDefault) {
+          injectRoute({
+            pattern: 'favicon.svg',
+            entrypoint: 'zenith-docs/routes/favicon.svg.ts',
+            prerender: true,
+          });
+        }
+
         if (config.og) {
           injectRoute({
             pattern: 'og/[...slug].png',
@@ -157,7 +166,11 @@ export default function zenith(userConfig: ZenithUserConfig): AstroIntegration {
         const selfIndex = astroConfig.integrations.findIndex((i) => i.name === 'zenith-docs');
         astroConfig.integrations.splice(selfIndex + 1, 0, ...integrations);
 
-        const resolvedConfig = { ...config, logo: resolveLogo(config.logo, astroConfig) };
+        const resolvedConfig: ZenithConfig = {
+          ...config,
+          logo: resolveLogo(config.logo, astroConfig),
+          favicon,
+        };
 
         // One entry per family of the preset, under the variables the theme reads.
         const preset: FontPreset | undefined = config.fonts ? FONT_PRESETS[config.fonts] : undefined;

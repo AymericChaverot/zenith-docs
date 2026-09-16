@@ -7,7 +7,7 @@ export interface ResolvedVersion extends PrefixedSegment {
   badge?: string;
 }
 
-export function resolveVersions(config: ZenithConfig): ResolvedVersion[] {
+export function resolveVersions(config: Pick<ZenithConfig, 'versions'>): ResolvedVersion[] {
   if (!config.versions) return [{ key: 'root', label: '', prefix: '' }];
   return Object.entries(config.versions).map(([key, version]) => ({
     key,
