@@ -1,7 +1,7 @@
 ---
 import { Font } from 'astro:assets';
 
-const { config, title, description, url, entry, alternates, locale } = Astro.locals.zenith;
+const { config, title, description, url, entry, alternates, locale, ogImage } = Astro.locals.zenith;
 const absolute = (path: string) => (Astro.site ? new URL(path, Astro.site).href : path);
 const pageTitle = title === config.title ? title : `${title} | ${config.title}`;
 const pageDescription = description ?? config.description;
@@ -48,7 +48,17 @@ const noindex = entry.id === '404' || entry.data.draft;
 <meta property="og:title" content={title} />
 {pageDescription && <meta property="og:description" content={pageDescription} />}
 {canonical && <meta property="og:url" content={canonical} />}
-<meta name="twitter:card" content="summary" />
+{
+  ogImage && !noindex && (
+    <>
+      <meta property="og:image" content={absolute(ogImage)} />
+      <meta property="og:image:width" content="1200" />
+      <meta property="og:image:height" content="630" />
+      <meta property="og:image:alt" content={title} />
+    </>
+  )
+}
+<meta name="twitter:card" content={ogImage && !noindex ? 'summary_large_image' : 'summary'} />
 <script
   is:inline
   type="speculationrules"
