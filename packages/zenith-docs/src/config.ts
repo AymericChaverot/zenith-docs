@@ -33,6 +33,8 @@ export const ZenithConfigSchema = z.object({
   search: z.boolean().default(true),
   /** Generate `llms.txt`, `llms-full.txt` and a `.md` version of every page. */
   llms: z.boolean().default(true),
+  /** Generate an Open Graph image for every page, shown when a link is shared. */
+  og: z.boolean().default(true),
   /** Accent color preset. Use `customCss` for anything else. */
   accent: z.enum(['emerald', 'teal', 'amber', 'rose', 'violet', 'neutral']).default('emerald'),
   /** Decorative background at the top of pages. `true` means `aurora`, `false` means `none`. */
