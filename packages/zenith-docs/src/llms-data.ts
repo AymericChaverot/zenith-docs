@@ -1,21 +1,24 @@
 import { getSections, toPlainMarkdown, type LlmsPage, type LlmsSection } from './llms';
-import { localeOf, stripLocale } from './locales';
 import { urlFromId } from './page-tree';
-import { defaultLocale, getDocs, getPageTree, locales } from './route-data';
+import { defaultLocale, defaultVersion, getDocs, getPageTree, scopeOf } from './route-data';
 
 export interface LlmsData {
   sections: LlmsSection[];
   pages: Map<string, LlmsPage>;
 }
 
-/** Collect the pages of the default language, keyed by the URL used in the navigation tree. */
+/** Collect the pages of the default language and version, keyed by their URL. */
 export async function getLlmsData(site: URL | undefined): Promise<LlmsData> {
-  const [tree, docs] = await Promise.all([getPageTree(defaultLocale), getDocs()]);
+  const [tree, docs] = await Promise.all([
+    getPageTree(defaultLocale, defaultVersion),
+    getDocs(),
+  ]);
   const pages = new Map<string, LlmsPage>();
 
   for (const entry of docs) {
-    if (localeOf(entry.id, locales).key !== defaultLocale.key) continue;
-    const path = urlFromId(stripLocale(entry.id, defaultLocale), import.meta.env.BASE_URL);
+    const scope = scopeOf(entry.id);
+    if (scope.locale.key !== defaultLocale.key || scope.version.key !== defaultVersion.key) continue;
+    const path = urlFromId(scope.id, import.meta.env.BASE_URL);
     pages.set(path, {
       title: entry.data.title,
       description: entry.data.description,
