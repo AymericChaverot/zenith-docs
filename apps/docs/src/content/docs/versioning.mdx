@@ -1,0 +1,58 @@
+---
+title: Versioning
+description: Keep the documentation of older releases online, next to the current one.
+icon: layers
+---
+
+Declare your versions with the `versions` option. Each key is both a content directory and a URL prefix, except `root`, which is the current version served without a prefix.
+
+```js title="astro.config.mjs"
+zenith({
+  title: 'My Docs',
+  versions: {
+    root: { label: 'v2', badge: 'Latest' },
+    v1: { label: 'v1' },
+  },
+});
+```
+
+| Field   | Purpose                                            |
+| ------- | -------------------------------------------------- |
+| `label` | Name shown in the version switcher                 |
+| `badge` | Small tag next to the label, such as `Latest`      |
+
+## Organizing versions
+
+The current version lives at the root of the docs directory, and each older version in its own directory:
+
+<Files>
+  <Folder name="src/content/docs" defaultOpen>
+    <File name="index.mdx" />
+    <File name="installation.mdx" />
+    <Folder name="v1" defaultOpen>
+      <File name="index.mdx" />
+      <File name="installation.mdx" />
+      <File name="meta.json" />
+    </Folder>
+  </Folder>
+</Files>
+
+`installation.mdx` is served at `/installation/`, and `v1/installation.mdx` at `/v1/installation/`.
+
+To cut a new version, copy the current directory: `cp -r src/content/docs src/content/docs/v2`, then add `v2` to the `versions` option. Each version is then edited independently.
+
+## Switching versions
+
+A version switcher appears in the header as soon as a second version is declared. It links to the same page in the other version, and falls back to that version's home page when the page does not exist there.
+
+Each version has its own navigation: sidebar, [page order](/writing/navigation/) and previous and next links stay inside the version being read.
+
+## With several languages
+
+Versions and [languages](/i18n/) combine, the language first and the version second: `/fr/v1/installation/`. A page missing from a translation falls back to the default language **of the same version**, so readers never jump between versions without noticing.
+
+:::note
+The search index covers every version. A page from an old version can therefore show up in the results of the current one.
+:::
+
+The Markdown output for [LLMs](/llms/) only covers the current version, so models are not fed outdated instructions.
