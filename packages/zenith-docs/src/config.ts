@@ -60,6 +60,23 @@ export const ZenithConfigSchema = z.object({
   fonts: z.boolean().default(true),
   favicon: z.string().default('/favicon.svg'),
   lang: z.string().default('en'),
+  /**
+   * Languages of the site, keyed by content directory and URL prefix.
+   * The `root` key is the default language, served without a prefix.
+   */
+  locales: z
+    .record(
+      z.string(),
+      z.object({
+        label: z.string(),
+        /** BCP-47 tag, defaults to the key. */
+        lang: z.string().optional(),
+        dir: z.enum(['ltr', 'rtl']).default('ltr'),
+      }),
+    )
+    .optional(),
+  /** Interface strings, keyed by locale, overriding the built-in ones. */
+  translations: z.record(z.string(), z.record(z.string(), z.string())).default({}),
   /** Directory holding the docs content, relative to the project root. */
   docsDir: z.string().default(DEFAULT_DOCS_DIR),
   /** Repository URL, shown as an icon link in the header. */
