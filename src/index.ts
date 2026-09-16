@@ -152,7 +152,7 @@ export default function zenith(userConfig: ZenithUserConfig = {}): AstroIntegrat
             ...zenithMdastPlugins(translationsForFile),
             directivesRestorationPlugin(),
           );
-          processor.options.hastPlugins.push(...zenithHastPlugins(translationsForFile));
+          processor.options.hastPlugins.push(...zenithHastPlugins(translationsForFile, astroConfig.base));
         } else {
           logger.warn(
             'ZenithDocs Markdown features (callouts, heading anchors, code titles) require the Sätteri processor.',

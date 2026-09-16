@@ -11,6 +11,7 @@ import type {
 } from 'satteri';
 import { resolveCallout, type CalloutType, type ResolvedCallout } from '../callouts';
 import { DEFAULT_TRANSLATIONS, type Translations } from '../translations';
+import { withBase } from '../urls';
 
 /** Interface strings for the file being processed. */
 export type TranslationsForFile = (fileURL: URL | undefined) => Translations;
@@ -24,9 +25,35 @@ export function zenithMdastPlugins(t: TranslationsForFile = defaultTranslations)
   return [({ fileURL }) => calloutsPlugin(t(fileURL))];
 }
 
-export function zenithHastPlugins(t: TranslationsForFile = defaultTranslations): HastPluginEntry[] {
+export function zenithHastPlugins(
+  t: TranslationsForFile = defaultTranslations,
+  base = '/',
+): HastPluginEntry[] {
   // A factory so each file gets its own slugger and its own language.
-  return [({ fileURL }) => [headingsPlugin(t(fileURL)), codeBlocksPlugin(t(fileURL))]];
+  return [
+    ({ fileURL }) => [headingsPlugin(t(fileURL)), codeBlocksPlugin(t(fileURL))],
+    ...(base === '/' ? [] : [linksPlugin(base)]),
+  ];
+}
+
+/**
+ * Links written from the root of the site, like `[Install](/installation/)`, get the base
+ * the site is served from, so content does not have to repeat it.
+ */
+function linksPlugin(base: string): HastPluginDefinition {
+  return {
+    name: 'zenith-links',
+    element: {
+      filter: ['a'],
+      visit(node) {
+        const href = node.properties.href;
+        if (typeof href !== 'string') return;
+        const prefixed = withBase(href, base);
+        if (prefixed === href) return;
+        return { ...node, properties: { ...node.properties, href: prefixed } };
+      },
+    },
+  };
 }
 
 /** Turn unclaimed directives back into text so content like `10:30` isn't lost. */
