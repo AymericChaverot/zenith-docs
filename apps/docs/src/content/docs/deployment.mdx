@@ -136,7 +136,7 @@ jobs:
 
 ## Static hosts
 
-Every static host needs the same two answers:
+Netlify, Vercel, Cloudflare Pages and the others all ask for the same settings:
 
 | Setting          | Value           |
 | ---------------- | --------------- |
@@ -145,3 +145,67 @@ Every static host needs the same two answers:
 | Node.js version  | 22.18 or later  |
 
 Set [`site`](/reference/configuration/#site) to the URL the host gives you, so that canonical links, the sitemap and [social images](/open-graph/) use absolute URLs. A host that serves the site from a sub-path, like GitHub Pages without a custom domain, also needs [`base`](/reference/configuration/#base).
+### GitHub Pages
+
+A repository named `my-docs` is served at `https://<owner>.github.io/my-docs/`, so the site needs both options:
+
+```ts title="zenith.config.ts"
+export default defineConfig({
+  title: 'My Docs',
+  site: 'https://<owner>.github.io',
+  base: '/my-docs',
+});
+```
+
+Links written from the root in your pages, like `[Install](/installation/)`, get the base added at build time: there is nothing to change in the content.
+
+This workflow builds the site on every push to `main` and publishes it. In the repository settings, under **Pages**, set the source to **GitHub Actions**.
+
+```yaml title=".github/workflows/pages.yml"
+name: Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # The whole history, for the last updated dates.
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
+```
+
+This site is deployed the same way, from [its repository](https://github.com/AymericChaverot/zenith-docs/blob/main/.github/workflows/docs.yml).

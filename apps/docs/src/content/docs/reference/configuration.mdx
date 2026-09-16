@@ -62,6 +62,8 @@ The URL the site is deployed at, such as `https://docs.example.com`. Canonical l
 
 The path the site is served from, when it is not the root of the domain, such as `/docs`. With the integration, set Astro's own `base` option instead.
 
+Links written from the root in pages, like `[Install](/installation/)`, and the `href` of cards get the base added at build time, so content never repeats it. Links that already start with the base are left alone.
+
 ### `description`
 
 **Type:** `string`
