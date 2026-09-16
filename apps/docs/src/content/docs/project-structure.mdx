@@ -4,28 +4,63 @@ description: Where ZenithDocs looks for your content and assets.
 icon: folder
 ---
 
-A ZenithDocs site is a regular Astro project. Content lives in `src/content/docs`, and every Markdown or MDX file becomes a page.
+Every Markdown or MDX file of the docs directory becomes a page. Where that directory lives depends on how the site is set up.
 
-<Files>
-  <Folder name="public" defaultOpen>
-    <File name="favicon.svg" />
-  </Folder>
-  <Folder name="src" defaultOpen>
-    <Folder name="content" defaultOpen>
-      <Folder name="docs" defaultOpen>
-        <Folder name="guides" defaultOpen>
+<Tabs items={['CLI', 'Integration']} groupId="setup" persist>
+  <Tab value="CLI">
+    <Files>
+      <Folder name="my-docs" defaultOpen>
+        <Folder name="content" defaultOpen>
+          <Folder name="guides" defaultOpen>
+            <File name="index.mdx" />
+            <File name="deploy.mdx" />
+            <File name="meta.json" />
+          </Folder>
           <File name="index.mdx" />
-          <File name="deploy.mdx" />
           <File name="meta.json" />
         </Folder>
-        <File name="index.mdx" />
-        <File name="meta.json" />
+        <Folder name="public" defaultOpen>
+          <File name="favicon.svg" />
+        </Folder>
+        <File name="package.json" />
+        <File name="zenith.config.ts" />
       </Folder>
-    </Folder>
-    <File name="content.config.ts" />
-  </Folder>
-  <File name="astro.config.mjs" />
-</Files>
+    </Files>
+
+    Pages live in `content/`. The [CLI](/cli/) writes what Astro needs into a `.zenith/` directory, which ignores itself in git.
+
+  </Tab>
+  <Tab value="Integration">
+    <Files>
+      <Folder name="my-docs" defaultOpen>
+        <Folder name="public" defaultOpen>
+          <File name="favicon.svg" />
+        </Folder>
+        <Folder name="src" defaultOpen>
+          <Folder name="content" defaultOpen>
+            <Folder name="docs" defaultOpen>
+              <Folder name="guides" defaultOpen>
+                <File name="index.mdx" />
+                <File name="deploy.mdx" />
+                <File name="meta.json" />
+              </Folder>
+              <File name="index.mdx" />
+              <File name="meta.json" />
+            </Folder>
+          </Folder>
+          <File name="content.config.ts" />
+        </Folder>
+        <File name="astro.config.mjs" />
+        <File name="package.json" />
+      </Folder>
+    </Files>
+
+    Pages live in `src/content/docs/`, next to anything else the Astro project holds.
+
+  </Tab>
+</Tabs>
+
+Change the directory with the [`docsDir`](/reference/configuration/#docsdir) option. Files in `public/` are copied to the site as they are.
 
 ## From files to URLs
 
@@ -42,3 +77,7 @@ Files whose name starts with an underscore are ignored, which is handy for parti
 ## Folders
 
 Folders become collapsible groups in the sidebar. A folder's `index` page is linked from the group title, and a [`meta.json`](/writing/navigation/) file can set its title, icon and page order.
+
+## Languages and versions
+
+[Translations](/i18n/) and [older versions](/versioning/) are subdirectories of the docs directory, named after their key: `fr/installation.mdx` is served at `/fr/installation/`.
