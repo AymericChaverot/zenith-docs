@@ -19,17 +19,17 @@ sidebar:
 | `title`           | `string`            | Page title, required                                         |
 | `description`     | `string`            | Shown under the title and used as meta description           |
 | `icon`            | `string`            | Name from the [icon set](/reference/icons/), shown in the sidebar |
-| `full`            | `boolean`           | Use the full content width, with the TOC collapsed           |
+| `full`            | `boolean`           | Use the full content width, without the table of contents    |
 | `toc`             | `boolean`           | Show the table of contents, `true` by default                |
-| `draft`           | `boolean`           | Only build the page in development                           |
+| `draft`           | `boolean`           | Only show the page in development, leave it out of builds    |
 | `sidebar.label`   | `string`            | Label used in the sidebar instead of the title               |
 | `sidebar.hidden`  | `boolean`           | Hide the page from the sidebar                               |
-| `editUrl`         | `string \| false`   | Override or disable the edit link                            |
-| `lastUpdated`     | `Date \| false`     | Override or disable the last updated date                    |
+| `editUrl`         | `string \| false`   | Override or disable the [edit link](/reference/configuration/#editlink) |
+| `lastUpdated`     | `Date \| false`     | Override or disable the [last updated](/reference/configuration/#lastupdated) date |
 
 ## Extending the schema
 
-`docsSchema()` returns a Zod object, so you can add your own fields:
+With the integration, `docsSchema()` returns a Zod object, so you can add your own fields and read them from `Astro.locals.zenith.entry.data` in an [override](/customization/overrides/) or a [slot](/customization/slots/):
 
 ```ts title="src/content.config.ts"
 import { z } from 'astro/zod';
