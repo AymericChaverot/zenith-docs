@@ -4,7 +4,7 @@ description: Built-in MDX components, available in every page without imports.
 icon: component
 ---
 
-These components are available in all `.mdx` pages. They render to static HTML, and only tabs ship a few lines of JavaScript.
+These components are available in all `.mdx` pages, without importing them. They render to static HTML, and only tabs ship a few lines of JavaScript. Plain `.md` pages cannot use components: rename the file to `.mdx` when a page needs one.
 
 ## Callout
 
@@ -41,7 +41,7 @@ The component form of [callouts](/writing/markdown/#callouts).
 
 ## Tabs
 
-Tabs sharing a `groupId` switch together, and `persist` remembers the choice across pages.
+Tabs sharing a `groupId` switch together, and `persist` remembers the choice across pages. `items` sets the order of the tab list; without it, the list is built from the `value` of each `<Tab>`. `defaultValue` picks the tab shown first.
 
 <Tabs items={['JavaScript', 'TypeScript']} groupId="language">
   <Tab value="JavaScript">
@@ -76,12 +76,12 @@ Without JavaScript, all tabs are displayed one after the other.
   <Step>
     ### Write
 
-    Add a Markdown file to `src/content/docs`.
+    Add a Markdown file to the docs directory.
   </Step>
   <Step>
     ### Build
 
-    Run `astro build`.
+    Run `zenith build`, or `astro build` in an Astro project.
   </Step>
 </Steps>
 
@@ -89,7 +89,7 @@ You can also wrap a series of level 3 headings in `<Steps>` without using `<Step
 
 ## Accordion
 
-Accordions use the native `<details>` element. Accordions with the same `group` close each other.
+Accordions use the native `<details>` element. Accordions with the same `group` close each other, and `open` expands one when the page loads.
 
 <Accordions>
   <Accordion title="Does ZenithDocs need JavaScript?" group="faq">
@@ -119,4 +119,20 @@ Accordions use the native `<details>` element. Accordions with the same `group` 
   </Folder>
   <File name="astro.config.mjs" />
 </Files>
+```
+
+## Icon
+
+One of the [built-in icons](/reference/icons/), inline in the text: <Icon name="rocket" />. Give it a `label` when the icon carries meaning on its own, so screen readers announce it.
+
+```mdx
+Press <Icon name="search" label="Search" /> to search.
+```
+
+## APIPage
+
+Renders operations of an OpenAPI document, see [OpenAPI](/openapi/).
+
+```mdx
+<APIPage spec="rockets" path="/rockets" method="get" />
 ```
