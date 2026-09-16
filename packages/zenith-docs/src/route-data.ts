@@ -59,6 +59,8 @@ export interface RouteData {
   next?: PageNode;
   editUrl?: string;
   lastUpdated?: Date;
+  /** Path of the generated Open Graph image, when `og` is enabled. */
+  ogImage?: string;
   locale: ResolvedLocale;
   locales: ResolvedLocale[];
   /** The same page in every language, keeping the current version. */
@@ -88,6 +90,12 @@ function prefixOf(locale: ResolvedLocale, version: ResolvedVersion): string {
 
 const scopeKey = (locale: ResolvedLocale, version: ResolvedVersion) =>
   `${locale.key}|${version.key}`;
+
+/** Path of the Open Graph image of a page, matching the `og/[...slug].png` route. */
+export function ogImagePath(url: string): string {
+  const path = url.slice(import.meta.env.BASE_URL.length).replace(/\/$/, '');
+  return `${import.meta.env.BASE_URL}og/${path || 'index'}.png`;
+}
 
 export async function getDocs(): Promise<DocsEntry[]> {
   const docs = (await getCollection('docs' as never)) as unknown as CollectionEntry<never>[];
@@ -257,6 +265,7 @@ export async function getRouteData(
     next,
     editUrl: getEditUrl(entry),
     lastUpdated: getPageLastUpdated(entry),
+    ogImage: config.og ? ogImagePath(url) : undefined,
     locale,
     locales,
     alternates: locales.map((other) => ({

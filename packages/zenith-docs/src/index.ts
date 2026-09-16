@@ -84,6 +84,14 @@ export default function zenith(userConfig: ZenithUserConfig): AstroIntegration {
           }
         }
 
+        if (config.og) {
+          injectRoute({
+            pattern: 'og/[...slug].png',
+            entrypoint: 'zenith-docs/routes/og.ts',
+            prerender: true,
+          });
+        }
+
         // Callout titles and labels follow the language of the file being processed.
         const locales = resolveLocales(config);
         const docsRoot = fileURLToPath(
