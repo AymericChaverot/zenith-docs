@@ -52,15 +52,15 @@ The title, the description, the source URL and the body of the page:
 
 > Add ZenithDocs to a new or existing Astro project.
 
-Source: /installation/
+Source: https://docs.example.com/installation/
 
-ZenithDocs is an Astro integration. It needs Astro 7 and Node.js 22.12 or later.
+ZenithDocs needs Astro 7 and Node.js 22.18 or later.
 ```
 
 MDX `import` and `export` lines are removed, since they mean nothing outside a bundler. Component tags are kept: they carry content, and models read them fine.
 
 :::tip
-Set `site` in your Astro configuration to get absolute URLs in the generated files, which is what most tools expect.
+Set [`site`](/reference/configuration/#site) to get absolute URLs in the generated files, which is what most tools expect. Without it, links are relative to the root of the site.
 :::
 
 ## Turning it off
