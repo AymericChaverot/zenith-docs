@@ -27,6 +27,10 @@
   line-height: var(--line-height-huge);
 }
 
+.zd-untranslated {
+  margin-top: 1.5rem;
+}
+
 /* Prose */
 
 .zd-prose {

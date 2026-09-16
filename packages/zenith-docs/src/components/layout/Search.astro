@@ -1,7 +1,7 @@
 ---
 import Icon from '../Icon.astro';
 
-const { config } = Astro.locals.zenith;
+const { config, t } = Astro.locals.zenith;
 ---
 
 {
@@ -9,26 +9,31 @@ const { config } = Astro.locals.zenith;
     <>
       <button class="zd-search-button" type="button" data-search-open>
         <Icon name="search" size={15} />
-        <span class="zd-search-label">Search</span>
+        <span class="zd-search-label">{t['search.button']}</span>
         <kbd class="zd-search-kbd">Ctrl K</kbd>
       </button>
-      <dialog class="zd-search-dialog" data-search-dialog aria-label="Search">
+      <dialog class="zd-search-dialog" data-search-dialog aria-label={t['search.button']}>
         <div class="zd-search-field">
           <Icon name="search" size={16} />
           <input
             class="zd-search-input"
             type="search"
-            placeholder="Search documentation"
+            placeholder={t['search.placeholder']}
             autocomplete="off"
             spellcheck="false"
-            aria-label="Search documentation"
+            aria-label={t['search.placeholder']}
             data-search-input
           />
           <button class="zd-search-close" type="button" data-search-close>
             Esc
           </button>
         </div>
-        <div class="zd-search-results" data-search-results />
+        <div
+          class="zd-search-results"
+          data-search-results
+          data-no-results={t['search.noResults']}
+          data-unavailable={t['search.unavailable']}
+        />
       </dialog>
     </>
   )
@@ -77,7 +82,7 @@ const { config } = Astro.locals.zenith;
 
     const render = (pages: PagefindResult[]) => {
       if (pages.length === 0) {
-        message('No results.');
+        message(results.dataset.noResults ?? 'No results.');
         return;
       }
       results.replaceChildren(
@@ -117,7 +122,7 @@ const { config } = Astro.locals.zenith;
       }
       const module = await load();
       if (!module) {
-        message('Search is available once the site has been built.');
+        message(results.dataset.unavailable ?? 'Search is unavailable.');
         return;
       }
       const response = await module.debouncedSearch(term, {}, 200);

@@ -1,17 +1,17 @@
 ---
 import Icon from '../Icon.astro';
 
-const { previous, next } = Astro.locals.zenith;
+const { previous, next, t } = Astro.locals.zenith;
 ---
 
 {
   (previous || next) && (
-    <nav class="zd-pagination" aria-label="Pagination">
+    <nav class="zd-pagination" aria-label={t['nav.pagination']}>
       {previous && (
         <a class="zd-pagination-link" href={previous.url} rel="prev">
           <span class="zd-pagination-label">
             <Icon name="arrow-left" size={14} />
-            Previous
+            {t['page.previous']}
           </span>
           <span class="zd-pagination-title">{previous.name}</span>
         </a>
@@ -19,7 +19,7 @@ const { previous, next } = Astro.locals.zenith;
       {next && (
         <a class="zd-pagination-link zd-pagination-next" href={next.url} rel="next">
           <span class="zd-pagination-label">
-            Next
+            {t['page.next']}
             <Icon name="arrow-right" size={14} />
           </span>
           <span class="zd-pagination-title">{next.name}</span>

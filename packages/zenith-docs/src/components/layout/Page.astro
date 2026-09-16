@@ -12,14 +12,15 @@ import Sidebar from 'virtual:zenith/components/Sidebar';
 import TableOfContents from 'virtual:zenith/components/TableOfContents';
 import Icon from '../Icon.astro';
 
-const { config, entry, toc } = Astro.locals.zenith;
+const { config, entry, toc, locale, t, translated } = Astro.locals.zenith;
 const full = entry.data.full;
 const hasToc = toc.length > 0 && !full;
 ---
 
 <!doctype html>
 <html
-  lang={config.lang}
+  lang={locale.lang}
+  dir={locale.dir}
   class="theme-light"
   data-accent={config.accent}
   data-backdrop={config.backdrop}
@@ -31,7 +32,7 @@ const hasToc = toc.length > 0 && !full;
   </head>
   <body>
     {config.backdrop !== 'none' && <div class="zd-backdrop" aria-hidden="true" />}
-    <a class="zd-skip" href="#zd-content">Skip to content</a>
+    <a class="zd-skip" href="#zd-content">{t.skip}</a>
     <Header />
     <div class="zd-layout" data-toc={hasToc ? '' : undefined}>
       <Sidebar />
@@ -50,11 +51,21 @@ const hasToc = toc.length > 0 && !full;
               >
                 <summary>
                   <Icon name="list" />
-                  On this page
+                  {t['toc.title']}
                   <Icon name="chevron" size={14} class="zd-chevron" />
                 </summary>
                 <TableOfContents />
               </details>
+            )
+          }
+          {
+            !translated && (
+              <aside class="zd-callout zd-untranslated" data-callout="note" data-pagefind-ignore>
+                <p class="zd-callout-title">{t['callout.note']}</p>
+                <div class="zd-callout-body">
+                  <p>{t['page.untranslated']}</p>
+                </div>
+              </aside>
             )
           }
           <div class="zd-prose">

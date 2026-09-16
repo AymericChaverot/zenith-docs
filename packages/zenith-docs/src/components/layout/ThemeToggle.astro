@@ -1,11 +1,13 @@
 ---
 import Icon from '../Icon.astro';
+
+const { t } = Astro.locals.zenith;
 ---
 
 <button
   class="zd-icon-button zd-theme-toggle"
   type="button"
-  aria-label="Toggle dark mode"
+  aria-label={t['theme.toggle']}
   data-theme-toggle
 >
   <Icon name="sun" size={18} class="zd-icon-sun" />

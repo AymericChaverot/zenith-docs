@@ -1,7 +1,8 @@
 ---
 import { Font } from 'astro:assets';
 
-const { config, title, description, url, entry } = Astro.locals.zenith;
+const { config, title, description, url, entry, alternates, locale } = Astro.locals.zenith;
+const absolute = (path: string) => (Astro.site ? new URL(path, Astro.site).href : path);
 const pageTitle = title === config.title ? title : `${title} | ${config.title}`;
 const pageDescription = description ?? config.description;
 const canonical = Astro.site ? new URL(url, Astro.site).href : undefined;
@@ -13,6 +14,12 @@ const noindex = entry.id === '404' || entry.data.draft;
 <title>{pageTitle}</title>
 {pageDescription && <meta name="description" content={pageDescription} />}
 {canonical && <link rel="canonical" href={canonical} />}
+{
+  alternates.length > 1 &&
+    alternates.map(({ locale: other, url: alternate }) => (
+      <link rel="alternate" hreflang={other.lang} href={absolute(alternate)} />
+    ))
+}
 {
   config.llms && (
     <link
@@ -37,6 +44,7 @@ const noindex = entry.id === '404' || entry.data.draft;
 <meta name="generator" content={`ZenithDocs, ${Astro.generator}`} />
 <meta property="og:type" content="article" />
 <meta property="og:site_name" content={config.title} />
+<meta property="og:locale" content={locale.lang.replace('-', '_')} />
 <meta property="og:title" content={title} />
 {pageDescription && <meta property="og:description" content={pageDescription} />}
 {canonical && <meta property="og:url" content={canonical} />}

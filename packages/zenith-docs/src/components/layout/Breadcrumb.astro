@@ -1,12 +1,12 @@
 ---
 import Icon from '../Icon.astro';
 
-const { breadcrumbs } = Astro.locals.zenith;
+const { breadcrumbs, t } = Astro.locals.zenith;
 ---
 
 {
   breadcrumbs.length > 0 && (
-    <nav class="zd-breadcrumb" aria-label="Breadcrumb">
+    <nav class="zd-breadcrumb" aria-label={t['nav.breadcrumb']}>
       <ol>
         {breadcrumbs.map((crumb, index) => (
           <li>

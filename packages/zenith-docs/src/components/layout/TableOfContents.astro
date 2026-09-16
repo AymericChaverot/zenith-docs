@@ -1,7 +1,7 @@
 ---
 import Icon from '../Icon.astro';
 
-const { toc } = Astro.locals.zenith;
+const { toc, t } = Astro.locals.zenith;
 const minDepth = Math.min(...toc.map((heading) => heading.depth));
 
 const items = toc.map((heading, index) => {
@@ -13,10 +13,10 @@ const items = toc.map((heading, index) => {
 
 {
   items.length > 0 && (
-    <nav class="zd-toc" aria-label="On this page">
+    <nav class="zd-toc" aria-label={t['toc.title']}>
       <p class="zd-toc-title">
         <Icon name="list" />
-        On this page
+        {t['toc.title']}
       </p>
       <ul class="zd-toc-list">
         {items.map((item) => (

@@ -1,8 +1,8 @@
 ---
 import Icon from '../Icon.astro';
 
-const { config, editUrl, lastUpdated } = Astro.locals.zenith;
-const formatter = new Intl.DateTimeFormat(config.lang, { dateStyle: 'medium' });
+const { editUrl, lastUpdated, locale, t } = Astro.locals.zenith;
+const formatter = new Intl.DateTimeFormat(locale.lang, { dateStyle: 'medium' });
 ---
 
 {
@@ -11,12 +11,13 @@ const formatter = new Intl.DateTimeFormat(config.lang, { dateStyle: 'medium' });
       {editUrl && (
         <a class="zd-edit-link" href={editUrl}>
           <Icon name="edit" size={14} />
-          Edit this page
+          {t['page.editLink']}
         </a>
       )}
       {lastUpdated && (
         <p>
-          Last updated on <time datetime={lastUpdated.toISOString()}>{formatter.format(lastUpdated)}</time>
+          {t['page.lastUpdated']}{' '}
+          <time datetime={lastUpdated.toISOString()}>{formatter.format(lastUpdated)}</time>
         </p>
       )}
     </footer>
