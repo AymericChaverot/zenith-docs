@@ -6,7 +6,6 @@ icon: box
 
 import AccentPicker from '../../../components/AccentPicker.astro';
 import BackdropPicker from '../../../components/BackdropPicker.astro';
-import { Icon } from 'zenith-docs/components';
 
 This page uses every Markdown feature and component available in ZenithDocs. Use it to check a theme at a glance.
 
@@ -67,12 +66,12 @@ This heading uses `[#custom-anchor]` to set its id.
 
 ## Table
 
-| Feature        |  Status  | Notes                                      |
+| Left aligned   | Centered | Right aligned                              |
 | :------------- | :------: | -----------------------------------------: |
-| Search         | Planned  | Static index with Pagefind                 |
-| i18n           | Planned  | Multiple locales with fallbacks            |
-| `llms.txt`     | Planned  | Markdown output for LLMs                   |
-| Callouts       |   Done   | Directives and GitHub alerts               |
+| Search         |   Yes    | Static index with Pagefind                 |
+| i18n           |   Yes    | Several languages, with a fallback         |
+| `llms.txt`     |   Yes    | Markdown output for LLMs                   |
+| Playground     |    No    | Out of scope for a static site             |
 
 ## Image
 
@@ -242,7 +241,7 @@ sidebar:
 ```
 
 ```bash
-pnpm add zenith-docs && pnpm astro build
+npx zenith build && npx zenith preview --open
 ```
 
 ```ts
@@ -266,28 +265,22 @@ const aVeryLongLine = 'This line is deliberately long so that the code block has
 
 ## Tabs
 
-<Tabs items={['npm', 'pnpm', 'yarn']} groupId="pm" persist>
+<Tabs items={['npm', 'pnpm']} groupId="package-manager" persist>
   <Tab value="npm">
     ```sh
-    npm install zenith-docs
+    npm install github:AymericChaverot/zenith-docs
     ```
   </Tab>
   <Tab value="pnpm">
     ```sh
-    pnpm add zenith-docs
-    ```
-  </Tab>
-  <Tab value="yarn">
-    ```sh
-    yarn add zenith-docs
+    pnpm add github:AymericChaverot/zenith-docs
     ```
   </Tab>
 </Tabs>
 
-<Tabs items={['npm', 'pnpm', 'yarn']} groupId="pm" persist>
-  <Tab value="npm">This set follows the one above, and the choice is remembered across pages.</Tab>
+<Tabs items={['npm', 'pnpm']} groupId="package-manager" persist>
+  <Tab value="npm">This set follows the one above, and the choice is remembered across pages, including the installation page.</Tab>
   <Tab value="pnpm">Selected **pnpm**.</Tab>
-  <Tab value="yarn">Selected **yarn**.</Tab>
 </Tabs>
 
 <Tabs>
