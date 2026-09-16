@@ -79,6 +79,11 @@ async function main(argv) {
 }
 
 main(process.argv.slice(2)).catch((error) => {
-  console.error(`\n${error instanceof Error ? error.message : String(error)}\n`);
+  // Errors are often wrapped, and the useful part is the innermost cause.
+  const lines = [];
+  for (let current = error; current; current = current instanceof Error ? current.cause : undefined) {
+    lines.push(`${lines.length === 0 ? '' : 'Caused by: '}${current instanceof Error ? current.message : String(current)}`);
+  }
+  console.error(`\n${lines.join('\n')}\n`);
   process.exit(1);
 });
