@@ -24,7 +24,6 @@ export default defineConfig({
     zenith({
       title: 'ZenithDocs',
       description: 'A static, lightweight and themeable documentation engine for Astro.',
-      logo: { src: './src/assets/logo.svg', alt: 'ZenithDocs' },
       lastUpdated: true,
       openapi: {
         rockets: './src/openapi/rockets.yaml',
