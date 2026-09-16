@@ -1,7 +1,7 @@
 {
   "title": "Reference",
-  "description": "Configuration and frontmatter",
+  "description": "Configuration, frontmatter and an example API",
   "icon": "settings",
   "root": true,
-  "pages": ["configuration", "frontmatter"]
+  "pages": ["configuration", "frontmatter", "api"]
 }

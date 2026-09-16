@@ -1,0 +1,278 @@
+openapi: 3.1.0
+info:
+  title: Rockets API
+  version: '1.4'
+  description: A small example API, used to demonstrate the OpenAPI renderer.
+servers:
+  - url: https://api.rockets.example/v1
+    description: Production
+security:
+  - bearerAuth: []
+tags:
+  - name: Rockets
+    description: Create and inspect rockets.
+  - name: Launches
+    description: Scheduled and past launches.
+paths:
+  /rockets:
+    get:
+      operationId: listRockets
+      summary: List rockets
+      description: Returns rockets in reverse chronological order, newest first.
+      tags: [Rockets]
+      parameters:
+        - name: status
+          in: query
+          description: Only return rockets in this state.
+          schema:
+            $ref: '#/components/schemas/RocketStatus'
+        - name: limit
+          in: query
+          description: Number of rockets to return, between 1 and 100.
+          schema:
+            type: integer
+            format: int32
+            minimum: 1
+            maximum: 100
+            default: 20
+        - name: cursor
+          in: query
+          description: Cursor returned by a previous call.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: A page of rockets.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Rocket'
+                  nextCursor:
+                    type: [string, 'null']
+                    description: Pass it back as `cursor` to fetch the next page.
+        '401':
+          description: The token is missing or invalid.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    post:
+      operationId: createRocket
+      summary: Create a rocket
+      tags: [Rockets]
+      requestBody:
+        required: true
+        description: The rocket to create.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RocketInput'
+      responses:
+        '201':
+          description: The rocket was created.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Rocket'
+        '422':
+          description: The payload did not pass validation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+  /rockets/{rocketId}:
+    parameters:
+      - name: rocketId
+        in: path
+        required: true
+        description: Identifier of the rocket.
+        schema:
+          type: string
+          format: uuid
+    get:
+      operationId: getRocket
+      summary: Retrieve a rocket
+      tags: [Rockets]
+      responses:
+        '200':
+          description: The rocket.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Rocket'
+        '404':
+          description: No rocket has this identifier.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      operationId: deleteRocket
+      summary: Delete a rocket
+      description: Retired rockets are kept for audit, prefer archiving them.
+      deprecated: true
+      tags: [Rockets]
+      responses:
+        '204':
+          description: The rocket was deleted.
+        '404':
+          description: No rocket has this identifier.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /launches:
+    get:
+      operationId: listLaunches
+      summary: List launches
+      tags: [Launches]
+      parameters:
+        - name: rocketId
+          in: query
+          description: Only return launches of this rocket.
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: A list of launches.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Launch'
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: A token issued by the console.
+  schemas:
+    RocketStatus:
+      type: string
+      description: Lifecycle of a rocket.
+      enum: [design, testing, flying, retired]
+    Stage:
+      type: object
+      required: [name, engines]
+      properties:
+        name:
+          type: string
+          description: Name of the stage.
+          example: Booster
+        engines:
+          type: integer
+          format: int32
+          description: Number of engines on the stage.
+          example: 9
+        reusable:
+          type: boolean
+          description: Whether the stage lands back.
+          default: false
+    Rocket:
+      type: object
+      required: [id, name, status, stages]
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Identifier of the rocket.
+        name:
+          type: string
+          description: Display name.
+          example: Zenith Heavy
+        status:
+          $ref: '#/components/schemas/RocketStatus'
+        thrust:
+          type: integer
+          format: int64
+          description: Thrust at sea level, in kilonewtons.
+          example: 7600
+        stages:
+          type: array
+          description: Stages, from the booster upwards.
+          items:
+            $ref: '#/components/schemas/Stage'
+        createdAt:
+          type: string
+          format: date-time
+          readOnly: true
+    RocketInput:
+      type: object
+      required: [name, stages]
+      properties:
+        name:
+          type: string
+          description: Display name.
+          example: Zenith Heavy
+        status:
+          $ref: '#/components/schemas/RocketStatus'
+        stages:
+          type: array
+          description: At least one stage.
+          items:
+            $ref: '#/components/schemas/Stage'
+    Launch:
+      type: object
+      required: [id, rocket, site]
+      properties:
+        id:
+          type: string
+          format: uuid
+        rocket:
+          $ref: '#/components/schemas/Rocket'
+        site:
+          type: object
+          description: Where the rocket lifts off.
+          required: [name]
+          properties:
+            name:
+              type: string
+              example: Pad 39A
+            country:
+              type: string
+              example: US
+        crew:
+          type: array
+          description: Names of the crew, empty for an uncrewed flight.
+          items:
+            type: string
+        liftoffAt:
+          type: string
+          format: date-time
+    Error:
+      type: object
+      required: [code, message]
+      properties:
+        code:
+          type: string
+          description: Machine-readable code.
+          example: not_found
+        message:
+          type: string
+          description: What went wrong.
+    ValidationError:
+      allOf:
+        - $ref: '#/components/schemas/Error'
+        - type: object
+          properties:
+            errors:
+              type: array
+              description: One entry per rejected field.
+              items:
+                type: object
+                properties:
+                  field:
+                    type: string
+                    example: stages
+                  reason:
+                    type: string
+                    example: must contain at least one stage
