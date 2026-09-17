@@ -39,7 +39,11 @@ const containsUrl = (folder: FolderNode) =>
       }
 
       const label = node.index ? (
-        <a href={node.index.url} aria-current={node.index.url === url ? 'page' : undefined}>
+        <a
+          class="zd-sidebar-folder-link"
+          href={node.index.url}
+          aria-current={node.index.url === url ? 'page' : undefined}
+        >
           {node.name}
         </a>
       ) : (
@@ -57,7 +61,10 @@ const containsUrl = (folder: FolderNode) =>
 
       return (
         <li>
-          <details class="zd-sidebar-folder" open={node.defaultOpen || containsUrl(node)}>
+          <details
+            class="zd-sidebar-folder"
+            open={node.defaultOpen || containsUrl(node)}
+          >
             <summary class="zd-sidebar-link">
               {node.icon && <Icon name={node.icon} />}
               {label}
