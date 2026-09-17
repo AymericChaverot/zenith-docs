@@ -82,12 +82,20 @@ This site is built with ZenithDocs, and demonstrates every feature as it documen
 
 ## JavaScript budget
 
-| Feature               | JavaScript                           |
-| --------------------- | ------------------------------------ |
-| Sidebar, mobile menu  | None, thanks to the Popover API      |
-| Dark mode             | A tiny inline script                 |
-| Copy code button      | A tiny inline script                 |
-| Table of contents     | A small scroll-spy module            |
-| Tabs                  | A small web component, only if used  |
-| Search                | Pagefind, fetched when you open it   |
-| API reference         | None beyond the tabs above           |
+Every script is inlined in the page, so none of them costs an extra request. Sizes are measured on this site, compressed with gzip.
+
+| Feature                  | JavaScript                                                        | Size     |
+| ------------------------ | ----------------------------------------------------------------- | -------- |
+| Mobile menu              | None, thanks to the Popover API                                   | 0        |
+| Sidebar                  | Remembers opened folders and the scroll position across pages     | 0.8 kB   |
+| Dark mode                | Applies the saved theme before the first paint, and the toggle    | 0.5 kB   |
+| Copy code button         | One click listener for every block                                | 0.3 kB   |
+| Table of contents        | Highlights the sections in view, on pages that have one           | 1.1 kB   |
+| Search dialog            | Opens the dialog and renders results                              | 1.1 kB   |
+| Tabs                     | A web component, only on pages that use tabs                      | 0.9 kB   |
+| API reference            | None beyond the tabs of the responses                             | 0        |
+| Page transitions         | None: a crossfade in CSS, and links prerendered by the browser    | 0        |
+
+That is about 4 kB on a page without tabs. Search is the only feature with a real cost, paid when a reader opens it: Pagefind and its worker, about 25 kB, then its WebAssembly module, about 70 kB, and the parts of the index that a query needs. Readers who never search never download any of it.
+
+For the whole picture, the stylesheet weighs about 12 kB, and the default fonts about 140 kB for the three faces preloaded on every page, plus 38 kB for the code font on pages with code. Browsers that support speculation rules also prerender a page when the pointer rests on its link, which makes the click instant at the cost of downloading that page.

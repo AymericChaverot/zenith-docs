@@ -40,12 +40,20 @@ Les gros frameworks de documentation apportent beaucoup de fonctionnalités, et 
 
 ## Budget JavaScript
 
-| Fonctionnalité             | JavaScript                                   |
-| -------------------------- | -------------------------------------------- |
-| Sidebar et menu mobile     | Aucun, grâce à l'API Popover                 |
-| Thème sombre               | Un court script en ligne                     |
-| Bouton copier le code      | Un court script en ligne                     |
-| Sommaire                   | Un petit module de suivi du défilement       |
-| Onglets                    | Un petit composant web, seulement si utilisé |
-| Recherche                  | Pagefind, chargé à l'ouverture               |
-| Référence d'API            | Rien de plus que les onglets                 |
+Chaque script est intégré à la page, donc aucun ne coûte de requête en plus. Les tailles sont mesurées sur ce site, compressées avec gzip.
+
+| Fonctionnalité          | JavaScript                                                        | Taille  |
+| ----------------------- | ----------------------------------------------------------------- | ------- |
+| Menu mobile             | Aucun, grâce à l'API Popover                                      | 0       |
+| Sidebar                 | Garde les dossiers ouverts et le défilement d'une page à l'autre  | 0,8 ko  |
+| Thème sombre            | Applique le thème enregistré avant l'affichage, et le bouton      | 0,5 ko  |
+| Bouton copier le code   | Un seul écouteur de clic pour tous les blocs                      | 0,3 ko  |
+| Sommaire                | Met en valeur les sections visibles, sur les pages qui en ont un  | 1,1 ko  |
+| Fenêtre de recherche    | Ouvre la fenêtre et affiche les résultats                         | 1,1 ko  |
+| Onglets                 | Un composant web, seulement sur les pages qui en utilisent        | 0,9 ko  |
+| Référence d'API         | Rien de plus que les onglets des réponses                         | 0       |
+| Transitions de page     | Aucun : un fondu en CSS, et des liens préchargés par le navigateur | 0       |
+
+Soit environ 4 ko sur une page sans onglets. La recherche est la seule fonctionnalité au coût réel, payé quand le lecteur l'ouvre : Pagefind et son worker, environ 25 ko, puis son module WebAssembly, environ 70 ko, et les morceaux de l'index utiles à la requête. Un lecteur qui ne cherche jamais n'en télécharge rien.
+
+Pour le reste, la feuille de style pèse environ 12 ko, et les polices par défaut environ 140 ko pour les trois styles préchargés sur chaque page, plus 38 ko pour la police de code sur les pages qui en contiennent. Les navigateurs qui gèrent les speculation rules prérendent aussi une page quand le pointeur s'attarde sur son lien : le clic est instantané, au prix du téléchargement de cette page.
