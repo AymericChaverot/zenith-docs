@@ -36,8 +36,7 @@ const icons: Record<string, string> = { Pagefind: 'search', Shiki: 'code' };
               ) : (
                 <Icon name={icons[name] ?? 'box'} size={14} class="zd-built-with-logo" />
               )}
-              {/* The ZenithDocs mark stands on its own, its name is only read out. */}
-              <span class={name === 'ZenithDocs' ? 'zd-sr-only' : 'zd-built-with-name'}>{name}</span>
+              <span class="zd-built-with-name">{name}</span>
               <span class="zd-built-with-version">{version}</span>
             </li>
           ))}
