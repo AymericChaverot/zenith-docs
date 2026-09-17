@@ -170,6 +170,12 @@ It is off unless set, since readers who cannot write to the repository only land
 
 Shows the date of the last commit that touched each page. The site has to be built from a git checkout with its history: a shallow clone, the default in many CI services, dates every page to the last commit.
 
+### `builtWith`
+
+**Type:** `boolean` · **Default:** `true`
+
+Shows an info button at the bottom of the sidebar. Hovering or focusing it lists the versions the site was built with: ZenithDocs, Astro, Pagefind when search is on, and Shiki. The versions are read at build time, and the tooltip needs no JavaScript.
+
 ## Customization
 
 ### `theme`
