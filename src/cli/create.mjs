@@ -1,10 +1,10 @@
 // `zenith create`: writes a new site. It runs before anything is installed in the target,
-// through `npx`, so it only uses Node built-ins.
-import { spawnSync } from 'node:child_process';
+// through `npx`, so it only uses Node built-ins and the dependencies of ZenithDocs itself.
+import { spawn } from 'node:child_process';
 import { existsSync, mkdirSync, readdirSync, writeFileSync } from 'node:fs';
 import { basename, dirname, join, relative, resolve } from 'node:path';
-import { createInterface } from 'node:readline';
-import { parseArgs } from 'node:util';
+import { parseArgs, styleText } from 'node:util';
+import * as p from '@clack/prompts';
 import { dockerFiles } from './docker.mjs';
 import { TEMPLATES, THEMES } from './templates.mjs';
 
@@ -37,8 +37,6 @@ export async function create(argv) {
       docker: { type: 'boolean' },
       install: { type: 'boolean' },
       yes: { type: 'boolean', short: 'y' },
-      // Forces the questions when input is piped, which is how they are tested.
-      interactive: { type: 'boolean' },
       help: { type: 'boolean', short: 'h' },
     },
   });
@@ -48,51 +46,102 @@ export async function create(argv) {
     return;
   }
 
-  const interactive = !values.yes && (values.interactive || process.stdin.isTTY === true);
-  const prompt = interactive ? createPrompt() : undefined;
+  // Arrow keys need a terminal on both ends: anywhere else, the options and defaults decide.
+  const interactive = !values.yes && process.stdin.isTTY === true && process.stdout.isTTY === true;
   const run = packageManager();
 
-  if (interactive) console.log('\n  ZenithDocs — let’s set up your documentation.\n');
-
-  const directory =
-    positionals[0] ?? (prompt ? await prompt.text('Where should the site go?', 'my-docs') : 'zenith-docs');
-  const target = resolve(directory);
-  // An empty directory, or one holding only dotfiles such as `.git`, is fine.
-  if (existsSync(target) && readdirSync(target).some((entry) => !entry.startsWith('.'))) {
-    prompt?.close();
-    throw new Error(`${target} is not empty. Pick another directory, or empty this one first.`);
+  if (values.template && !TEMPLATES[values.template]) {
+    throw new Error(
+      `Unknown template \`${values.template}\`. Use one of: ${Object.keys(TEMPLATES).join(', ')}.`,
+    );
+  }
+  if (values.theme && values.theme !== 'none' && !THEMES[values.theme]) {
+    throw new Error(
+      `Unknown theme \`${values.theme}\`. Use one of: ${Object.keys(THEMES).join(', ')}.`,
+    );
   }
 
+  // A directory known up front is checked before anything is drawn.
+  const given = positionals[0] ?? (interactive ? undefined : 'zenith-docs');
+  const problem = given && notEmpty(resolve(given));
+  if (problem) throw new Error(problem);
+
+  console.log();
+  p.intro(
+    `${styleText(['bgGreen', 'black', 'bold'], ' ZenithDocs ')} ${styleText('dim', 'let’s set up your documentation')}`,
+  );
+
+  const directory =
+    given ??
+    answer(
+      await p.text({
+        message: 'Where should the site go?',
+        placeholder: './my-docs',
+        defaultValue: 'my-docs',
+        validate: (value) => notEmpty(resolve(value || 'my-docs')),
+      }),
+    );
+  const target = resolve(directory);
+
   const title =
-    values.title ?? (prompt ? await prompt.text('Site title', toTitle(basename(target))) : toTitle(basename(target)));
+    values.title ??
+    (interactive
+      ? answer(
+          await p.text({
+            message: 'What is the site called?',
+            placeholder: toTitle(basename(target)),
+            defaultValue: toTitle(basename(target)),
+          }),
+        )
+      : toTitle(basename(target)));
 
   const template =
     values.template ??
-    (prompt
-      ? await prompt.choice(
-          'Template',
-          Object.entries(TEMPLATES).map(([name, { description }]) => [name, description]),
+    (interactive
+      ? answer(
+          await p.select({
+            message: 'Which template?',
+            options: Object.entries(TEMPLATES).map(([name, { description }]) => ({
+              value: name,
+              label: name,
+              hint: description,
+            })),
+          }),
         )
       : 'cli');
-  if (!TEMPLATES[template]) {
-    prompt?.close();
-    throw new Error(`Unknown template \`${template}\`. Use one of: ${Object.keys(TEMPLATES).join(', ')}.`);
-  }
 
   const theme =
     values.theme ??
-    (prompt ? await prompt.choice('Theme', [['none', 'Keep the defaults'], ...Object.entries(THEMES)]) : 'none');
-  if (theme !== 'none' && !THEMES[theme]) {
-    prompt?.close();
-    throw new Error(`Unknown theme \`${theme}\`. Use one of: ${Object.keys(THEMES).join(', ')}.`);
-  }
+    (interactive
+      ? answer(
+          await p.select({
+            message: 'Which theme?',
+            options: [
+              { value: 'none', label: 'default', hint: 'Keep the defaults' },
+              ...Object.entries(THEMES).map(([name, hint]) => ({ value: name, label: name, hint })),
+            ],
+          }),
+        )
+      : 'none');
 
   const withDocker =
-    values.docker ?? (prompt ? await prompt.confirm('Add a Dockerfile?', false) : false);
+    values.docker ??
+    (interactive
+      ? answer(
+          await p.confirm({
+            message: 'Add a Dockerfile to serve it with nginx?',
+            initialValue: false,
+          }),
+        )
+      : false);
 
   const install =
-    values.install ?? (prompt ? await prompt.confirm(`Install dependencies with ${run}?`, true) : false);
-  prompt?.close();
+    values.install ??
+    (interactive
+      ? answer(
+          await p.confirm({ message: `Install dependencies with ${run}?`, initialValue: true }),
+        )
+      : false);
 
   const name = toPackageName(basename(target));
   const files = {
@@ -109,68 +158,85 @@ export async function create(argv) {
   }
 
   const location = relative(process.cwd(), target) || '.';
-  console.log(`\n  Created ${title} in ${location}, from the ${template} template.`);
+  p.log.success(
+    `Created ${styleText('bold', title)} in ${styleText('cyan', location)}, from the ${template} template.`,
+  );
 
   let installed = false;
-  if (install) {
-    console.log(`\n  Installing dependencies with ${run}…\n`);
-    // Package managers are `.cmd` shims on Windows, which only a shell can run. The command
-    // is one string because `run` comes from a fixed list, so there is nothing to escape.
-    const result = spawnSync(`${run} install`, { cwd: target, stdio: 'inherit', shell: true });
-    installed = result.status === 0;
-    if (!installed) console.log(`\n  The install did not complete. Run it yourself from ${location}.`);
-  }
+  if (install) installed = await installDependencies(run, target);
 
-  console.log(`
-  Next steps:
-${location === '.' ? '' : `    cd ${location}\n`}${installed ? '' : `    ${run} install\n`}    ${run === 'npm' ? 'npm run dev' : `${run} dev`}
-`);
+  const steps = [
+    ...(location === '.' ? [] : [`cd ${location}`]),
+    ...(installed ? [] : [`${run} install`]),
+    run === 'npm' ? 'npm run dev' : `${run} dev`,
+  ];
+  p.note(steps.map((step) => styleText('cyan', step)).join('\n'), 'Next steps');
+  p.outro(
+    `Docs are at ${styleText('underline', 'https://aymericchaverot.github.io/zenith-docs/')}`,
+  );
 }
 
 /**
- * Questions read line by line, so they work in any terminal and with piped input.
- * An exhausted input answers every remaining question with its default.
+ * Runs the install, showing its output as it goes: the log clears once it succeeds, and
+ * stays on screen when it fails.
+ *
+ * @param {string} run
+ * @param {string} cwd
+ * @returns {Promise<boolean>}
  */
-function createPrompt() {
-  const lines = createInterface({ input: process.stdin, terminal: false })[Symbol.asyncIterator]();
+function installDependencies(run, cwd) {
+  // Package managers are `.cmd` shims on Windows, which only a shell can run. The command
+  // is one string because `run` comes from a fixed list, so there is nothing to escape.
+  const command = `${run} install`;
 
-  const read = async (question) => {
-    process.stdout.write(question);
-    const { value, done } = await lines.next();
-    if (!process.stdin.isTTY) process.stdout.write(`${done ? '' : value}\n`);
-    return done ? '' : value.trim();
-  };
+  // Redrawing the log takes a terminal: a CI log or a file gets the plain output instead.
+  if (process.stdout.isTTY !== true) {
+    p.log.step(`Installing dependencies with ${run}`);
+    return new Promise((done) => {
+      spawn(command, { cwd, shell: true, stdio: 'inherit' })
+        .on('error', () => done(false))
+        .on('close', (code) => {
+          if (code !== 0) p.log.error(`The install did not complete. Run \`${command}\` yourself.`);
+          done(code === 0);
+        });
+    });
+  }
 
-  return {
-    async text(label, fallback) {
-      return (await read(`  ◆ ${label} (${fallback}) `)) || fallback;
-    },
+  const log = p.taskLog({ title: `Installing dependencies with ${run}`, limit: 8 });
+  return new Promise((done) => {
+    const child = spawn(command, { cwd, shell: true, env: { ...process.env, FORCE_COLOR: '0' } });
+    const forward = (chunk) => {
+      for (const line of String(chunk).split(/\r?\n/)) if (line.trim()) log.message(line);
+    };
+    child.stdout.on('data', forward);
+    child.stderr.on('data', forward);
+    child.on('error', (error) => {
+      log.error(`Could not run ${run}: ${error.message}`);
+      done(false);
+    });
+    child.on('close', (code) => {
+      if (code === 0) log.success('Dependencies installed');
+      else
+        log.error(`The install did not complete. Run \`${command}\` yourself.`, { showLog: true });
+      done(code === 0);
+    });
+  });
+}
 
-    async choice(label, choices) {
-      const width = Math.max(...choices.map(([name]) => name.length));
-      console.log(`  ◆ ${label}`);
-      choices.forEach(([name, description], index) => {
-        console.log(`      ${index + 1}. ${name.padEnd(width)}  ${description}`);
-      });
-      for (;;) {
-        const answer = await read(`    Choose 1-${choices.length} (1) `);
-        if (!answer) return choices[0][0];
-        const byNumber = choices[Number(answer) - 1];
-        const byName = choices.find(([name]) => name === answer);
-        if (byNumber || byName) return (byNumber ?? byName)[0];
-        console.log(`    “${answer}” is not one of the choices.`);
-      }
-    },
+/** Stops cleanly on Ctrl+C or Escape, before anything is written. */
+function answer(value) {
+  if (p.isCancel(value)) {
+    p.cancel('Nothing was created.');
+    process.exit(0);
+  }
+  return value;
+}
 
-    async confirm(label, fallback) {
-      const answer = (await read(`  ◆ ${label} (${fallback ? 'Y/n' : 'y/N'}) `)).toLowerCase();
-      return answer ? answer.startsWith('y') : fallback;
-    },
-
-    close() {
-      lines.return?.();
-    },
-  };
+/** An empty directory, or one holding only dotfiles such as `.git`, is fine. */
+function notEmpty(target) {
+  if (existsSync(target) && readdirSync(target).some((entry) => !entry.startsWith('.'))) {
+    return `${target} is not empty. Pick another directory, or empty this one first.`;
+  }
 }
 
 /** The package manager that ran `create`, so the instructions match it. */

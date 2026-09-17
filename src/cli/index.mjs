@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 import { readFileSync } from 'node:fs';
 import { parseArgs } from 'node:util';
-import { create } from './create.mjs';
 import { docker } from './docker.mjs';
 import { init } from './init.mjs';
 import { generateProject, loadProject } from './project.mjs';
@@ -34,6 +33,8 @@ Options
 async function main(argv) {
   // `create` and `docker` have options of their own, so they parse the rest of the line.
   if (argv[0] === 'create') {
+    // Loaded on demand: its prompts are the only part of the CLI with dependencies.
+    const { create } = await import('./create.mjs');
     await create(argv.slice(1));
     return;
   }
@@ -98,8 +99,14 @@ async function main(argv) {
 main(process.argv.slice(2)).catch((error) => {
   // Errors are often wrapped, and the useful part is the innermost cause.
   const lines = [];
-  for (let current = error; current; current = current instanceof Error ? current.cause : undefined) {
-    lines.push(`${lines.length === 0 ? '' : 'Caused by: '}${current instanceof Error ? current.message : String(current)}`);
+  for (
+    let current = error;
+    current;
+    current = current instanceof Error ? current.cause : undefined
+  ) {
+    lines.push(
+      `${lines.length === 0 ? '' : 'Caused by: '}${current instanceof Error ? current.message : String(current)}`,
+    );
   }
   console.error(`\n${lines.join('\n')}\n`);
   process.exit(1);
