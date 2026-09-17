@@ -41,6 +41,8 @@ When `pages` is set, only the listed items are shown. Use `...` to include the r
 - `defaultOpen` expands the folder on every page.
 - `collapsible: false` renders the folder as a plain group.
 
+The folder of the current page is always expanded. Past that, the sidebar remembers what the reader opens and closes, and its scroll position, until the tab is closed: a folder they closed stays closed on the next page, even with `defaultOpen`.
+
 ## Sidebar tabs
 
 Set `"root": true` to turn a folder into a sidebar tab. When a page of that folder is open, the sidebar only shows the folder's content. The [Reference](/reference/) section of this site is a root folder.
