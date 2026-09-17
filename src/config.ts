@@ -99,6 +99,8 @@ export const ZenithConfigSchema = z.object({
   editLink: z.object({ baseUrl: z.string() }).optional(),
   /** Show the last commit date of each page. Requires the site to be built from a git checkout. */
   lastUpdated: z.boolean().default(false),
+  /** Show a button at the bottom of the sidebar listing the versions the site is built with. */
+  builtWith: z.boolean().default(true),
   tableOfContents: z
     .union([z.literal(false), TableOfContentsSchema])
     .default({ minHeadingLevel: 2, maxHeadingLevel: 3 }),

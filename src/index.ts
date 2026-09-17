@@ -20,6 +20,7 @@ import {
   zenithMdastPlugins,
 } from './markdown/index';
 import { zenithShikiTransformers } from './markdown/shiki';
+import { getBuiltWith } from './built-with';
 import { buildSearchIndex } from './search';
 import { OVERRIDABLE_COMPONENTS, SLOT_NAMES, vitePluginZenith } from './virtual';
 
@@ -208,7 +209,14 @@ export default function zenith(userConfig: ZenithUserConfig = {}): AstroIntegrat
           },
           fonts,
           vite: {
-            plugins: [vitePluginZenith(resolvedConfig, astroConfig.root, shikiThemes)],
+            plugins: [
+              vitePluginZenith(
+                resolvedConfig,
+                astroConfig.root,
+                shikiThemes,
+                config.builtWith ? getBuiltWith({ root: astroConfig.root, search: config.search }) : [],
+              ),
+            ],
           },
         });
       },

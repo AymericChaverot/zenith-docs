@@ -37,6 +37,7 @@ export const icons = {
   image: {
     body: '<rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.1-3.1a2 2 0 0 0-2.8 0L6 21"/>',
   },
+  info: { body: '<circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/>' },
   languages: {
     body: '<path d="M5 8h10M9 4v4c0 4.5-2 7.5-5 9"/><path d="M11 13c1.5 2.5 3 4 6 5"/><path d="m12 20 4.5-10L21 20M13.8 17h5.4"/>',
   },

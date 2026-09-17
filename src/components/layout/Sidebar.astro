@@ -3,6 +3,7 @@ import { flattenTree } from '../../page-tree';
 import { baseUrl } from '../../urls';
 import Icon from '../Icon.astro';
 import SidebarTree from '../SidebarTree.astro';
+import BuiltWith from './BuiltWith.astro';
 import InjectionPoint from './InjectionPoint.astro';
 
 const { config, locale, sidebar, t, tree, url } = Astro.locals.zenith;
@@ -69,6 +70,7 @@ if (tabs.length > 0 && hasRootContent) {
     )
   }
   <InjectionPoint name="sidebarBottom" class="zd-slot-sidebar-bottom" />
+  <BuiltWith />
 </aside>
 <script is:inline>
   // Keep the folders opened or closed, and the scroll position, across page loads.

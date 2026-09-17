@@ -1,0 +1,48 @@
+---
+import builtWith from 'virtual:zenith/built-with';
+import zenithLogo from '../../assets/logo.svg?raw';
+import Icon from '../Icon.astro';
+
+const { t } = Astro.locals.zenith;
+
+// The Astro mark comes from Simple Icons (CC0). Pagefind and Shiki have no mark of their own.
+const astroLogo =
+  '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8.358 20.162c-1.186-1.07-1.532-3.316-1.038-4.944.856 1.026 2.043 1.352 3.272 1.535 1.897.283 3.76.177 5.522-.678.202-.098.388-.229.608-.36.166.473.209.95.151 1.437-.14 1.185-.738 2.1-1.688 2.794-.38.277-.782.525-1.175.787-1.205.804-1.531 1.747-1.078 3.119l.044.148a3.158 3.158 0 0 1-1.407-1.188 3.31 3.31 0 0 1-.544-1.815c-.004-.32-.004-.642-.048-.958-.106-.769-.472-1.113-1.161-1.133-.707-.02-1.267.411-1.415 1.09-.012.053-.028.104-.045.165h.002zm-5.961-4.445s3.24-1.575 6.49-1.575l2.451-7.565c.092-.366.36-.614.662-.614.302 0 .57.248.662.614l2.45 7.565c3.85 0 6.491 1.575 6.491 1.575L16.088.727C15.93.285 15.663 0 15.303 0H8.697c-.36 0-.615.285-.784.727l-5.516 14.99z"/></svg>';
+const logos: Record<string, string> = {
+  ZenithDocs: zenithLogo.replace('<svg', '<svg aria-hidden="true"'),
+  Astro: astroLogo,
+};
+const icons: Record<string, string> = { Pagefind: 'search', Shiki: 'code' };
+---
+
+{
+  builtWith.length > 0 && (
+    <div class="zd-built-with">
+      <button
+        class="zd-icon-button zd-built-with-button"
+        type="button"
+        aria-label={t['builtWith.label']}
+        aria-describedby="zd-built-with"
+      >
+        <Icon name="info" size={16} />
+      </button>
+      <div id="zd-built-with" class="zd-built-with-tooltip" role="tooltip">
+        <p class="zd-built-with-title">{t['builtWith.label']}</p>
+        <ul class="zd-built-with-list">
+          {builtWith.map(({ name, version }) => (
+            <li class="zd-built-with-item">
+              {logos[name] ? (
+                <span class="zd-built-with-logo" set:html={logos[name]} />
+              ) : (
+                <Icon name={icons[name] ?? 'box'} size={14} class="zd-built-with-logo" />
+              )}
+              {/* The ZenithDocs mark stands on its own, its name is only read out. */}
+              <span class={name === 'ZenithDocs' ? 'zd-sr-only' : 'zd-built-with-name'}>{name}</span>
+              <span class="zd-built-with-version">{version}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  )
+}

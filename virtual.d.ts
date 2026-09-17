@@ -33,6 +33,12 @@ declare module 'virtual:zenith/slots' {
   export default slots;
 }
 
+declare module 'virtual:zenith/built-with' {
+  /** Projects the site is built with and their versions, empty when `builtWith` is off. */
+  const builtWith: import('./src/built-with').BuiltWithEntry[];
+  export default builtWith;
+}
+
 declare module 'virtual:zenith/components/*' {
   const Component: (props: Record<string, unknown>) => unknown;
   export default Component;

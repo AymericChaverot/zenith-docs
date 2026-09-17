@@ -2,6 +2,7 @@ import { existsSync, readFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
+import type { BuiltWithEntry } from './built-with';
 import type { ZenithConfig } from './config';
 import type { OgFontWeight } from './og';
 
@@ -103,6 +104,7 @@ export function vitePluginZenith(
   config: ZenithConfig,
   root: URL,
   shikiThemes: Record<string, string> = {},
+  builtWith: BuiltWithEntry[] = [],
 ) {
   const rootPath = fileURLToPath(root);
   const resolveFromRoot = (path: string) =>
@@ -116,6 +118,7 @@ export const shikiThemes = ${JSON.stringify(shikiThemes)};`,
       .map((path) => `import ${JSON.stringify(resolveFromRoot(path))};`)
       .join('\n'),
     'virtual:zenith/slots': slotsModule(config.slots, resolveFromRoot),
+    'virtual:zenith/built-with': `export default ${JSON.stringify(builtWith)};`,
   };
 
   if (config.og) modules['virtual:zenith/og-assets'] = ogAssets();
