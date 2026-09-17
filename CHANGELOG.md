@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.2.1
+
+### Fixes
+
+- A folder with `collapsible: false` shows its icon in the sidebar, aligned with its title.
+
 ## 0.2.0
 
 ### Features
