@@ -4,7 +4,7 @@ description: A social preview image is generated for every page at build time.
 icon: image
 ---
 
-Every page gets its own 1200×630 preview image, the one social networks and chat apps show when its link is shared. Images are generated during the build, written next to the page as `og/<page>.png`, and referenced with the `og:image` and `twitter:image` meta tags.
+Every page gets its own 1200×630 preview image, the one social networks and chat apps show when its link is shared. Images are generated during the build, written to `og/<page>.png` at the root of the site, and referenced with the `og:image` meta tag, which X and the others read as well, alongside a `summary_large_image` Twitter card.
 
 Nothing is required to turn this on: it follows the `og` option, which defaults to `true`.
 
