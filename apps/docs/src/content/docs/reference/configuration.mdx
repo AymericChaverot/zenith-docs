@@ -19,7 +19,6 @@ The same options work in both setups: passed to the integration in `astro.config
           title: 'My Docs',
           description: 'Documentation for my project.',
           github: 'https://github.com/me/my-project',
-          editLink: { baseUrl: 'https://github.com/me/my-project/edit/main/' },
         }),
       ],
     });
@@ -34,7 +33,6 @@ The same options work in both setups: passed to the integration in `astro.config
       title: 'My Docs',
       description: 'Documentation for my project.',
       github: 'https://github.com/me/my-project',
-      editLink: { baseUrl: 'https://github.com/me/my-project/edit/main/' },
     });
     ```
   </Tab>
@@ -160,9 +158,11 @@ OpenAPI documents rendered by `<APIPage>`, keyed by the name used in pages, as p
 
 ### `editLink`
 
-**Type:** `{ baseUrl: string }`
+**Type:** `{ baseUrl: string }` · **Default:** none, no link
 
-Adds an "Edit this page" link. The path of the file, relative to the project root, is appended to `baseUrl`.
+Adds an "Edit this page" link at the bottom of every page. The path of the file, relative to the project root, is appended to `baseUrl`.
+
+It is off unless set, since readers who cannot write to the repository only land on a fork prompt. It suits docs that welcome outside contributions.
 
 ### `lastUpdated`
 

@@ -28,7 +28,6 @@ export default defineConfig({
       title: 'ZenithDocs',
       description: 'A static, lightweight and themeable documentation engine for Astro.',
       github: 'https://github.com/AymericChaverot/zenith-docs',
-      editLink: { baseUrl: 'https://github.com/AymericChaverot/zenith-docs/edit/main/apps/docs/' },
       lastUpdated: true,
       openapi: {
         rockets: './src/openapi/rockets.yaml',
