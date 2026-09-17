@@ -41,4 +41,4 @@ The search field disappears from the header, and no index is built.
 
 ## Weight and privacy
 
-The dialog itself is a few lines of JavaScript, loaded with the page. Pagefind and its index are only downloaded when the dialog is opened, and Pagefind only loads the fragments of the index it needs to answer a query. Nothing leaves the reader's browser.
+The dialog itself is about 1 kB of JavaScript, inlined in the page. Pagefind is only downloaded when the dialog is opened: about 25 kB for its script and worker, and 70 kB for its WebAssembly module, all compressed. It then loads the parts of the index a query needs, between 7 and 35 kB each on this site, and about 1 kB per result shown. The index is static and queried in the browser, so searches never leave it.
