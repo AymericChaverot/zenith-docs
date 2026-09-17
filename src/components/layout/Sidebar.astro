@@ -71,23 +71,50 @@ if (tabs.length > 0 && hasRootContent) {
   <InjectionPoint name="sidebarBottom" class="zd-slot-sidebar-bottom" />
 </aside>
 <script is:inline>
-  // Keep the sidebar scroll position across page loads.
+  // Keep the folders opened or closed, and the scroll position, across page loads.
   (() => {
     const sidebar = document.getElementById('zd-sidebar');
     if (!sidebar) return;
-    const restore = () => {
+
+    const read = (key) => {
       try {
-        const saved = sessionStorage.getItem('zd-sidebar-scroll');
-        if (saved) sidebar.scrollTop = Number(saved);
+        return sessionStorage.getItem(key);
       } catch {}
+    };
+    const write = (key, value) => {
+      try {
+        sessionStorage.setItem(key, value);
+      } catch {}
+    };
+
+    let folders = {};
+    try {
+      folders = JSON.parse(read('zd-sidebar-folders') ?? '{}');
+    } catch {}
+    for (const folder of sidebar.querySelectorAll('details[data-folder]')) {
+      const open = folders[folder.dataset.folder];
+      // The folder of the current page stays open, so its link is always in sight.
+      const current = folder.querySelector('[aria-current="page"]');
+      if (typeof open === 'boolean' && !current) folder.open = open;
+    }
+
+    // Only the reader's own clicks are remembered, not the folders opened for the current page.
+    sidebar.addEventListener('click', (event) => {
+      const summary = event.target.closest('summary');
+      if (!summary || event.target.closest('a')) return;
+      const folder = summary.parentElement;
+      if (!folder.dataset.folder) return;
+      folders[folder.dataset.folder] = !folder.open;
+      write('zd-sidebar-folders', JSON.stringify(folders));
+    });
+
+    const restore = () => {
+      const saved = read('zd-sidebar-scroll');
+      if (saved) sidebar.scrollTop = Number(saved);
     };
     restore();
     addEventListener('pagereveal', restore);
-    addEventListener('pagehide', () => {
-      try {
-        sessionStorage.setItem('zd-sidebar-scroll', String(sidebar.scrollTop));
-      } catch {}
-    });
+    addEventListener('pagehide', () => write('zd-sidebar-scroll', String(sidebar.scrollTop)));
   })();
 
   // Close the mobile menu when the viewport grows past the breakpoint.

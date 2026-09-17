@@ -63,6 +63,7 @@ const containsUrl = (folder: FolderNode) =>
         <li>
           <details
             class="zd-sidebar-folder"
+            data-folder={node.dir}
             open={node.defaultOpen || containsUrl(node)}
           >
             <summary class="zd-sidebar-link">
