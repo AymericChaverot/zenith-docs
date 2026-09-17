@@ -24,7 +24,7 @@ To add ZenithDocs to an existing Astro project instead:
 npm install github:AymericChaverot/zenith-docs
 ```
 
-Append a release tag, such as `#v0.1.0`, to pin a version. Sites made with `create` are pinned to the release that created them.
+Append a release tag, such as `#v0.2.0`, to pin a version. Sites made with `create` are pinned to the release that created them.
 
 ## Documentation
 

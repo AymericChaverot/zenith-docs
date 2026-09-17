@@ -1,5 +1,24 @@
 # Changelog
 
+## 0.2.0
+
+### Features
+
+- A built with button at the bottom of the sidebar lists the versions of ZenithDocs, Astro, Pagefind and Shiki the site was built with. Turn it off with `builtWith: false`.
+- The sidebar remembers the folders a reader opens or closes, on top of its scroll position.
+- `create` asks its questions with arrow keys and shows the install as it runs.
+
+### Fixes
+
+- The bends of the table of contents are rounded, and indented entries are centered on their line.
+- Folders that have their own page are no longer underlined in the sidebar.
+
+### Documentation
+
+- The JavaScript budget gives the measured size of every feature, and the search page its download cost.
+- The Rockets API is presented as an OpenAPI example, under the OpenAPI page.
+- Several details corrected: the Markdown output of untranslated pages, social image tags, backdrops and callout aliases.
+
 ## 0.1.0
 
 The first release.
