@@ -62,9 +62,9 @@ zenith({
 | `glow`          | A soft accent glow, nothing else                               |
 | `none`          | No background                                                  |
 
-`aurora` and `dither` stay in place while the page scrolls; the other styles sit at the top of the page. `dither` is anchored to the top left, and `backdropPosition: 'center'` or `'right'` moves it.
+`aurora`, `dither` and `grain` stay in place while the page scrolls; the other styles sit at the top of the page. `dither` is anchored to the top left, and `backdropPosition: 'center'` or `'right'` moves it.
 
-Every style is plain CSS: no images and no JavaScript. Tune them with `--zd-backdrop-strength`, for the dither dots, and `--zd-backdrop-line`, for the grid and dots.
+Every style is plain CSS, with no image file to download and no JavaScript: `grain` draws its noise with an SVG filter inlined in the stylesheet. Tune them with `--zd-backdrop-strength`, for the dither dots, and `--zd-backdrop-line`, for the grid and dots.
 
 ```css
 .theme-light {
