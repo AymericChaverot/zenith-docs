@@ -33,21 +33,30 @@ It is the same `zenith` command you then use in the project, run straight from G
 Run in a terminal, the command asks where to put the site, its title, the template, a [packaged theme](/customization/theming/#packaged-themes), whether to add a [Dockerfile](/deployment/#docker), and whether to install the dependencies:
 
 ```txt
-  ◆ Where should the site go? (my-docs) acme-docs
-  ◆ Site title (Acme Docs) Acme Handbook
-  ◆ Template
-      1. cli    A config file and a folder of Markdown, run by the zenith CLI
-      2. astro  An Astro project with the integration, for more than docs
-    Choose 1-2 (1)
-  ◆ Theme
-      1. none      Keep the defaults
-      2. zenith    Emerald, dither backdrop, Instrument fonts: the defaults
-      ...
-  ◆ Add a Dockerfile? (y/N)
-  ◆ Install dependencies with pnpm? (Y/n)
+┌   ZenithDocs  let’s set up your documentation
+│
+◇  Where should the site go?
+│  acme-docs
+│
+◇  What is the site called?
+│  Acme Handbook
+│
+◇  Which template?
+│  cli
+│
+◆  Which theme?
+│  ● default (Keep the defaults)
+│  ○ zenith
+│  ○ slate
+│  ○ terminal
+│  ○ paper
+│  ○ aurora
+└
 ```
 
-Every answer has a flag, for scripts and CI: `--template`, `--title`, `--theme`, `--docker` and `--install`. Add `--yes` to skip the questions and take the defaults for anything not given. The directory has to be empty.
+The directory is given as an argument or typed at the first question. It has to be empty, apart from dotfiles such as `.git`. Once the files are written, the dependencies are installed if you said yes, with the package manager that ran the command, and the next steps are printed.
+
+Every answer has a flag, for scripts and CI: `--template`, `--title`, `--theme`, `--docker` and `--install`. Add `--yes` to skip the questions and take the defaults for anything not given: the directory is then `zenith-docs`, and nothing is installed unless `--install` is set. Outside a terminal, as in CI, the questions are skipped the same way.
 
 ## Add to an Astro project
 
