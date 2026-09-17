@@ -53,7 +53,10 @@ const containsUrl = (folder: FolderNode) =>
       if (!node.collapsible) {
         return (
           <li>
-            <p class="zd-sidebar-group-title">{label}</p>
+            <p class="zd-sidebar-group-title">
+              {node.icon && <Icon name={node.icon} />}
+              {label}
+            </p>
             <Astro.self nodes={node.children} url={url} />
           </li>
         );
