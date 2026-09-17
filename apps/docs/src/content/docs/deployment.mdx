@@ -48,6 +48,7 @@ The Dockerfile has two stages. The first builds the site with Node and is thrown
 | `immutable` cache on `/_astro/`           | Those files have a content hash in their name, so they never change     |
 | `404.html` as the error page              | Unknown URLs get the site's own not found page                          |
 | `text/markdown` for `.md` files           | The [Markdown version](/llms/) of each page opens instead of downloading |
+| `nosniff` and a strict referrer policy    | Security headers that cost nothing on a static site                     |
 | A health check                            | Orchestrators can tell when the server is ready                         |
 
 Dependencies are installed before the content is copied, and cached between builds, so editing a page rebuilds the site without reinstalling anything. The package manager follows the lockfile: pnpm when `pnpm-lock.yaml` exists, npm otherwise.
@@ -145,6 +146,7 @@ Netlify, Vercel, Cloudflare Pages and the others all ask for the same settings:
 | Node.js version  | 22.18 or later  |
 
 Set [`site`](/reference/configuration/#site) to the URL the host gives you, so that canonical links, the sitemap and [social images](/open-graph/) use absolute URLs. A host that serves the site from a sub-path, like GitHub Pages without a custom domain, also needs [`base`](/reference/configuration/#base).
+
 ### GitHub Pages
 
 A repository named `my-docs` is served at `https://<owner>.github.io/my-docs/`, so the site needs both options:
