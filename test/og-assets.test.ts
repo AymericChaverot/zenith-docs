@@ -12,6 +12,8 @@ mkdirSync(join(dir, 'src'));
 writeFileSync(join(dir, 'public', 'logo.png'), '');
 writeFileSync(join(dir, 'src', 'card.svg'), '<svg/>');
 writeFileSync(join(dir, 'src', 'card.webp'), '');
+writeFileSync(join(dir, 'src', 'serif.ttf'), '');
+writeFileSync(join(dir, 'src', 'serif.woff2'), '');
 afterAll(() => rmSync(dir, { recursive: true, force: true }));
 
 const paths = { root: pathToFileURL(`${dir}/`), publicDir: pathToFileURL(`${dir}/public/`) };
@@ -38,5 +40,24 @@ describe('resolveOgAssets', () => {
   it('rejects missing files and formats satori cannot draw', () => {
     expect(() => resolve({ og: { background: './missing.png' } })).toThrow(/Cannot find/);
     expect(() => resolve({ og: { background: './src/card.webp' } })).toThrow(/SVG, PNG or JPEG/);
+  });
+
+  it('puts the font of the card before Geist', () => {
+    const { fonts } = resolve({
+      og: { font: { name: 'Serif', files: [{ path: './src/serif.ttf', weight: 700 }] } },
+    });
+    expect(fonts[0]).toEqual({
+      name: 'Serif',
+      weight: 700,
+      style: 'normal',
+      path: join(dir, 'src', 'serif.ttf'),
+    });
+    expect(fonts.slice(1).every((font) => font.name === 'Geist')).toBe(true);
+  });
+
+  it('rejects fonts satori cannot read', () => {
+    expect(() => resolve({ og: { font: { files: [{ path: './src/serif.woff2' }] } } })).toThrow(
+      /TTF, OTF or WOFF/,
+    );
   });
 });

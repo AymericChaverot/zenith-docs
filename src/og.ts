@@ -42,8 +42,11 @@ export function resolveOgColors(config: ZenithConfig, og: OgOptions): OgColors {
  * because this module is bundled and can no longer resolve packages by name.
  */
 export interface OgAssets {
-  /** Geist as WOFF: satori reads TTF, OTF and WOFF, but not WOFF2. */
-  fonts: { weight: OgFontWeight; path: string }[];
+  /**
+   * Font files, the ones of the `font` option first, then Geist as a fallback for the
+   * characters they lack. satori reads TTF, OTF and WOFF, but not WOFF2.
+   */
+  fonts: OgFontFile[];
   /** The resvg WebAssembly binary. */
   wasm: string;
   /** The logo, when it is not an SVG inlined in the config. */
@@ -52,18 +55,21 @@ export interface OgAssets {
   background?: string;
 }
 
-export type OgFontWeight = 400 | 600;
+export type OgFontWeight = 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900;
 
-let fonts: Promise<{ name: string; weight: OgFontWeight; data: Buffer }[]> | undefined;
+export interface OgFontFile {
+  name: string;
+  weight: OgFontWeight;
+  style: 'normal' | 'italic';
+  path: string;
+}
+
+let fonts: Promise<(Omit<OgFontFile, 'path'> & { data: Buffer })[]> | undefined;
 let renderer: Promise<unknown> | undefined;
 
 function loadFonts(assets: OgAssets) {
   return (fonts ??= Promise.all(
-    assets.fonts.map(async ({ weight, path }) => ({
-      name: 'Geist',
-      weight,
-      data: await readFile(path),
-    })),
+    assets.fonts.map(async ({ path, ...font }) => ({ ...font, data: await readFile(path) })),
   ));
 }
 
@@ -120,6 +126,8 @@ export interface OgTemplateProps {
   /** Image covering the card, from the `background` option. */
   background?: OgImage;
   colors: OgColors;
+  /** Family of the `font` option, or Geist. */
+  fontFamily: string;
   options: OgOptions;
   width: number;
   height: number;
@@ -154,6 +162,7 @@ async function templateProps({
       ? await loadImage(assets.background, colors.accent, OG_HEIGHT)
       : undefined,
     colors,
+    fontFamily: assets.fonts[0]!.name,
     options,
     width: OG_WIDTH,
     height: OG_HEIGHT,
@@ -211,7 +220,7 @@ export function defaultTemplate(props: OgTemplateProps): OgNode {
       height: '100%',
       backgroundColor: colors.background,
       color: colors.text,
-      fontFamily: 'Geist',
+      fontFamily: props.fontFamily,
     },
     props.background &&
       h('img', {

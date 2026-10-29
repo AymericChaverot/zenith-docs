@@ -77,6 +77,25 @@ const OgSchema = z.object({
    * as a path from the project root or from `public/`.
    */
   background: z.string().optional(),
+  /**
+   * Font of the card instead of Geist, from TTF, OTF or WOFF files given as paths from
+   * the project root or from `public/`. Geist still draws the characters they lack.
+   */
+  font: z
+    .object({
+      /** Family name, only used to tell the fonts apart. */
+      name: z.string().default('Custom'),
+      files: z
+        .array(
+          z.object({
+            path: z.string(),
+            weight: z.number().int().min(100).max(900).multipleOf(100).default(400),
+            style: z.enum(['normal', 'italic']).default('normal'),
+          }),
+        )
+        .min(1),
+    })
+    .optional(),
 });
 
 const LogoSchema = z.object({

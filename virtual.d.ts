@@ -16,8 +16,8 @@ declare module 'virtual:zenith/project' {
 }
 
 declare module 'virtual:zenith/og-assets' {
-  /** Absolute paths of the Geist WOFF files embedded in Open Graph images. */
-  export const fonts: { weight: import('./src/og').OgFontWeight; path: string }[];
+  /** Font files embedded in Open Graph images, the family of the card first. */
+  export const fonts: import('./src/og').OgFontFile[];
   /** Absolute path of the resvg WebAssembly binary. */
   export const wasm: string;
   /** Absolute path of the logo, when it is not an SVG inlined in the config. */

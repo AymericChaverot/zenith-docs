@@ -8,6 +8,8 @@ const require = createRequire(import.meta.url);
 
 const assets: OgAssets = {
   fonts: ([400, 600] as const).map((weight) => ({
+    name: 'Geist',
+    style: 'normal' as const,
     weight,
     path: require.resolve(`@fontsource/geist/files/geist-latin-${weight}-normal.woff`),
   })),
