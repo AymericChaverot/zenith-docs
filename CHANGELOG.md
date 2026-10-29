@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.3.0
+
+### Dependencies
+
+- Astro 7.4, Shiki 4.5 and MDX 8.1, with the latest fixes of the Markdown pipeline.
+- Satori 0.63 renders the social images, which look the same as before.
+- TypeScript 7 type checks the package.
+
 ## 0.2.1
 
 ### Fixes
