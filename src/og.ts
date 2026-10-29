@@ -66,15 +66,19 @@ export interface OgImageOptions {
 }
 
 export async function renderOgImage(options: OgImageOptions): Promise<Uint8Array<ArrayBuffer>> {
-  const [loaded] = await Promise.all([loadFonts(options.assets), loadRenderer(options.assets)]);
-  const svg = await satori(card(options) as never, {
-    width: OG_WIDTH,
-    height: OG_HEIGHT,
-    fonts: loaded,
-  });
+  const [svg] = await Promise.all([renderOgSvg(options), loadRenderer(options.assets)]);
   const png = new Resvg(svg, { fitTo: { mode: 'width', value: OG_WIDTH } }).render().asPng();
   // Copy the pixels out of the WebAssembly memory, which is reused by the next render.
   return new Uint8Array(png);
+}
+
+/** The card as SVG, before it is rasterized. */
+export async function renderOgSvg(options: OgImageOptions): Promise<string> {
+  return satori(card(options) as never, {
+    width: OG_WIDTH,
+    height: OG_HEIGHT,
+    fonts: await loadFonts(options.assets),
+  });
 }
 
 interface Element {
@@ -129,18 +133,14 @@ function card({ config, title, description, section, badges = [] }: OgImageOptio
           boxSizing: 'border-box',
         },
         [
-          el(
-            'div',
-            { display: 'flex', alignItems: 'center', gap: 18 },
-            [
-              logo && {
-                type: 'img',
-                props: { src: logo, width: 44, height: 44, style: { display: 'flex' } },
-              },
-              title !== config.title &&
-                el('div', { fontSize: 28, fontWeight: 600, letterSpacing: '-0.02em' }, config.title),
-            ],
-          ),
+          el('div', { display: 'flex', alignItems: 'center', gap: 18 }, [
+            logo && {
+              type: 'img',
+              props: { src: logo, width: 44, height: 44, style: { display: 'flex' } },
+            },
+            title !== config.title &&
+              el('div', { fontSize: 28, fontWeight: 600, letterSpacing: '-0.02em' }, config.title),
+          ]),
           el('div', { display: 'flex', flexDirection: 'column' }, [
             el(
               'div',
@@ -163,7 +163,11 @@ function card({ config, title, description, section, badges = [] }: OgImageOptio
             'div',
             { display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 24 },
             [
-              el('div', { display: 'flex', fontSize: 22, color: MUTED }, truncate(section ?? '', 60)),
+              el(
+                'div',
+                { display: 'flex', fontSize: 22, color: MUTED },
+                truncate(section ?? '', 60),
+              ),
               el(
                 'div',
                 { display: 'flex', gap: 12 },
@@ -207,10 +211,11 @@ function rgba(hex: string, alpha: number): string {
 function logoDataUri(svg: string, color: string): string {
   let markup = svg.replaceAll('currentColor', color);
   if (!/<svg[^>]+\swidth=/.test(markup)) {
-    const [, , width = '32', height = '32'] = /viewBox="([^"]+)"/
-      .exec(markup)?.[1]
-      ?.trim()
-      .split(/[\s,]+/) ?? [];
+    const [, , width = '32', height = '32'] =
+      /viewBox="([^"]+)"/
+        .exec(markup)?.[1]
+        ?.trim()
+        .split(/[\s,]+/) ?? [];
     markup = markup.replace('<svg', `<svg width="${width}" height="${height}"`);
   }
   return `data:image/svg+xml;base64,${Buffer.from(markup).toString('base64')}`;
