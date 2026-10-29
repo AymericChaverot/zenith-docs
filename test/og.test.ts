@@ -52,6 +52,30 @@ describe('renderOgSvg', () => {
   });
 });
 
+describe('og options', () => {
+  const render = (og: unknown) =>
+    renderOgSvg({
+      config: { ...ZenithConfigSchema.parse({ og }), favicon: '' } as ZenithConfig,
+      assets,
+      title: 'Getting started',
+      badges: ['English', 'v2'],
+    });
+
+  it('leaves out what is turned off', async () => {
+    expect(borderedBoxes(await render({ badges: false }))).toHaveLength(0);
+  });
+
+  it('moves the badges up when the brand takes their corner', async () => {
+    for (const layout of ['default', 'centered', 'split']) {
+      const boxes = borderedBoxes(
+        await render({ layout, logo: { position: 'bottom-right' }, colorScheme: 'dark' }),
+      );
+      expect(boxes).toHaveLength(2);
+      expect(boxes[0]!.y).toBeLessThan(OG_HEIGHT / 2);
+    }
+  });
+});
+
 describe('resolveOgColors', () => {
   const parse = (og: unknown) =>
     ({ ...ZenithConfigSchema.parse({ og }), favicon: '' }) as ZenithConfig;

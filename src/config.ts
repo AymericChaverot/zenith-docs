@@ -24,7 +24,33 @@ const HeadTagSchema = z.object({
 
 export const OG_BACKDROPS = ['glow', 'grid', 'dots', 'none'] as const;
 
+export const OG_LAYOUTS = ['default', 'centered', 'split'] as const;
+
+export const OG_POSITIONS = ['top-left', 'top-right', 'bottom-left', 'bottom-right'] as const;
+
 const OgSchema = z.object({
+  /** Arrangement of the card: text on the left, on the center line, or next to a large logo. */
+  layout: z.enum(OG_LAYOUTS).default('default'),
+  /** Logo of the card, the one of the site. `false` leaves it out. */
+  logo: z
+    .union([
+      z.literal(false),
+      z.object({
+        /** Height in pixels, in the corner of the card. */
+        size: z.number().positive().default(44),
+        /** Corner holding the logo and the site name. */
+        position: z.enum(OG_POSITIONS).default('top-left'),
+      }),
+    ])
+    .default({ size: 44, position: 'top-left' }),
+  /** Site name next to the logo: `true` for the `title` option, or another text. */
+  siteName: z.union([z.boolean(), z.string()]).default(true),
+  /** Show the description of the page. */
+  description: z.boolean().default(true),
+  /** Show the folders the page belongs to. */
+  breadcrumb: z.boolean().default(true),
+  /** Show the language and version, on sites that have several. */
+  badges: z.boolean().default(true),
   /** Palette the card is drawn with. */
   colorScheme: z.enum(['dark', 'light']).default('dark'),
   /** Colors taking precedence over the palette and the accent of the site. */
