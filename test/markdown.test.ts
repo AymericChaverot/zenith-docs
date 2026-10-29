@@ -8,9 +8,12 @@ import {
 } from '../src/markdown/index';
 import { getTranslations } from '../src/translations';
 
-function render(source: string, options: { base?: string; t?: TranslationsForFile } = {}) {
+function render(
+  source: string,
+  options: { base?: string; t?: TranslationsForFile; math?: boolean } = {},
+) {
   const { html } = markdownToHtml(source, {
-    features: { directive: true },
+    features: { directive: true, math: options.math ?? false },
     mdastPlugins: [...zenithMdastPlugins(options.t), directivesRestorationPlugin()],
     hastPlugins: zenithHastPlugins(options.t, options.base),
   }) as { html: string };
@@ -130,5 +133,18 @@ describe('mermaid', () => {
     expect(html).toContain('<code class="language-mermaid">');
     expect(warn).toHaveBeenCalledOnce();
     warn.mockRestore();
+  });
+});
+
+describe('math', () => {
+  it('renders TeX as MathML', () => {
+    expect(render('Euler: $e^{i\\pi} = -1$', { math: true })).toContain(
+      '<span class="katex"><math><semantics><mrow><msup><mi>e</mi>',
+    );
+    expect(render('$$\n\\int_0^1 x\\,dx\n$$', { math: true })).toContain('display="block"');
+  });
+
+  it('leaves dollar signs alone when math is off', () => {
+    expect(render('From $5 to $10')).toBe('<p>From $5 to $10</p>');
   });
 });

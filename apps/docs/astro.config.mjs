@@ -29,6 +29,7 @@ export default defineConfig({
       description: 'A static, lightweight and themeable documentation engine for Astro.',
       github: 'https://github.com/AymericChaverot/zenith-docs',
       lastUpdated: true,
+      math: true,
       openapi: {
         rockets: './src/openapi/rockets.yaml',
       },

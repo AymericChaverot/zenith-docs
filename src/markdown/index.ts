@@ -11,7 +11,7 @@ import {
   type MdastPluginEntry,
 } from 'satteri';
 import { resolveCallout, type CalloutType, type ResolvedCallout } from '../callouts';
-import { renderMermaid } from './diagrams';
+import { renderMath, renderMermaid } from './diagrams';
 import { convertCommand, PACKAGE_MANAGERS } from './package-managers';
 import { DEFAULT_TRANSLATIONS, type Translations } from '../translations';
 import { withBase } from '../urls';
@@ -220,19 +220,25 @@ function headingsPlugin(t: Translations): HastPluginDefinition {
 }
 
 /**
- * ```mermaid code blocks drawn as SVG at build time.
+ * ```mermaid code blocks drawn as SVG, and math rendered as MathML, at build time.
  * The markup is parsed into elements, so it goes through MDX like any other.
  */
 function diagramsPlugin(fileURL: URL | undefined): HastPluginDefinition {
   return {
     name: 'zenith-diagrams',
     element: {
-      filter: ['pre'],
+      filter: ['pre', 'code'],
       visit(node, ctx) {
+        if (node.tagName === 'code') {
+          if (!hasClass(node as Element, 'math-inline')) return;
+          return parseHtml(renderMath(ctx.textContent(node), false));
+        }
+
         const code = node.children.find(
           (child): child is Element => child.type === 'element' && child.tagName === 'code',
         );
         if (!code) return;
+        if (hasClass(code, 'math-display')) return parseHtml(renderMath(ctx.textContent(node), true));
 
         // Shiki marks the language on `<pre>`, plain Markdown on `<code>`.
         const language = node.properties?.dataLanguage ?? node.properties?.['data-language'];
@@ -251,7 +257,7 @@ function diagramsPlugin(fileURL: URL | undefined): HastPluginDefinition {
 
 /**
  * The single element of an HTML fragment. `xmlns` is dropped: HTML does not need it on
- * `<svg>`, and the parser would keep it as a namespaced `:xmlns`.
+ * `<svg>` and `<math>`, and the parser would keep it as a namespaced `:xmlns`.
  */
 function parseHtml(html: string): Element {
   const root = htmlToHast(html.replace(/\sxmlns="[^"]*"/g, ''), { fragment: true }) as HastRoot;

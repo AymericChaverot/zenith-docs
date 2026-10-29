@@ -46,6 +46,11 @@ export const ZenithConfigSchema = z.object({
    * in ChatGPT or Claude, which needs `site`. Requires `llms`.
    */
   pageActions: z.boolean().default(true),
+  /**
+   * Render TeX between `$` and `$$` as math, with MathML. Off by default, since it changes
+   * what dollar signs mean in existing content.
+   */
+  math: z.boolean().default(false),
   /** Generate an Open Graph image for every page, shown when a link is shared. */
   og: z.boolean().default(true),
   /** OpenAPI specs rendered by `<APIPage>`, keyed by name, as paths from the project root. */

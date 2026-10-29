@@ -122,7 +122,13 @@
   color: var(--text);
 }
 
-/* Diagrams, drawn at build time */
+/* Math and diagrams, rendered at build time */
+
+.zd-prose math[display='block'] {
+  margin-block: 1.5rem;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
 
 .zd-mermaid {
   margin-block: 1.5rem;

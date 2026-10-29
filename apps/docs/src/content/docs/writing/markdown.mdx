@@ -83,6 +83,32 @@ graph LR
 
 Flowcharts, sequence, state, class and ER diagrams, and XY charts are supported. Other diagram types are shown as code, with a warning in the build output.
 
+## Math
+
+Turn on `math` to write TeX between `$` for inline math and `$$` for blocks:
+
+```js title="astro.config.mjs"
+zenith({
+  math: true, // [!code highlight]
+});
+```
+
+```md
+The identity $e^{i\pi} + 1 = 0$ links five constants.
+
+$$
+\int_0^1 x^2 \, dx = \frac{1}{3}
+$$
+```
+
+The identity $e^{i\pi} + 1 = 0$ links five constants.
+
+$$
+\int_0^1 x^2 \, dx = \frac{1}{3}
+$$
+
+Math is rendered with KaTeX to MathML, which browsers lay out natively: it costs no stylesheet, font or script. It is off by default because it gives dollar signs a meaning, so prices in existing content would become math.
+
 ## Footnotes
 
 Footnotes are collected at the end of the page.[^1]

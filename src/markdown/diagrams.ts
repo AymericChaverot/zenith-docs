@@ -1,4 +1,13 @@
+import katex from 'katex';
 import { renderMermaidSVG } from 'beautiful-mermaid';
+
+/**
+ * TeX as MathML, which browsers lay out natively: no stylesheet, font or script to load.
+ * Errors are shown in place, in red, instead of failing the build.
+ */
+export function renderMath(tex: string, displayMode: boolean): string {
+  return katex.renderToString(tex, { output: 'mathml', displayMode, throwOnError: false });
+}
 
 /**
  * A Mermaid diagram as inline SVG, drawn with the colors of the site so it follows

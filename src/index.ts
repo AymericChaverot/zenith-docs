@@ -149,6 +149,7 @@ export default function zenith(userConfig: ZenithUserConfig = {}): AstroIntegrat
         const processor = astroConfig.markdown.processor;
         if (processor && isSatteriProcessor(processor)) {
           processor.options.features.directive = true;
+          if (config.math) processor.options.features.math = true;
           processor.options.mdastPlugins.push(
             ...zenithMdastPlugins(translationsForFile),
             directivesRestorationPlugin(),
