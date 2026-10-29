@@ -43,6 +43,12 @@ Each page is also served as Markdown, at the same path with a `.md` extension: `
 <link rel="alternate" type="text/markdown" href="/installation.md" />
 ```
 
+## Page actions
+
+Under the title of every page, **Copy page** puts its Markdown in the clipboard, and **Open** shows it, or hands it to ChatGPT or Claude with a prompt asking to read it. Those two need [`site`](/reference/configuration/#site), since an assistant fetches the page itself.
+
+Turn the buttons off with `pageActions: false`, or replace them with the `PageActions` [override](/customization/overrides/).
+
 ## What the Markdown contains
 
 The title, the description, the source URL and the body of the page:
