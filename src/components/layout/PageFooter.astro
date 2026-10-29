@@ -5,21 +5,19 @@ const { editUrl, lastUpdated, locale, t } = Astro.locals.zenith;
 const formatter = new Intl.DateTimeFormat(locale.lang, { dateStyle: 'medium' });
 ---
 
-{
-  (editUrl || lastUpdated) && (
-    <footer class="zd-page-footer">
-      {editUrl && (
-        <a class="zd-edit-link" href={editUrl}>
-          <Icon name="edit" size={14} />
-          {t['page.editLink']}
-        </a>
-      )}
-      {lastUpdated && (
-        <p>
-          {t['page.lastUpdated']}{' '}
-          <time datetime={lastUpdated.toISOString()}>{formatter.format(lastUpdated)}</time>
-        </p>
-      )}
-    </footer>
-  )
-}
+{(editUrl || lastUpdated) && (
+  <footer class="zd-page-footer">
+    {editUrl && (
+      <a class="zd-edit-link" href={editUrl}>
+        <Icon name="edit" size={14} />
+        {t['page.editLink']}
+      </a>
+    )}
+    {lastUpdated && (
+      <p>
+        {t['page.lastUpdated']}{' '}
+        <time datetime={lastUpdated.toISOString()}>{formatter.format(lastUpdated)}</time>
+      </p>
+    )}
+  </footer>
+)}

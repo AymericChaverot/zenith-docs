@@ -18,7 +18,8 @@ export const DEFAULT_TRANSLATIONS = {
   'page.next': 'Next',
   'page.editLink': 'Edit this page',
   'page.lastUpdated': 'Last updated on',
-  'page.untranslated': 'This page has not been translated yet, so it is shown in the default language.',
+  'page.untranslated':
+    'This page has not been translated yet, so it is shown in the default language.',
   'page.anchor': 'Link to this section',
   'page.notFound': 'Page not found',
   'page.notFoundBody': 'The page you are looking for does not exist or has been moved.',

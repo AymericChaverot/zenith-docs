@@ -1,11 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import {
-  curlSample,
-  exampleOf,
-  getOperations,
-  propertiesOf,
-  typeName,
-} from '../src/openapi/model';
+import { curlSample, exampleOf, getOperations, propertiesOf, typeName } from '../src/openapi/model';
 import { dereference } from '../src/openapi/spec';
 import type { OpenApiDocument, SchemaObject } from '../src/openapi/spec';
 
@@ -24,7 +18,9 @@ describe('dereference', () => {
 
   it('names schemas after the component they come from', () => {
     const resolved = dereference({
-      paths: { '/pets': { get: { parameters: [{ schema: { $ref: '#/components/schemas/Pet' } }] } } },
+      paths: {
+        '/pets': { get: { parameters: [{ schema: { $ref: '#/components/schemas/Pet' } }] } },
+      },
       components: { schemas: { Pet: { type: 'object' } } },
     }) as Record<string, any>;
 
@@ -52,7 +48,9 @@ describe('dereference', () => {
   });
 
   it('reports a reference that points nowhere', () => {
-    expect(() => dereference({ a: { $ref: '#/components/schemas/Missing' } })).toThrow(/Unresolved/);
+    expect(() => dereference({ a: { $ref: '#/components/schemas/Missing' } })).toThrow(
+      /Unresolved/,
+    );
   });
 });
 
@@ -175,8 +173,19 @@ describe('curlSample', () => {
       '/rockets/{rocketId}': {
         get: {
           parameters: [
-            { name: 'rocketId', in: 'path', required: true, schema: { type: 'string' }, example: 'r1' },
-            { name: 'expand', in: 'query', required: true, schema: { type: 'string', example: 'stages' } },
+            {
+              name: 'rocketId',
+              in: 'path',
+              required: true,
+              schema: { type: 'string' },
+              example: 'r1',
+            },
+            {
+              name: 'expand',
+              in: 'query',
+              required: true,
+              schema: { type: 'string', example: 'stages' },
+            },
           ],
         },
       },

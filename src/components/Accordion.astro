@@ -17,5 +17,7 @@ const { title, id, open = false, group } = Astro.props;
     {title}
     <Icon name="chevron" size={14} class="zd-chevron" />
   </summary>
-  <div class="zd-accordion-body"><slot /></div>
+  <div class="zd-accordion-body">
+    <slot />
+  </div>
 </details>

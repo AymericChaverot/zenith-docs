@@ -15,14 +15,12 @@ const presets = [
 <FontPreviewStyles />
 
 <div class="font-picker" role="group" aria-label="Font preset">
-  {
-    presets.map(({ key, label, note }) => (
-      <button type="button" data-font-choice={key}>
-        <span class="font-label">{label}</span>
-        <span class="font-note">{note}</span>
-      </button>
-    ))
-  }
+  {presets.map(({ key, label, note }) => (
+    <button type="button" data-font-choice={key}>
+      <span class="font-label">{label}</span>
+      <span class="font-note">{note}</span>
+    </button>
+  ))}
 </div>
 
 <script>

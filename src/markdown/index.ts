@@ -238,17 +238,22 @@ function diagramsPlugin(fileURL: URL | undefined): HastPluginDefinition {
           (child): child is Element => child.type === 'element' && child.tagName === 'code',
         );
         if (!code) return;
-        if (hasClass(code, 'math-display')) return parseHtml(renderMath(ctx.textContent(node), true));
+        if (hasClass(code, 'math-display'))
+          return parseHtml(renderMath(ctx.textContent(node), true));
 
         // Shiki marks the language on `<pre>`, plain Markdown on `<code>`.
         const language = node.properties?.dataLanguage ?? node.properties?.['data-language'];
         if (language !== 'mermaid' && !hasClass(code, 'language-mermaid')) return;
         try {
-          return parseHtml(`<figure class="zd-mermaid">${renderMermaid(ctx.textContent(node))}</figure>`);
+          return parseHtml(
+            `<figure class="zd-mermaid">${renderMermaid(ctx.textContent(node))}</figure>`,
+          );
         } catch (error) {
           // Diagram types the renderer does not draw stay readable as code.
           const file = fileURL ? ` in ${fileURL.pathname}` : '';
-          console.warn(`[zenith-docs] Mermaid diagram shown as code${file}: ${(error as Error).message}`);
+          console.warn(
+            `[zenith-docs] Mermaid diagram shown as code${file}: ${(error as Error).message}`,
+          );
         }
       },
     },
@@ -275,7 +280,8 @@ function codeBlocksPlugin(t: Translations): HastPluginDefinition {
         if (parent?.type === 'element' && hasClass(parent, 'zd-code')) return;
 
         const { 'data-title': title, dataTitle, ...properties } = node.properties ?? {};
-        const caption = typeof title === 'string' ? title : typeof dataTitle === 'string' ? dataTitle : '';
+        const caption =
+          typeof title === 'string' ? title : typeof dataTitle === 'string' ? dataTitle : '';
         const children: ElementContent[] = [];
         if (caption) {
           children.push({
@@ -314,7 +320,11 @@ function hasClass(node: Element, name: string): boolean {
   return list.includes(name);
 }
 
-function element(tagName: string, properties: Record<string, string>, children: unknown[]): Paragraph {
+function element(
+  tagName: string,
+  properties: Record<string, string>,
+  children: unknown[],
+): Paragraph {
   return {
     type: 'paragraph',
     // `hName` and `hProperties` are read by the mdast to hast conversion.

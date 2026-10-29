@@ -11,39 +11,37 @@ const items = toc.map((heading, index) => {
 });
 ---
 
-{
-  items.length > 0 && (
-    <nav class="zd-toc" aria-label={t['toc.title']}>
-      <p class="zd-toc-title">
-        <Icon name="list" />
-        {t['toc.title']}
-      </p>
-      <ul class="zd-toc-list">
-        {items.map((item) => (
-          <li class="zd-toc-item" data-depth={item.depth} style={`--depth: ${item.depth}`}>
-            {item.previous !== item.depth && (
-              <svg
-                class="zd-toc-connector"
-                style={`--from: ${Math.min(item.previous, item.depth)}; --span: ${Math.abs(item.previous - item.depth)}`}
-                viewBox="0 0 1 1"
-                preserveAspectRatio="none"
-                aria-hidden="true"
-              >
-                <path
-                  d={item.previous < item.depth ? 'M0 0C0 .5 1 .5 1 1' : 'M1 0C1 .5 0 .5 0 1'}
-                  vector-effect="non-scaling-stroke"
-                />
-              </svg>
-            )}
-            <a class="zd-toc-link" href={`#${item.slug}`} data-toc-link>
-              {item.text}
-            </a>
-          </li>
-        ))}
-      </ul>
-    </nav>
-  )
-}
+{items.length > 0 && (
+  <nav class="zd-toc" aria-label={t['toc.title']}>
+    <p class="zd-toc-title">
+      <Icon name="list" />
+      {t['toc.title']}
+    </p>
+    <ul class="zd-toc-list">
+      {items.map((item) => (
+        <li class="zd-toc-item" data-depth={item.depth} style={`--depth: ${item.depth}`}>
+          {item.previous !== item.depth && (
+            <svg
+              class="zd-toc-connector"
+              style={`--from: ${Math.min(item.previous, item.depth)}; --span: ${Math.abs(item.previous - item.depth)}`}
+              viewBox="0 0 1 1"
+              preserveAspectRatio="none"
+              aria-hidden="true"
+            >
+              <path
+                d={item.previous < item.depth ? 'M0 0C0 .5 1 .5 1 1' : 'M1 0C1 .5 0 .5 0 1'}
+                vector-effect="non-scaling-stroke"
+              />
+            </svg>
+          )}
+          <a class="zd-toc-link" href={`#${item.slug}`} data-toc-link>
+            {item.text}
+          </a>
+        </li>
+      ))}
+    </ul>
+  </nav>
+)}
 
 <script>
   const SVG_NS = 'http://www.w3.org/2000/svg';

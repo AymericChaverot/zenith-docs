@@ -50,10 +50,16 @@ describe('resolveFavicon', () => {
   it('uses public/favicon.svg when it exists', () => {
     const paths = project();
     writeFileSync(join(paths.dir, 'public', 'favicon.svg'), '<svg/>');
-    expect(resolveFavicon(undefined, paths)).toEqual({ favicon: '/favicon.svg', serveDefault: false });
+    expect(resolveFavicon(undefined, paths)).toEqual({
+      favicon: '/favicon.svg',
+      serveDefault: false,
+    });
   });
 
   it('keeps an explicit favicon', () => {
-    expect(resolveFavicon('/icon.png', project())).toEqual({ favicon: '/icon.png', serveDefault: false });
+    expect(resolveFavicon('/icon.png', project())).toEqual({
+      favicon: '/icon.png',
+      serveDefault: false,
+    });
   });
 });

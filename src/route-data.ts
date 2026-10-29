@@ -101,7 +101,9 @@ export function ogImagePath(url: string): string {
 
 export async function getDocs(): Promise<DocsEntry[]> {
   const docs = (await getCollection('docs' as never)) as unknown as CollectionEntry<never>[];
-  return (docs as unknown as DocsEntry[]).filter((entry) => import.meta.env.DEV || !entry.data.draft);
+  return (docs as unknown as DocsEntry[]).filter(
+    (entry) => import.meta.env.DEV || !entry.data.draft,
+  );
 }
 
 async function getMetas(): Promise<{ id: string; data: MetaData }[]> {
@@ -190,10 +192,7 @@ export function getPageTree(
   return cached;
 }
 
-async function loadPageTree(
-  locale: ResolvedLocale,
-  version: ResolvedVersion,
-): Promise<PageTree> {
+async function loadPageTree(locale: ResolvedLocale, version: ResolvedVersion): Promise<PageTree> {
   const [groups, metas] = await Promise.all([getGroups(), getMetas()]);
   const pages = withFallback(groups, locale, version);
 

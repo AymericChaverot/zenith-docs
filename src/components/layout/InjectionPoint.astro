@@ -14,15 +14,13 @@ const { name, class: className, ignoreSearch = false } = Astro.props;
 const components = slots[name];
 ---
 
-{
-  components.length > 0 &&
-    (className ? (
-      <div class={className} data-slot={name} data-pagefind-ignore={ignoreSearch ? '' : undefined}>
-        {components.map((Component) => (
-          <Component />
-        ))}
-      </div>
-    ) : (
-      components.map((Component) => <Component />)
-    ))
-}
+{components.length > 0 &&
+  (className ? (
+    <div class={className} data-slot={name} data-pagefind-ignore={ignoreSearch ? '' : undefined}>
+      {components.map((Component) => (
+        <Component />
+      ))}
+    </div>
+  ) : (
+    components.map((Component) => <Component />)
+  ))}

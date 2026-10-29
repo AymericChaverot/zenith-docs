@@ -54,51 +54,49 @@ const sliders = [
 <FontPreviewStyles />
 
 <div class="builder" data-themes={JSON.stringify(THEMES)}>
-  {
-    controls.map(({ key, label, options, labels }) => (
-      <div class="builder-row">
-        <span class="builder-label">{label}</span>
-        <div class="builder-options" role="group" aria-label={label}>
-          {options.map((option, index) => (
-            <button type="button" data-control={key} data-value={option}>
-              {labels?.[index] ?? option}
-            </button>
-          ))}
-          {key === 'accent' && (
-            <label class="builder-color">
-              <input type="color" value="#10b981" data-color aria-label="Custom accent color" />
-              <span>Custom</span>
-            </label>
-          )}
-        </div>
+  {controls.map(({ key, label, options, labels }) => (
+    <div class="builder-row">
+      <span class="builder-label">{label}</span>
+      <div class="builder-options" role="group" aria-label={label}>
+        {options.map((option, index) => (
+          <button type="button" data-control={key} data-value={option}>
+            {labels?.[index] ?? option}
+          </button>
+        ))}
+        {key === 'accent' && (
+          <label class="builder-color">
+            <input type="color" value="#10b981" data-color aria-label="Custom accent color" />
+            <span>Custom</span>
+          </label>
+        )}
       </div>
-    ))
-  }
-  {
-    sliders.map(({ key, label, min, max, step, value, unit }) => (
-      <div class="builder-row">
-        <span class="builder-label">
-          <label for={`builder-${key}`}>{label}</label>
-        </span>
-        <div class="builder-options">
-          <input
-            type="range"
-            id={`builder-${key}`}
-            data-slider={key}
-            min={min}
-            max={max}
-            step={step}
-            value={value}
-          />
-          <output data-output={key}>{`${value}${unit}`}</output>
-        </div>
+    </div>
+  ))}
+  {sliders.map(({ key, label, min, max, step, value, unit }) => (
+    <div class="builder-row">
+      <span class="builder-label">
+        <label for={`builder-${key}`}>{label}</label>
+      </span>
+      <div class="builder-options">
+        <input
+          type="range"
+          id={`builder-${key}`}
+          data-slider={key}
+          min={min}
+          max={max}
+          step={step}
+          value={value}
+        />
+        <output data-output={key}>{`${value}${unit}`}</output>
       </div>
-    ))
-  }
+    </div>
+  ))}
   <div class="builder-row">
     <span class="builder-label">&nbsp;</span>
     <div class="builder-options">
-      <button type="button" data-reset>Reset</button>
+      <button type="button" data-reset>
+        Reset
+      </button>
     </div>
   </div>
 </div>
@@ -157,7 +155,8 @@ const sliders = [
     value.endsWith('rem') ? parseFloat(value) * 16 : parseFloat(value) || 0;
 
   /** The accent the config would give without a custom color: the theme's, or the default. */
-  const baseAccent = () => (state.theme ? themes[state.theme]?.accent : undefined) ?? DEFAULTS.accent;
+  const baseAccent = () =>
+    (state.theme ? themes[state.theme]?.accent : undefined) ?? DEFAULTS.accent;
 
   /** Dark mode needs a lighter accent: keep the hue and chroma, lift the lightness if needed. */
   const darkAccent = (hex: string) => `oklch(from ${hex} max(l, 0.72) c h)`;

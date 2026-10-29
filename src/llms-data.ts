@@ -10,15 +10,13 @@ export interface LlmsData {
 
 /** Collect the pages of the default language and version, keyed by their URL. */
 export async function getLlmsData(site: URL | undefined): Promise<LlmsData> {
-  const [tree, docs] = await Promise.all([
-    getPageTree(defaultLocale, defaultVersion),
-    getDocs(),
-  ]);
+  const [tree, docs] = await Promise.all([getPageTree(defaultLocale, defaultVersion), getDocs()]);
   const pages = new Map<string, LlmsPage>();
 
   for (const entry of docs) {
     const scope = scopeOf(entry.id);
-    if (scope.locale.key !== defaultLocale.key || scope.version.key !== defaultVersion.key) continue;
+    if (scope.locale.key !== defaultLocale.key || scope.version.key !== defaultVersion.key)
+      continue;
     const path = urlFromId(scope.id, baseUrl());
     pages.set(path, {
       title: entry.data.title,

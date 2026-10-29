@@ -162,7 +162,8 @@ export function buildPageTree(
     const used = new Set<string>();
     const excluded = new Set<string>();
     for (const entry of pages) {
-      if (SEPARATOR.test(entry) || LINK.test(entry) || entry === '...' || entry === 'z...a') continue;
+      if (SEPARATOR.test(entry) || LINK.test(entry) || entry === '...' || entry === 'z...a')
+        continue;
       if (entry.startsWith('!')) excluded.add(entry.slice(1));
       else used.add(normalizeName(entry.startsWith('...') ? entry.slice(3) : entry));
     }
@@ -203,9 +204,7 @@ export function buildPageTree(
   }
 
   function rest(dir: string, names: string[], reverse: boolean): TreeNode[] {
-    const sorted = names
-      .filter((name) => name !== 'index')
-      .sort((a, b) => a.localeCompare(b));
+    const sorted = names.filter((name) => name !== 'index').sort((a, b) => a.localeCompare(b));
     if (reverse) sorted.reverse();
     if (names.includes('index')) sorted.unshift('index');
     return sorted.flatMap((name) => resolveItem(dir, name) ?? []);

@@ -36,7 +36,9 @@ export async function loadProject(root) {
   if (configFile) {
     const module = await import(pathToFileURL(configFile).href);
     if (!module.default) {
-      throw new Error(`${basename(configFile)} must export its ZenithDocs config as \`export default\`.`);
+      throw new Error(
+        `${basename(configFile)} must export its ZenithDocs config as \`export default\`.`,
+      );
     }
     config = module.default;
   }

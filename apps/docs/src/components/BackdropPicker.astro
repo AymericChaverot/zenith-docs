@@ -15,23 +15,19 @@ const positions = ['left', 'center', 'right'];
 ---
 
 <div class="accent-picker" role="group" aria-label="Backdrop style">
-  {
-    backdrops.map((backdrop) => (
-      <button type="button" data-backdrop-choice={backdrop}>
-        {backdrop}
-      </button>
-    ))
-  }
+  {backdrops.map((backdrop) => (
+    <button type="button" data-backdrop-choice={backdrop}>
+      {backdrop}
+    </button>
+  ))}
 </div>
 
 <div class="accent-picker" role="group" aria-label="Backdrop position">
-  {
-    positions.map((position) => (
-      <button type="button" data-position-choice={position}>
-        {position}
-      </button>
-    ))
-  }
+  {positions.map((position) => (
+    <button type="button" data-position-choice={position}>
+      {position}
+    </button>
+  ))}
 </div>
 
 <script>

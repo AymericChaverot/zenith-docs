@@ -14,5 +14,7 @@ const { name, defaultOpen = false } = Astro.props;
     <Icon name="folder" size={14} />
     {name}
   </summary>
-  <div class="zd-folder-content"><slot /></div>
+  <div class="zd-folder-content">
+    <slot />
+  </div>
 </details>

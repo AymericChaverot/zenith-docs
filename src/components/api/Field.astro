@@ -27,25 +27,31 @@ const children = depth < 4 ? propertiesOf(nested) : [];
   <p class="zd-api-field-head">
     <code class="zd-api-name">{name}</code>
     <span class="zd-api-type">{typeName(schema)}</span>
-    {required && <span class="zd-api-flag" data-flag="required">{t['api.required']}</span>}
-    {isDeprecated && <span class="zd-api-flag" data-flag="deprecated">{t['api.deprecated']}</span>}
+    {required && (
+      <span class="zd-api-flag" data-flag="required">
+        {t['api.required']}
+      </span>
+    )}
+    {isDeprecated && (
+      <span class="zd-api-flag" data-flag="deprecated">
+        {t['api.deprecated']}
+      </span>
+    )}
   </p>
   {text && <p class="zd-api-text">{text}</p>}
-  {
-    children.length > 0 && (
-      <details class="zd-api-nested">
-        <summary>{t['api.attributes']}</summary>
-        <ul class="zd-api-fields">
-          {children.map((child) => (
-            <Astro.self
-              name={child.name}
-              schema={child.schema}
-              required={child.required}
-              depth={depth + 1}
-            />
-          ))}
-        </ul>
-      </details>
-    )
-  }
+  {children.length > 0 && (
+    <details class="zd-api-nested">
+      <summary>{t['api.attributes']}</summary>
+      <ul class="zd-api-fields">
+        {children.map((child) => (
+          <Astro.self
+            name={child.name}
+            schema={child.schema}
+            required={child.required}
+            depth={depth + 1}
+          />
+        ))}
+      </ul>
+    </details>
+  )}
 </li>

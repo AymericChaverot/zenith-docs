@@ -3,21 +3,21 @@ const accents = ['neutral', 'emerald', 'teal', 'amber', 'rose', 'violet'];
 ---
 
 <div class="accent-picker" role="group" aria-label="Accent color">
-  {
-    accents.map((accent) => (
-      <button type="button" data-accent-choice={accent}>
-        <span class="accent-swatch" data-swatch={accent} />
-        {accent}
-      </button>
-    ))
-  }
+  {accents.map((accent) => (
+    <button type="button" data-accent-choice={accent}>
+      <span class="accent-swatch" data-swatch={accent} />
+      {accent}
+    </button>
+  ))}
 </div>
 
 <script>
   const buttons = document.querySelectorAll<HTMLButtonElement>('[data-accent-choice]');
   const sync = () => {
     for (const button of buttons) {
-      button.ariaPressed = String(button.dataset.accentChoice === document.documentElement.dataset.accent);
+      button.ariaPressed = String(
+        button.dataset.accentChoice === document.documentElement.dataset.accent,
+      );
     }
   };
   for (const button of buttons) {
@@ -61,10 +61,22 @@ const accents = ['neutral', 'emerald', 'teal', 'amber', 'rose', 'violet'];
     background: var(--swatch);
   }
 
-  .accent-swatch[data-swatch='neutral'] { --swatch: oklch(45% 0.006 286); }
-  .accent-swatch[data-swatch='emerald'] { --swatch: oklch(62% 0.13 165); }
-  .accent-swatch[data-swatch='teal'] { --swatch: oklch(62% 0.1 195); }
-  .accent-swatch[data-swatch='amber'] { --swatch: oklch(72% 0.15 65); }
-  .accent-swatch[data-swatch='rose'] { --swatch: oklch(64% 0.18 12); }
-  .accent-swatch[data-swatch='violet'] { --swatch: oklch(62% 0.17 290); }
+  .accent-swatch[data-swatch='neutral'] {
+    --swatch: oklch(45% 0.006 286);
+  }
+  .accent-swatch[data-swatch='emerald'] {
+    --swatch: oklch(62% 0.13 165);
+  }
+  .accent-swatch[data-swatch='teal'] {
+    --swatch: oklch(62% 0.1 195);
+  }
+  .accent-swatch[data-swatch='amber'] {
+    --swatch: oklch(72% 0.15 65);
+  }
+  .accent-swatch[data-swatch='rose'] {
+    --swatch: oklch(64% 0.18 12);
+  }
+  .accent-swatch[data-swatch='violet'] {
+    --swatch: oklch(62% 0.17 290);
+  }
 </style>

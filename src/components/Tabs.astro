@@ -20,23 +20,21 @@ const { items = [], defaultValue = items[0], groupId, persist = false } = Astro.
   data-persist={persist ? '' : undefined}
   data-default={defaultValue}
 >
-  {
-    items.length > 0 && (
-      <div class="zd-tabs-list" role="tablist" data-pagefind-ignore>
-        {items.map((item) => (
-          <button
-            class="zd-tab-trigger"
-            type="button"
-            role="tab"
-            data-value={item}
-            aria-selected={item === defaultValue ? 'true' : 'false'}
-          >
-            {item}
-          </button>
-        ))}
-      </div>
-    )
-  }
+  {items.length > 0 && (
+    <div class="zd-tabs-list" role="tablist" data-pagefind-ignore>
+      {items.map((item) => (
+        <button
+          class="zd-tab-trigger"
+          type="button"
+          role="tab"
+          data-value={item}
+          aria-selected={item === defaultValue ? 'true' : 'false'}
+        >
+          {item}
+        </button>
+      ))}
+    </div>
+  )}
   <slot />
 </zd-tabs>
 

@@ -14,75 +14,73 @@ const containsUrl = (folder: FolderNode) =>
 ---
 
 <ul class="zd-sidebar-list">
-  {
-    nodes.map((node) => {
-      if (node.type === 'separator') {
-        return <li class="zd-sidebar-separator">{node.name}</li>;
-      }
+  {nodes.map((node) => {
+    if (node.type === 'separator') {
+      return <li class="zd-sidebar-separator">{node.name}</li>;
+    }
 
-      if (node.type === 'page') {
-        return (
-          <li>
-            <a
-              class="zd-sidebar-link"
-              href={node.url}
-              aria-current={node.url === url ? 'page' : undefined}
-              target={node.external ? '_blank' : undefined}
-              rel={node.external ? 'noreferrer noopener' : undefined}
-            >
-              {node.icon && <Icon name={node.icon} />}
-              <span>{node.name}</span>
-              {node.badge && (
-                <span class="zd-sidebar-badge" data-variant={node.badge.variant}>
-                  {node.badge.text}
-                </span>
-              )}
-              {node.external && <Icon name="external" size={12} />}
-            </a>
-          </li>
-        );
-      }
-
-      const label = node.index ? (
-        <a
-          class="zd-sidebar-folder-link"
-          href={node.index.url}
-          aria-current={node.index.url === url ? 'page' : undefined}
-        >
-          {node.name}
-        </a>
-      ) : (
-        <span>{node.name}</span>
-      );
-
-      if (!node.collapsible) {
-        return (
-          <li>
-            <p class="zd-sidebar-group-title">
-              {node.icon && <Icon name={node.icon} />}
-              {label}
-            </p>
-            <Astro.self nodes={node.children} url={url} />
-          </li>
-        );
-      }
-
+    if (node.type === 'page') {
       return (
         <li>
-          <details
-            class="zd-sidebar-folder"
-            data-folder={node.dir}
-            open={node.defaultOpen || containsUrl(node)}
+          <a
+            class="zd-sidebar-link"
+            href={node.url}
+            aria-current={node.url === url ? 'page' : undefined}
+            target={node.external ? '_blank' : undefined}
+            rel={node.external ? 'noreferrer noopener' : undefined}
           >
-            <summary class="zd-sidebar-link">
-              {node.icon && <Icon name={node.icon} />}
-              {label}
-              <Icon name="chevron" size={14} class="zd-chevron" />
-            </summary>
-            <Astro.self nodes={node.children} url={url} />
-          </details>
+            {node.icon && <Icon name={node.icon} />}
+            <span>{node.name}</span>
+            {node.badge && (
+              <span class="zd-sidebar-badge" data-variant={node.badge.variant}>
+                {node.badge.text}
+              </span>
+            )}
+            {node.external && <Icon name="external" size={12} />}
+          </a>
         </li>
       );
-    })
-  }
+    }
+
+    const label = node.index ? (
+      <a
+        class="zd-sidebar-folder-link"
+        href={node.index.url}
+        aria-current={node.index.url === url ? 'page' : undefined}
+      >
+        {node.name}
+      </a>
+    ) : (
+      <span>{node.name}</span>
+    );
+
+    if (!node.collapsible) {
+      return (
+        <li>
+          <p class="zd-sidebar-group-title">
+            {node.icon && <Icon name={node.icon} />}
+            {label}
+          </p>
+          <Astro.self nodes={node.children} url={url} />
+        </li>
+      );
+    }
+
+    return (
+      <li>
+        <details
+          class="zd-sidebar-folder"
+          data-folder={node.dir}
+          open={node.defaultOpen || containsUrl(node)}
+        >
+          <summary class="zd-sidebar-link">
+            {node.icon && <Icon name={node.icon} />}
+            {label}
+            <Icon name="chevron" size={14} class="zd-chevron" />
+          </summary>
+          <Astro.self nodes={node.children} url={url} />
+        </details>
+      </li>
+    );
+  })}
 </ul>

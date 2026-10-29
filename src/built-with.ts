@@ -32,7 +32,9 @@ export function getBuiltWith({ root, search }: { root: URL; search: boolean }): 
   const entries: { name: BuiltWithEntry['name']; version: string | undefined }[] = [
     { name: 'ZenithDocs', version: own },
     { name: 'Astro', version: packageVersion('astro', new URL('package.json', root)) },
-    ...(search ? [{ name: 'Pagefind' as const, version: packageVersion('pagefind', import.meta.url) }] : []),
+    ...(search
+      ? [{ name: 'Pagefind' as const, version: packageVersion('pagefind', import.meta.url) }]
+      : []),
     { name: 'Shiki', version: packageVersion('shiki', import.meta.url) },
   ];
   return entries.flatMap(({ name, version }) => (version ? [{ name, version }] : []));

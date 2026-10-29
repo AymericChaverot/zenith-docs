@@ -13,19 +13,15 @@ const Tag = href ? 'a' : 'div';
 ---
 
 <Tag class="zd-card" href={href && withBase(href)}>
-  {
-    icon && (
-      <span class="zd-card-icon">
-        <Icon name={icon} />
-      </span>
-    )
-  }
+  {icon && (
+    <span class="zd-card-icon">
+      <Icon name={icon} />
+    </span>
+  )}
   <p class="zd-card-title">{title}</p>
-  {
-    Astro.slots.has('default') && (
-      <div class="zd-card-body">
-        <slot />
-      </div>
-    )
-  }
+  {Astro.slots.has('default') && (
+    <div class="zd-card-body">
+      <slot />
+    </div>
+  )}
 </Tag>

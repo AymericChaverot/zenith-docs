@@ -20,7 +20,12 @@ describe('packageVersion', () => {
 describe('getBuiltWith', () => {
   it('lists ZenithDocs first, then Astro and the dependencies', () => {
     const entries = getBuiltWith({ root, search: true });
-    expect(entries.map((entry) => entry.name)).toEqual(['ZenithDocs', 'Astro', 'Pagefind', 'Shiki']);
+    expect(entries.map((entry) => entry.name)).toEqual([
+      'ZenithDocs',
+      'Astro',
+      'Pagefind',
+      'Shiki',
+    ]);
     expect(entries[0]?.version).toBe(JSON.parse(readFileSync('package.json', 'utf8')).version);
     expect(entries[1]?.version).toBe(version('astro'));
   });

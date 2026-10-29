@@ -53,7 +53,9 @@ const accentStyle =
   </head>
   <body>
     {config.backdrop !== 'none' && <div class="zd-backdrop" aria-hidden="true" />}
-    <a class="zd-skip" href="#zd-content">{t.skip}</a>
+    <a class="zd-skip" href="#zd-content">
+      {t.skip}
+    </a>
     <InjectionPoint name="banner" class="zd-slot-banner" />
     <Header />
     <div class="zd-layout" data-toc={hasToc ? '' : undefined}>
@@ -65,32 +67,28 @@ const accentStyle =
           </div>
           <PageTitle />
           <PageActions />
-          {
-            toc.length > 0 && (
-              <details
-                class="zd-toc-mobile"
-                style={full ? 'display: block' : undefined}
-                data-pagefind-ignore
-              >
-                <summary>
-                  <Icon name="list" />
-                  {t['toc.title']}
-                  <Icon name="chevron" size={14} class="zd-chevron" />
-                </summary>
-                <TableOfContents />
-              </details>
-            )
-          }
-          {
-            !translated && (
-              <aside class="zd-callout zd-untranslated" data-callout="note" data-pagefind-ignore>
-                <p class="zd-callout-title">{t['callout.note']}</p>
-                <div class="zd-callout-body">
-                  <p>{t['page.untranslated']}</p>
-                </div>
-              </aside>
-            )
-          }
+          {toc.length > 0 && (
+            <details
+              class="zd-toc-mobile"
+              style={full ? 'display: block' : undefined}
+              data-pagefind-ignore
+            >
+              <summary>
+                <Icon name="list" />
+                {t['toc.title']}
+                <Icon name="chevron" size={14} class="zd-chevron" />
+              </summary>
+              <TableOfContents />
+            </details>
+          )}
+          {!translated && (
+            <aside class="zd-callout zd-untranslated" data-callout="note" data-pagefind-ignore>
+              <p class="zd-callout-title">{t['callout.note']}</p>
+              <div class="zd-callout-body">
+                <p>{t['page.untranslated']}</p>
+              </div>
+            </aside>
+          )}
           <InjectionPoint name="contentBefore" class="zd-slot-content-before" ignoreSearch />
           <div class="zd-prose">
             <slot />
@@ -102,14 +100,12 @@ const accentStyle =
           </div>
         </article>
       </main>
-      {
-        hasToc && (
-          <aside class="zd-toc-aside">
-            <TableOfContents />
-            <InjectionPoint name="tocAfter" class="zd-slot-toc-after" />
-          </aside>
-        )
-      }
+      {hasToc && (
+        <aside class="zd-toc-aside">
+          <TableOfContents />
+          <InjectionPoint name="tocAfter" class="zd-slot-toc-after" />
+        </aside>
+      )}
     </div>
     <InjectionPoint name="footer" class="zd-slot-footer" />
     {packageManagers && <TabsScript />}
@@ -137,7 +133,9 @@ const accentStyle =
         const button = target && target.closest('[data-copy]');
         const code = button && button.parentElement.querySelector('pre code');
         if (!code) return;
-        navigator.clipboard.writeText(code.textContent.replace(/\n$/, '')).then(() => copied(button));
+        navigator.clipboard
+          .writeText(code.textContent.replace(/\n$/, ''))
+          .then(() => copied(button));
       });
     </script>
   </body>

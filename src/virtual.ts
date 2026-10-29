@@ -132,7 +132,8 @@ export const shikiThemes = ${JSON.stringify(shikiThemes)};`,
     const path = override
       ? resolveFromRoot(override)
       : toPosix(fileURLToPath(new URL(`./components/layout/${name}.astro`, import.meta.url)));
-    modules[`virtual:zenith/components/${name}`] = `export { default } from ${JSON.stringify(path)};`;
+    modules[`virtual:zenith/components/${name}`] =
+      `export { default } from ${JSON.stringify(path)};`;
   }
 
   return {

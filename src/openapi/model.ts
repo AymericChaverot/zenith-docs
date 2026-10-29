@@ -7,7 +7,16 @@ import type {
   SecuritySchemeObject,
 } from './spec';
 
-export const METHODS = ['get', 'post', 'put', 'patch', 'delete', 'head', 'options', 'trace'] as const;
+export const METHODS = [
+  'get',
+  'post',
+  'put',
+  'patch',
+  'delete',
+  'head',
+  'options',
+  'trace',
+] as const;
 
 export type Method = (typeof METHODS)[number];
 
@@ -41,7 +50,10 @@ export interface OperationFilter {
 }
 
 /** Operations of a document, in spec order, narrowed by an optional filter. */
-export function getOperations(document: OpenApiDocument, filter: OperationFilter = {}): Operation[] {
+export function getOperations(
+  document: OpenApiDocument,
+  filter: OperationFilter = {},
+): Operation[] {
   const operations: Operation[] = [];
   const wanted = filter.method?.toLowerCase();
 
@@ -167,7 +179,10 @@ export function propertiesOf(schema: SchemaObject | undefined): {
 }
 
 /** A representative value for a schema, used for request and response samples. */
-export function exampleOf(schema: SchemaObject | undefined, seen = new Set<SchemaObject>()): unknown {
+export function exampleOf(
+  schema: SchemaObject | undefined,
+  seen = new Set<SchemaObject>(),
+): unknown {
   if (!schema || seen.has(schema)) return null;
   if (schema.example !== undefined) return schema.example;
   if (schema.default !== undefined) return schema.default;

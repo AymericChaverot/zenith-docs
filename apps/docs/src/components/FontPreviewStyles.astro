@@ -23,7 +23,9 @@ const families = [
 ];
 ---
 
-{families.map((family) => <Font cssVariable={family as never} />)}
+{families.map((family) => (
+  <Font cssVariable={family as never} />
+))}
 
 <style is:global>
   /* The site runs Instrument, whose headings are sized up: previews use the standard scale. */

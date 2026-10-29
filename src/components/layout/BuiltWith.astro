@@ -15,33 +15,31 @@ const logos: Record<string, string> = {
 const icons: Record<string, string> = { Pagefind: 'search', Shiki: 'code' };
 ---
 
-{
-  builtWith.length > 0 && (
-    <div class="zd-built-with">
-      <button
-        class="zd-icon-button zd-built-with-button"
-        type="button"
-        aria-label={t['builtWith.label']}
-        aria-describedby="zd-built-with"
-      >
-        <Icon name="info" size={16} />
-      </button>
-      <div id="zd-built-with" class="zd-built-with-tooltip" role="tooltip">
-        <p class="zd-built-with-title">{t['builtWith.label']}</p>
-        <ul class="zd-built-with-list">
-          {builtWith.map(({ name, version }) => (
-            <li class="zd-built-with-item">
-              {logos[name] ? (
-                <span class="zd-built-with-logo" set:html={logos[name]} />
-              ) : (
-                <Icon name={icons[name] ?? 'box'} size={14} class="zd-built-with-logo" />
-              )}
-              <span class="zd-built-with-name">{name}</span>
-              <span class="zd-built-with-version">{version}</span>
-            </li>
-          ))}
-        </ul>
-      </div>
+{builtWith.length > 0 && (
+  <div class="zd-built-with">
+    <button
+      class="zd-icon-button zd-built-with-button"
+      type="button"
+      aria-label={t['builtWith.label']}
+      aria-describedby="zd-built-with"
+    >
+      <Icon name="info" size={16} />
+    </button>
+    <div id="zd-built-with" class="zd-built-with-tooltip" role="tooltip">
+      <p class="zd-built-with-title">{t['builtWith.label']}</p>
+      <ul class="zd-built-with-list">
+        {builtWith.map(({ name, version }) => (
+          <li class="zd-built-with-item">
+            {logos[name] ? (
+              <span class="zd-built-with-logo" set:html={logos[name]} />
+            ) : (
+              <Icon name={icons[name] ?? 'box'} size={14} class="zd-built-with-logo" />
+            )}
+            <span class="zd-built-with-name">{name}</span>
+            <span class="zd-built-with-version">{version}</span>
+          </li>
+        ))}
+      </ul>
     </div>
-  )
-}
+  </div>
+)}

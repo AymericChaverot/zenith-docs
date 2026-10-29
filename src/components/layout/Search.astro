@@ -5,40 +5,38 @@ import Icon from '../Icon.astro';
 const { config, t } = Astro.locals.zenith;
 ---
 
-{
-  config.search && (
-    <>
-      <button class="zd-search-button" type="button" data-search-open>
-        <Icon name="search" size={15} />
-        <span class="zd-search-label">{t['search.button']}</span>
-        <kbd class="zd-search-kbd">Ctrl K</kbd>
-      </button>
-      <dialog class="zd-search-dialog" data-search-dialog aria-label={t['search.button']}>
-        <div class="zd-search-field">
-          <Icon name="search" size={16} />
-          <input
-            class="zd-search-input"
-            type="search"
-            placeholder={t['search.placeholder']}
-            autocomplete="off"
-            spellcheck="false"
-            aria-label={t['search.placeholder']}
-            data-search-input
-          />
-          <button class="zd-search-close" type="button" data-search-close>
-            Esc
-          </button>
-        </div>
-        <div
-          class="zd-search-results"
-          data-search-results
-          data-no-results={t['search.noResults']}
-          data-unavailable={t['search.unavailable']}
+{config.search && (
+  <>
+    <button class="zd-search-button" type="button" data-search-open>
+      <Icon name="search" size={15} />
+      <span class="zd-search-label">{t['search.button']}</span>
+      <kbd class="zd-search-kbd">Ctrl K</kbd>
+    </button>
+    <dialog class="zd-search-dialog" data-search-dialog aria-label={t['search.button']}>
+      <div class="zd-search-field">
+        <Icon name="search" size={16} />
+        <input
+          class="zd-search-input"
+          type="search"
+          placeholder={t['search.placeholder']}
+          autocomplete="off"
+          spellcheck="false"
+          aria-label={t['search.placeholder']}
+          data-search-input
         />
-      </dialog>
-    </>
-  )
-}
+        <button class="zd-search-close" type="button" data-search-close>
+          Esc
+        </button>
+      </div>
+      <div
+        class="zd-search-results"
+        data-search-results
+        data-no-results={t['search.noResults']}
+        data-unavailable={t['search.unavailable']}
+      />
+    </dialog>
+  </>
+)}
 
 {/* Not processed by Vite, so the import is left alone and still happens on demand. */}
 <script is:inline define:vars={{ base: baseUrl() }}>
@@ -77,10 +75,12 @@ const { config, t } = Astro.locals.zenith;
     };
 
     const message = (text: string) => {
-      results.replaceChildren(Object.assign(document.createElement('p'), {
-        className: 'zd-search-message',
-        textContent: text,
-      }));
+      results.replaceChildren(
+        Object.assign(document.createElement('p'), {
+          className: 'zd-search-message',
+          textContent: text,
+        }),
+      );
     };
 
     const render = (pages: PagefindResult[]) => {

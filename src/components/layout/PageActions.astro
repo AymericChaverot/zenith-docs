@@ -9,36 +9,37 @@ const markdown = `${baseUrl()}${entry.id}.md`;
 const prompt = Astro.site && t['page.prompt'].replace('{url}', new URL(markdown, Astro.site).href);
 const assistants = prompt
   ? [
-      { name: 'ChatGPT', href: `https://chatgpt.com/?hints=search&q=${encodeURIComponent(prompt)}` },
+      {
+        name: 'ChatGPT',
+        href: `https://chatgpt.com/?hints=search&q=${encodeURIComponent(prompt)}`,
+      },
       { name: 'Claude', href: `https://claude.ai/new?q=${encodeURIComponent(prompt)}` },
     ]
   : [];
 ---
 
-{
-  config.llms && config.pageActions && (
-    <div class="zd-page-actions" data-pagefind-ignore>
-      <button type="button" class="zd-page-action zd-copy-page" data-copy-page={markdown}>
-        {t['page.copy']}
-      </button>
-      <details class="zd-page-menu">
-        <summary class="zd-page-action">
-          {t['page.actions']}
-          <Icon name="chevron" size={14} class="zd-chevron" />
-        </summary>
-        <div class="zd-page-menu-list">
-          <a class="zd-page-menu-item" href={markdown}>
-            <Icon name="file" size={16} />
-            {t['page.markdown']}
+{config.llms && config.pageActions && (
+  <div class="zd-page-actions" data-pagefind-ignore>
+    <button type="button" class="zd-page-action zd-copy-page" data-copy-page={markdown}>
+      {t['page.copy']}
+    </button>
+    <details class="zd-page-menu">
+      <summary class="zd-page-action">
+        {t['page.actions']}
+        <Icon name="chevron" size={14} class="zd-chevron" />
+      </summary>
+      <div class="zd-page-menu-list">
+        <a class="zd-page-menu-item" href={markdown}>
+          <Icon name="file" size={16} />
+          {t['page.markdown']}
+        </a>
+        {assistants.map(({ name, href }) => (
+          <a class="zd-page-menu-item" href={href} target="_blank" rel="noopener">
+            <Icon name="external" size={16} />
+            {t['page.openIn'].replace('{name}', name)}
           </a>
-          {assistants.map(({ name, href }) => (
-            <a class="zd-page-menu-item" href={href} target="_blank" rel="noopener">
-              <Icon name="external" size={16} />
-              {t['page.openIn'].replace('{name}', name)}
-            </a>
-          ))}
-        </div>
-      </details>
-    </div>
-  )
-}
+        ))}
+      </div>
+    </details>
+  </div>
+)}

@@ -89,7 +89,8 @@
     onKeydown(event: KeyboardEvent, index: number) {
       const offsets: Record<string, number> = { ArrowRight: 1, ArrowLeft: -1 };
       let next: number | undefined;
-      if (event.key in offsets) next = (index + offsets[event.key]! + this.tabs.length) % this.tabs.length;
+      if (event.key in offsets)
+        next = (index + offsets[event.key]! + this.tabs.length) % this.tabs.length;
       else if (event.key === 'Home') next = 0;
       else if (event.key === 'End') next = this.tabs.length - 1;
       if (next === undefined) return;

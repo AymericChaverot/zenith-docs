@@ -16,7 +16,9 @@ const headTags = config.head.map(({ tag, attrs, content }) => ({
   attrs: Object.fromEntries(
     Object.entries(attrs).map(([name, value]) => [
       name,
-      (name === 'src' || name === 'href') && typeof value === 'string' ? withBase(value, baseUrl()) : value,
+      (name === 'src' || name === 'href') && typeof value === 'string'
+        ? withBase(value, baseUrl())
+        : value,
     ]),
   ),
 }));
@@ -27,35 +29,30 @@ const headTags = config.head.map(({ tag, attrs, content }) => ({
 <title>{pageTitle}</title>
 {pageDescription && <meta name="description" content={pageDescription} />}
 {canonical && <link rel="canonical" href={canonical} />}
-{
-  !noindex &&
-    alternates.length > 1 &&
-    alternates.map(({ locale: other, url: alternate }) => (
-      <link rel="alternate" hreflang={other.lang} href={absolute(alternate)} />
-    ))
-}
-{
-  config.llms &&
-    !noindex && (
-    <link
-      rel="alternate"
-      type="text/markdown"
-      href={`${baseUrl()}${entry.id}.md`}
-      title="Markdown source"
-    />
-  )
-}
+{!noindex &&
+  alternates.length > 1 &&
+  alternates.map(({ locale: other, url: alternate }) => (
+    <link rel="alternate" hreflang={other.lang} href={absolute(alternate)} />
+  ))}
+{config.llms && !noindex && (
+  <link
+    rel="alternate"
+    type="text/markdown"
+    href={`${baseUrl()}${entry.id}.md`}
+    title="Markdown source"
+  />
+)}
 {noindex && <meta name="robots" content="noindex" />}
 <link rel="icon" href={withBase(config.favicon)} />
-{
-  config.fonts && (
-    <>
-      <Font cssVariable={'--zd-font-sans' as never} preload />
-      <Font cssVariable={'--zd-font-mono' as never} />
-      {'display' in FONT_PRESETS[config.fonts] && <Font cssVariable={'--zd-font-display' as never} preload />}
-    </>
-  )
-}
+{config.fonts && (
+  <>
+    <Font cssVariable={'--zd-font-sans' as never} preload />
+    <Font cssVariable={'--zd-font-mono' as never} />
+    {'display' in FONT_PRESETS[config.fonts] && (
+      <Font cssVariable={'--zd-font-display' as never} preload />
+    )}
+  </>
+)}
 {Astro.site && <link rel="sitemap" href={`${baseUrl()}sitemap-index.xml`} />}
 <meta name="generator" content={`ZenithDocs, ${Astro.generator}`} />
 <meta property="og:type" content="article" />
@@ -64,16 +61,14 @@ const headTags = config.head.map(({ tag, attrs, content }) => ({
 <meta property="og:title" content={title} />
 {pageDescription && <meta property="og:description" content={pageDescription} />}
 {canonical && <meta property="og:url" content={canonical} />}
-{
-  ogImage && !noindex && (
-    <>
-      <meta property="og:image" content={absolute(ogImage)} />
-      <meta property="og:image:width" content="1200" />
-      <meta property="og:image:height" content="630" />
-      <meta property="og:image:alt" content={title} />
-    </>
-  )
-}
+{ogImage && !noindex && (
+  <>
+    <meta property="og:image" content={absolute(ogImage)} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={title} />
+  </>
+)}
 <meta name="twitter:card" content={ogImage && !noindex ? 'summary_large_image' : 'summary'} />
 <script
   is:inline
@@ -95,4 +90,6 @@ const headTags = config.head.map(({ tag, attrs, content }) => ({
     root.setAttribute('data-js', '');
   })();
 </script>
-{headTags.map(({ Tag, attrs, content }) => <Tag {...attrs} set:html={content} />)}
+{headTags.map(({ Tag, attrs, content }) => (
+  <Tag {...attrs} set:html={content} />
+))}

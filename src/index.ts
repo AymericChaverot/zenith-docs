@@ -30,7 +30,9 @@ export type { ZenithConfig, ZenithUserConfig } from './config';
 export default function zenith(userConfig: ZenithUserConfig = {}): AstroIntegration {
   const parsed = ZenithConfigSchema.safeParse(userConfig);
   if (!parsed.success) {
-    const issues = parsed.error.issues.map((issue) => `- ${issue.path.join('.')}: ${issue.message}`);
+    const issues = parsed.error.issues.map(
+      (issue) => `- ${issue.path.join('.')}: ${issue.message}`,
+    );
     throw new AstroError('Invalid ZenithDocs configuration', issues.join('\n'));
   }
   const config = parsed.data;
@@ -157,7 +159,9 @@ export default function zenith(userConfig: ZenithUserConfig = {}): AstroIntegrat
             ...zenithMdastPlugins(translationsForFile),
             directivesRestorationPlugin(),
           );
-          processor.options.hastPlugins.push(...zenithHastPlugins(translationsForFile, astroConfig.base));
+          processor.options.hastPlugins.push(
+            ...zenithHastPlugins(translationsForFile, astroConfig.base),
+          );
         } else {
           logger.warn(
             'ZenithDocs Markdown features (callouts, heading anchors, code titles) require the Sätteri processor.',
@@ -178,7 +182,9 @@ export default function zenith(userConfig: ZenithUserConfig = {}): AstroIntegrat
         };
 
         // One entry per family of the preset, under the variables the theme reads.
-        const preset: FontPreset | undefined = config.fonts ? FONT_PRESETS[config.fonts] : undefined;
+        const preset: FontPreset | undefined = config.fonts
+          ? FONT_PRESETS[config.fonts]
+          : undefined;
         const fontFamily = (family: FontFamily, cssVariable: string) => ({
           provider: fontProviders.fontsource(),
           name: family.name,
@@ -206,7 +212,9 @@ export default function zenith(userConfig: ZenithUserConfig = {}): AstroIntegrat
         updateConfig({
           markdown: {
             shikiConfig: {
-              ...(hasUserThemes ? {} : { themes: { light: 'vitesse-light', dark: 'vitesse-dark' } }),
+              ...(hasUserThemes
+                ? {}
+                : { themes: { light: 'vitesse-light', dark: 'vitesse-dark' } }),
               defaultColor: false,
               transformers: zenithShikiTransformers(),
             },
@@ -218,7 +226,9 @@ export default function zenith(userConfig: ZenithUserConfig = {}): AstroIntegrat
                 resolvedConfig,
                 astroConfig.root,
                 shikiThemes,
-                config.builtWith ? getBuiltWith({ root: astroConfig.root, search: config.search }) : [],
+                config.builtWith
+                  ? getBuiltWith({ root: astroConfig.root, search: config.search })
+                  : [],
               ),
             ],
           },

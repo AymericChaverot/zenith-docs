@@ -163,12 +163,17 @@ export function docker(argv, root) {
   }
   const scripts = JSON.parse(readFileSync(manifest, 'utf8')).scripts ?? {};
   if (!scripts.build) {
-    throw new Error('package.json has no `build` script, which the image runs. Add `"build": "zenith build"`.');
+    throw new Error(
+      'package.json has no `build` script, which the image runs. Add `"build": "zenith build"`.',
+    );
   }
 
   const packageManager = detectPackageManager(root);
   const workspace = join(root, 'pnpm-workspace.yaml');
-  if (packageManager === 'pnpm' && !(existsSync(workspace) && readFileSync(workspace, 'utf8').includes('esbuild'))) {
+  if (
+    packageManager === 'pnpm' &&
+    !(existsSync(workspace) && readFileSync(workspace, 'utf8').includes('esbuild'))
+  ) {
     console.warn(
       'pnpm-workspace.yaml does not approve the esbuild build script, so pnpm will refuse to install in the image.\nAdd it with:\n\n  allowBuilds:\n    esbuild: true\n',
     );

@@ -59,7 +59,12 @@ describe('buildPageTree', () => {
       ['', { pages: ['intro', '---Guides---', '...', '!secret', '[GitHub](https://github.com)'] }],
     ]);
     const tree = buildPageTree(
-      [doc('intro.mdx', 'Intro'), doc('b.mdx', 'B'), doc('a.mdx', 'A'), doc('secret.mdx', 'Secret')],
+      [
+        doc('intro.mdx', 'Intro'),
+        doc('b.mdx', 'B'),
+        doc('a.mdx', 'A'),
+        doc('secret.mdx', 'Secret'),
+      ],
       metas,
     );
     expect(tree.children.map((n) => [n.type, n.name])).toEqual([
@@ -87,9 +92,15 @@ describe('buildPageTree', () => {
   });
 
   it('uses meta title and options for folders', () => {
-    const metas = new Map<string, PageTreeMeta>([['guides', { title: 'All guides', defaultOpen: true }]]);
+    const metas = new Map<string, PageTreeMeta>([
+      ['guides', { title: 'All guides', defaultOpen: true }],
+    ]);
     const tree = buildPageTree([doc('guides/a.mdx')], metas);
-    expect(tree.children[0]).toMatchObject({ name: 'All guides', defaultOpen: true, collapsible: true });
+    expect(tree.children[0]).toMatchObject({
+      name: 'All guides',
+      defaultOpen: true,
+      collapsible: true,
+    });
   });
 });
 

@@ -8,7 +8,9 @@ import { readFileSync } from 'node:fs';
 
 const ASTRO_VERSION = '^7.3.2';
 
-const { version } = JSON.parse(readFileSync(new URL('../../package.json', import.meta.url), 'utf8'));
+const { version } = JSON.parse(
+  readFileSync(new URL('../../package.json', import.meta.url), 'utf8'),
+);
 
 /**
  * ZenithDocs is not on the npm registry: it installs straight from its GitHub repository,

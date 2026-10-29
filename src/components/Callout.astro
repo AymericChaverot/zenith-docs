@@ -16,5 +16,7 @@ const title = Astro.props.title ?? callout.title;
 
 <aside class="zd-callout" data-callout={callout.type}>
   <p class="zd-callout-title">{title}</p>
-  <div class="zd-callout-body"><slot /></div>
+  <div class="zd-callout-body">
+    <slot />
+  </div>
 </aside>

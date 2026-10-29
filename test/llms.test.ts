@@ -22,7 +22,7 @@ describe('toPlainMarkdown', () => {
   it('drops imports and exports', () => {
     const body = [
       "import Thing from '../Thing.astro';",
-      "export const value = 1;",
+      'export const value = 1;',
       '',
       '# Title',
       '',
@@ -60,10 +60,7 @@ describe('getSections', () => {
 });
 
 describe('rendering', () => {
-  const sections = [
-    { urls: ['/'] },
-    { name: 'Guides', urls: ['/guides/one/'] },
-  ];
+  const sections = [{ urls: ['/'] }, { name: 'Guides', urls: ['/guides/one/'] }];
   const pages = new Map([
     page('/', 'Home', { description: 'The home page.' }),
     page('/guides/one/', 'One'),
