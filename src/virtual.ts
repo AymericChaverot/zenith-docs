@@ -4,7 +4,7 @@ import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import type { BuiltWithEntry } from './built-with';
 import type { ZenithConfig } from './config';
-import type { OgFontWeight } from './og';
+import type { OgAssets } from './og';
 
 /** Layout components that can be replaced through the `components` option. */
 export const OVERRIDABLE_COMPONENTS = [
@@ -60,9 +60,6 @@ export function slotsModule(
 
 const require = createRequire(import.meta.url);
 
-/** Font weights embedded in Open Graph images, see `og.ts`. */
-const OG_FONT_WEIGHTS: OgFontWeight[] = [400, 600];
-
 /**
  * satori shapes text with harfbuzz, an Emscripten module that reads `__dirname` and
  * loads its `.wasm` file from its own directory, so it breaks as soon as it is bundled.
@@ -90,22 +87,12 @@ function esmEntry(name: string): string {
   return pathToFileURL(join(root, entry)).href;
 }
 
-/** Files read while rendering Open Graph images, resolved before the bundle loses names. */
-function ogAssets(): string {
-  const fonts = OG_FONT_WEIGHTS.map((weight) => ({
-    weight,
-    path: require.resolve(`@fontsource/geist/files/geist-latin-${weight}-normal.woff`),
-  }));
-  const wasm = require.resolve('@resvg/resvg-wasm/index_bg.wasm');
-  return `export const fonts = ${JSON.stringify(fonts)};
-export const wasm = ${JSON.stringify(wasm)};`;
-}
-
 export function vitePluginZenith(
   config: ZenithConfig,
   root: URL,
   shikiThemes: Record<string, string> = {},
   builtWith: BuiltWithEntry[] = [],
+  ogAssets?: OgAssets,
 ) {
   const rootPath = fileURLToPath(root);
   const resolveFromRoot = (path: string) =>
@@ -122,9 +109,13 @@ export const shikiThemes = ${JSON.stringify(shikiThemes)};`,
     'virtual:zenith/built-with': `export default ${JSON.stringify(builtWith)};`,
   };
 
-  if (config.og) modules['virtual:zenith/og-assets'] = ogAssets();
+  if (ogAssets) {
+    modules['virtual:zenith/og-assets'] = Object.entries(ogAssets)
+      .map(([name, value]) => `export const ${name} = ${JSON.stringify(value)};`)
+      .join('\n');
+  }
   const external = new Map<string, string>(
-    config.og ? EXTERNAL.map((name) => [name, esmEntry(name)]) : [],
+    ogAssets ? EXTERNAL.map((name) => [name, esmEntry(name)]) : [],
   );
 
   for (const name of OVERRIDABLE_COMPONENTS) {

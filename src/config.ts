@@ -36,6 +36,11 @@ const OgSchema = z.object({
     .union([
       z.literal(false),
       z.object({
+        /**
+         * Image used instead of the logo of the site: an SVG, PNG or JPEG file, as a path
+         * from the project root (`./src/assets/card-logo.svg`) or from `public/` (`/logo.png`).
+         */
+        src: z.string().optional(),
         /** Height in pixels, in the corner of the card. */
         size: z.number().positive().default(44),
         /** Corner holding the logo and the site name. */
@@ -67,6 +72,11 @@ const OgSchema = z.object({
   backdrop: z.enum(OG_BACKDROPS).default('glow'),
   /** Accent line along the top edge. */
   accentBar: z.boolean().default(true),
+  /**
+   * Image covering the card, under the backdrop and the text: an SVG, PNG or JPEG file,
+   * as a path from the project root or from `public/`.
+   */
+  background: z.string().optional(),
 });
 
 const LogoSchema = z.object({

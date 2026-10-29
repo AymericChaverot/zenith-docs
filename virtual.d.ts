@@ -20,6 +20,10 @@ declare module 'virtual:zenith/og-assets' {
   export const fonts: { weight: import('./src/og').OgFontWeight; path: string }[];
   /** Absolute path of the resvg WebAssembly binary. */
   export const wasm: string;
+  /** Absolute path of the logo, when it is not an SVG inlined in the config. */
+  export const logo: string | undefined;
+  /** Absolute path of the background image. */
+  export const background: string | undefined;
 }
 
 declare module 'virtual:zenith/user-css' {}

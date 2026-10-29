@@ -23,6 +23,7 @@ import { zenithShikiTransformers } from './markdown/shiki';
 import { getBuiltWith } from './built-with';
 import { buildSearchIndex } from './search';
 import { builtFileExists, findBrokenLinks, readBuiltPages } from './links';
+import { resolveOgAssets } from './og-assets';
 import { OVERRIDABLE_COMPONENTS, SLOT_NAMES, vitePluginZenith } from './virtual';
 
 export type { ZenithConfig, ZenithUserConfig } from './config';
@@ -229,6 +230,7 @@ export default function zenith(userConfig: ZenithUserConfig = {}): AstroIntegrat
                 config.builtWith
                   ? getBuiltWith({ root: astroConfig.root, search: config.search })
                   : [],
+                config.og ? resolveOgAssets(resolvedConfig, config.og, astroConfig) : undefined,
               ),
             ],
           },

@@ -46,6 +46,10 @@ export interface OgAssets {
   fonts: { weight: OgFontWeight; path: string }[];
   /** The resvg WebAssembly binary. */
   wasm: string;
+  /** The logo, when it is not an SVG inlined in the config. */
+  logo?: string;
+  /** Image covering the card. */
+  background?: string;
 }
 
 export type OgFontWeight = 400 | 600;
@@ -87,7 +91,7 @@ export async function renderOgImage(options: OgImageOptions): Promise<Uint8Array
 
 /** The card as SVG, before it is rasterized. */
 export async function renderOgSvg(options: OgImageOptions): Promise<string> {
-  return satori(defaultTemplate(templateProps(options)) as never, {
+  return satori(defaultTemplate(await templateProps(options)) as never, {
     width: OG_WIDTH,
     height: OG_HEIGHT,
     fonts: await loadFonts(options.assets),
@@ -113,26 +117,31 @@ export interface OgTemplateProps {
   /** Left out on the home page, whose title is already the site name, or when `siteName` is off. */
   siteName?: string;
   logo?: OgImage;
+  /** Image covering the card, from the `background` option. */
+  background?: OgImage;
   colors: OgColors;
   options: OgOptions;
   width: number;
   height: number;
 }
 
-function templateProps({
+async function templateProps({
   config,
+  assets,
   title,
   description,
   section,
   badges = [],
-}: OgImageOptions): OgTemplateProps {
+}: OgImageOptions): Promise<OgTemplateProps> {
   // Images are only rendered when `og` is on.
   const options = config.og as OgOptions;
   const colors = resolveOgColors(config, options);
   const name = typeof options.siteName === 'string' ? options.siteName : config.title;
-  const logo =
-    options.logo && config.logo?.svg
-      ? svgImage(config.logo.svg, colors.accent, options.logo.size)
+  const size = options.logo ? options.logo.size : 0;
+  const logo = assets.logo
+    ? await loadImage(assets.logo, colors.accent, size)
+    : options.logo && config.logo?.svg
+      ? svgImage(config.logo.svg, colors.accent, size)
       : undefined;
   return {
     title,
@@ -141,6 +150,9 @@ function templateProps({
     badges: options.badges ? badges : [],
     siteName: options.siteName && name !== title ? name : undefined,
     logo,
+    background: assets.background
+      ? await loadImage(assets.background, colors.accent, OG_HEIGHT)
+      : undefined,
     colors,
     options,
     width: OG_WIDTH,
@@ -200,8 +212,22 @@ export function defaultTemplate(props: OgTemplateProps): OgNode {
       backgroundColor: colors.background,
       color: colors.text,
       fontFamily: 'Geist',
-      ...backdrop(options.backdrop, colors),
     },
+    props.background &&
+      h('img', {
+        src: props.background.src,
+        width: props.width,
+        height: props.height,
+        style: { position: 'absolute', top: 0, left: 0, objectFit: 'cover' },
+      }),
+    el('div', {
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      width: '100%',
+      height: '100%',
+      ...backdrop(options.backdrop, colors),
+    }),
     options.accentBar &&
       el('div', {
         position: 'absolute',
@@ -211,7 +237,12 @@ export function defaultTemplate(props: OgTemplateProps): OgNode {
         height: 8,
         backgroundImage: `linear-gradient(90deg, ${colors.accent}, ${toRgba(colors.accent, 0)})`,
       }),
-    layout(props),
+    // Positioned, like the layers above, so it is painted after them.
+    el(
+      'div',
+      { display: 'flex', position: 'relative', width: '100%', height: '100%' },
+      layout(props),
+    ),
   );
 }
 
@@ -398,8 +429,9 @@ function scale(image: OgImage, height: number): OgImage {
 /** Background of the card, drawn with the accent so it matches the site. */
 function backdrop(name: OgOptions['backdrop'], { accent, background }: OgColors) {
   const faint = toRgba(accent, 0.14);
-  // Fades the pattern out towards the bottom right, where the text sits.
-  const fade = `radial-gradient(circle at 0% 0%, ${toRgba(background, 0)}, ${background} 75%)`;
+  // Fades the pattern out towards the bottom right, where the text sits, and lets a
+  // background image show through.
+  const fade = 'radial-gradient(circle at 0% 0%, black, transparent 75%)';
   switch (name) {
     case 'glow':
       // The site anchors its backdrop to the top left, the card does the same.
@@ -408,14 +440,16 @@ function backdrop(name: OgOptions['backdrop'], { accent, background }: OgColors)
       };
     case 'grid':
       return {
-        backgroundImage: `${fade}, linear-gradient(${faint} 1px, transparent 1px), linear-gradient(90deg, ${faint} 1px, transparent 1px)`,
-        backgroundSize: '100% 100%, 48px 48px, 48px 48px',
+        backgroundImage: `linear-gradient(${faint} 1px, transparent 1px), linear-gradient(90deg, ${faint} 1px, transparent 1px)`,
+        backgroundSize: '48px 48px, 48px 48px',
+        maskImage: fade,
       };
     case 'dots':
       return {
         // satori reads the stops of a radial gradient as percentages only.
-        backgroundImage: `${fade}, radial-gradient(${toRgba(accent, 0.5)} 8%, ${toRgba(accent, 0)} 12%)`,
-        backgroundSize: '100% 100%, 24px 24px',
+        backgroundImage: `radial-gradient(${toRgba(accent, 0.5)} 8%, ${toRgba(accent, 0)} 12%)`,
+        backgroundSize: '24px 24px',
+        maskImage: fade,
       };
     case 'none':
       return {};
@@ -428,6 +462,43 @@ function truncate(text: string, max: number): string {
   const cut = text.slice(0, max - 1);
   const space = cut.lastIndexOf(' ');
   return `${(space > max * 0.6 ? cut.slice(0, space) : cut).trimEnd()}…`;
+}
+
+const images = new Map<string, Promise<Buffer>>();
+
+/** An image file `height` pixels high, in proportion. The file is read once per build. */
+async function loadImage(path: string, color: string, height: number): Promise<OgImage> {
+  let data = images.get(path);
+  if (!data) images.set(path, (data = readFile(path)));
+  const bytes = await data;
+  if (/\.svg$/i.test(path)) return svgImage(bytes.toString('utf8'), color, height);
+
+  const png = /\.png$/i.test(path);
+  const [width, ratioHeight] = png ? pngSize(bytes) : jpegSize(bytes);
+  return {
+    src: `data:image/${png ? 'png' : 'jpeg'};base64,${bytes.toString('base64')}`,
+    width: Math.round((width / ratioHeight) * height),
+    height,
+  };
+}
+
+/** Dimensions from the IHDR chunk, which always comes first. */
+function pngSize(bytes: Buffer): [number, number] {
+  return [bytes.readUInt32BE(16), bytes.readUInt32BE(20)];
+}
+
+/** Dimensions from the first start-of-frame marker. */
+function jpegSize(bytes: Buffer): [number, number] {
+  let offset = 2;
+  while (offset + 9 < bytes.length) {
+    const marker = bytes[offset + 1]!;
+    // SOF0 to SOF15, except DHT (C4), JPG (C8) and DAC (CC).
+    if (marker >= 0xc0 && marker <= 0xcf && ![0xc4, 0xc8, 0xcc].includes(marker)) {
+      return [bytes.readUInt16BE(offset + 7), bytes.readUInt16BE(offset + 5)];
+    }
+    offset += 2 + bytes.readUInt16BE(offset + 2);
+  }
+  throw new Error('Cannot read the dimensions of a JPEG image.');
 }
 
 /** An SVG logo `height` pixels high, in proportion, with `currentColor` resolved. */
