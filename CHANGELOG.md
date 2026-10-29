@@ -1,5 +1,23 @@
 # Changelog
 
+## 0.4.0
+
+### Features
+
+- Page actions under the title copy the page as Markdown, open its Markdown version, or send it to ChatGPT or Claude when `site` is set. Turn them off with `pageActions: false`.
+- Code blocks written as ` ```npm ` become tabs for npm, pnpm, Yarn and Bun, and the chosen manager is remembered across pages.
+- Mermaid diagrams are drawn at build time as SVG that follows the color scheme, with no JavaScript in the page.
+- `math: true` renders TeX between `$` and `$$` as MathML, with no stylesheet or font to load.
+- `accent` takes any color, as `#rrggbb`, `#rgb` or `oklch()`, or one color per color scheme.
+- `sidebar.badge` in the frontmatter shows a label next to a page in the sidebar, with an optional callout variant.
+- `prev` and `next` in the frontmatter change or hide the links at the bottom of a page.
+- Internal links and anchors are checked after the build. `linkValidation` lists broken links by default, fails the build with `'error'`, or skips the check with `false`.
+- `head` adds tags to the head of every page, such as an analytics script.
+
+### Fixes
+
+- Social images take their colors from the theme, and the accent from the config.
+
 ## 0.3.0
 
 ### Dependencies
