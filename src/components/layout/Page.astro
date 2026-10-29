@@ -10,12 +10,24 @@ import PageTitle from 'virtual:zenith/components/PageTitle';
 import Pagination from 'virtual:zenith/components/Pagination';
 import Sidebar from 'virtual:zenith/components/Sidebar';
 import TableOfContents from 'virtual:zenith/components/TableOfContents';
+import { resolveAccent } from '../../colors';
 import Icon from '../Icon.astro';
 import InjectionPoint from './InjectionPoint.astro';
 
 const { config, entry, toc, locale, t, translated } = Astro.locals.zenith;
 const full = entry.data.full;
 const hasToc = toc.length > 0 && !full;
+const accent = resolveAccent(config.accent);
+// A custom accent sets the variables the presets set in `theme.css`.
+const accentStyle =
+  accent.name === 'custom'
+    ? {
+        '--zd-accent-light': accent.light,
+        '--zd-accent-dark': accent.dark,
+        '--zd-accent-contrast-light': accent.contrastLight,
+        '--zd-accent-contrast-dark': accent.contrastDark,
+      }
+    : undefined;
 ---
 
 <!doctype html>
@@ -23,7 +35,8 @@ const hasToc = toc.length > 0 && !full;
   lang={locale.lang}
   dir={locale.dir}
   class="theme-light"
-  data-accent={config.accent}
+  data-accent={accent.name}
+  style={accentStyle}
   data-fonts={config.fonts || undefined}
   data-theme={config.theme}
   data-backdrop={config.backdrop}

@@ -31,12 +31,18 @@ export const ACCENT_COLORS: Record<Accent, { light: string; dark: string }> = {
   neutral: { light: 'oklch(21% 0.006 286)', dark: 'oklch(96.5% 0.002 286)' },
 };
 
+/** Text drawn on the accent: white on dark accents, near black on light ones. */
+const CONTRAST = { onDark: 'oklch(100% 0 0)', onLight: 'oklch(21% 0.006 286)' };
 
 type Rgb = [number, number, number];
 
 const OKLCH = /^oklch\(\s*([\d.]+)(%?)\s+([\d.]+)\s+([\d.]+)(?:deg)?\s*\)$/i;
 const HEX = /^#([\da-f]{3}|[\da-f]{6})$/i;
 
+/** Whether a color is one `toHex` understands: `#rgb`, `#rrggbb` or `oklch(L C H)`. */
+export function isSupportedColor(color: string): boolean {
+  return OKLCH.test(color.trim()) || HEX.test(color.trim());
+}
 
 /** Linear sRGB channels of a supported color, in 0–1. */
 function toLinearRgb(color: string): Rgb {
@@ -85,4 +91,39 @@ export function toHex(color: string): string {
 export function toRgba(color: string, alpha = 1): string {
   const value = Number.parseInt(toHex(color).slice(1), 16);
   return `rgba(${(value >> 16) & 255}, ${(value >> 8) & 255}, ${value & 255}, ${alpha})`;
+}
+
+/** Text color that reads on a supported color. */
+export function contrastOn(color: string): string {
+  const [r, g, b] = toLinearRgb(color).map((c) => Math.min(1, Math.max(0, c))) as Rgb;
+  const luminance = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+  return luminance > 0.3 ? CONTRAST.onLight : CONTRAST.onDark;
+}
+
+/** An accent preset, a color for both color schemes, or one color per scheme. */
+export type AccentOption = Accent | string | { light: string; dark: string };
+
+export interface ResolvedAccent {
+  /** Preset name, or `custom`. */
+  name: Accent | 'custom';
+  light: string;
+  dark: string;
+  contrastLight: string;
+  contrastDark: string;
+}
+
+export function resolveAccent(accent: AccentOption): ResolvedAccent {
+  if (typeof accent === 'string' && accent in ACCENT_COLORS) {
+    const name = accent as Accent;
+    const { light, dark } = ACCENT_COLORS[name];
+    return { name, light, dark, contrastLight: contrastOn(light), contrastDark: contrastOn(dark) };
+  }
+  const { light, dark } = typeof accent === 'string' ? { light: accent, dark: accent } : accent;
+  return {
+    name: 'custom',
+    light,
+    dark,
+    contrastLight: contrastOn(light),
+    contrastDark: contrastOn(dark),
+  };
 }

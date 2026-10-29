@@ -1,7 +1,7 @@
 import { readFile } from 'node:fs/promises';
 import { initWasm, Resvg } from '@resvg/resvg-wasm';
 import satori from 'satori';
-import { ACCENT_COLORS, PALETTE, toHex, toRgba } from './colors';
+import { PALETTE, resolveAccent, toHex, toRgba } from './colors';
 import type { ZenithConfig } from './config';
 
 export const OG_WIDTH = 1200;
@@ -83,7 +83,7 @@ function el(type: string, style: Record<string, unknown>, children?: Child | Chi
 }
 
 function card({ config, title, description, section, badges = [] }: OgImageOptions): Element {
-  const accent = toHex(ACCENT_COLORS[config.accent].dark);
+  const accent = toHex(resolveAccent(config.accent).dark);
   const heading = truncate(title, 70);
   const logo = config.logo?.svg ? logoDataUri(config.logo.svg, accent) : undefined;
 

@@ -1,5 +1,6 @@
 import { z } from 'astro/zod';
 // Explicit extensions: the CLI loads this module with Node, which does not guess them.
+import { isSupportedColor } from './colors.ts';
 import { FONT_PRESET_NAMES } from './fonts.ts';
 import { ACCENTS, BACKDROP_POSITIONS, BACKDROPS } from './options.ts';
 import { THEME_NAMES } from './themes.ts';
@@ -9,6 +10,10 @@ export const DEFAULT_DOCS_DIR = 'src/content/docs';
 const LinkSchema = z.object({
   label: z.string(),
   href: z.string(),
+});
+
+const ColorSchema = z.string().refine(isSupportedColor, {
+  message: 'Expected a color as `#rrggbb`, `#rgb` or `oklch(L C H)`',
 });
 
 const LogoSchema = z.object({
@@ -45,8 +50,13 @@ export const ZenithConfigSchema = z.object({
    * Any of those options you set yourself takes precedence over the theme.
    */
   theme: z.enum(THEME_NAMES).optional(),
-  /** Accent color preset. Use `customCss` for anything else. */
-  accent: z.enum(ACCENTS).default('emerald'),
+  /**
+   * Accent color: a preset, a color for both color schemes, or `{ light, dark }`.
+   * Colors are written as `#rrggbb` or `oklch(L C H)`.
+   */
+  accent: z
+    .union([z.enum(ACCENTS), ColorSchema, z.object({ light: ColorSchema, dark: ColorSchema })])
+    .default('emerald'),
   /** Decorative background at the top of pages. `true` means `dither`, `false` means `none`. */
   backdrop: z
     .union([z.boolean(), z.enum(BACKDROPS)])

@@ -1,6 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { ACCENT_COLORS, PALETTE, toHex } from '../src/colors';
+import { ACCENT_COLORS, PALETTE, contrastOn, resolveAccent, toHex } from '../src/colors';
+import { ZenithConfigSchema } from '../src/config';
 
 const theme = readFileSync(new URL('../src/styles/theme.css', import.meta.url), 'utf8');
 
@@ -53,5 +54,52 @@ describe('toHex', () => {
 
   it('rejects other formats', () => {
     expect(() => toHex('rebeccapurple')).toThrow();
+  });
+});
+
+describe('contrastOn', () => {
+  it('picks white on dark colors and near black on light ones', () => {
+    expect(contrastOn('#1e3a8a')).toBe('oklch(100% 0 0)');
+    expect(contrastOn('#fde047')).toBe('oklch(21% 0.006 286)');
+  });
+});
+
+describe('resolveAccent', () => {
+  it('resolves a preset', () => {
+    expect(resolveAccent('teal')).toMatchObject({ name: 'teal', ...ACCENT_COLORS.teal });
+  });
+
+  it('uses a single color for both schemes', () => {
+    expect(resolveAccent('#3b82f6')).toMatchObject({
+      name: 'custom',
+      light: '#3b82f6',
+      dark: '#3b82f6',
+    });
+  });
+
+  it('takes a color per scheme', () => {
+    const accent = resolveAccent({ light: '#1d4ed8', dark: '#93c5fd' });
+    expect(accent).toMatchObject({ name: 'custom', light: '#1d4ed8', dark: '#93c5fd' });
+    expect(accent.contrastLight).toBe('oklch(100% 0 0)');
+    expect(accent.contrastDark).toBe('oklch(21% 0.006 286)');
+  });
+});
+
+describe('accent option', () => {
+  it('accepts presets and supported colors', () => {
+    for (const accent of [
+      'violet',
+      '#3b82f6',
+      'oklch(60% 0.2 250)',
+      { light: '#000', dark: '#fff' },
+    ]) {
+      expect(ZenithConfigSchema.safeParse({ accent }).success, JSON.stringify(accent)).toBe(true);
+    }
+  });
+
+  it('rejects other values', () => {
+    for (const accent of ['blue', 'rgb(0 0 0)', { light: '#000' }]) {
+      expect(ZenithConfigSchema.safeParse({ accent }).success, JSON.stringify(accent)).toBe(false);
+    }
   });
 });

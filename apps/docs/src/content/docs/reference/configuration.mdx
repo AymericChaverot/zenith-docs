@@ -186,9 +186,9 @@ Packaged theme: an accent, a backdrop and a font preset that go together, plus a
 
 ### `accent`
 
-**Type:** `'emerald' | 'teal' | 'amber' | 'rose' | 'violet' | 'neutral'` · **Default:** `'emerald'`
+**Type:** `'emerald' | 'teal' | 'amber' | 'rose' | 'violet' | 'neutral' | string | { light: string; dark: string }` · **Default:** `'emerald'`
 
-Accent color preset. See [theming](/customization/theming/#accent-presets).
+Accent color: a preset, a color for both color schemes, or one color per scheme. Colors are written as `#rrggbb`, `#rgb` or `oklch(L C H)`, and also tint the [social images](/open-graph/). See [theming](/customization/theming/#accent-presets).
 
 ### `backdrop`
 
