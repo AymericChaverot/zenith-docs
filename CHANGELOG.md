@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.5.0
+
+### Features
+
+- `og` takes an object to change the social images: a `default`, `centered` or `split` layout, the logo, its size and corner, the site name, the colors and color scheme, a `glow`, `grid` or `dots` backdrop, a background image and a font.
+- `og.template` draws the card with a module of your own. `zenith-docs/og` exports `h()` to build it, and the built-in `defaultTemplate` to reuse it.
+- `og` in the frontmatter changes the title and description of a page's card, replaces it with an image, or removes it with `false`.
+
+
 ## 0.4.0
 
 ### Features
