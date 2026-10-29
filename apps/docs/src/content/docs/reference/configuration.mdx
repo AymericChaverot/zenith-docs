@@ -176,6 +176,17 @@ Adds an "Edit this page" link at the bottom of every page. The path of the file,
 
 It is off unless set, since readers who cannot write to the repository only land on a fork prompt. It suits docs that welcome outside contributions.
 
+### `linkValidation`
+
+**Type:** `'warn' | 'error' | false` · **Default:** `'warn'`
+
+Checks internal links once the site is built: each one must lead to a page or a file of the build, and its `#anchor` to an id of that page. `warn` lists the broken links in the build output, `error` also fails the build, which suits CI. External links are not checked.
+
+```txt
+[WARN] Broken link on /guides/setup/: /guides/instal/ (no such page)
+[WARN] Broken link on /guides/setup/: /reference/#options (no such anchor)
+```
+
 ### `lastUpdated`
 
 **Type:** `boolean` · **Default:** `false`

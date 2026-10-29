@@ -117,6 +117,11 @@ export const ZenithConfigSchema = z.object({
   links: z.array(LinkSchema).default([]),
   /** Base URL used to build "Edit this page" links, e.g. `https://github.com/org/repo/edit/main/`. */
   editLink: z.object({ baseUrl: z.string() }).optional(),
+  /**
+   * Check internal links once the site is built: each must lead to a page or file of the
+   * build, and to an id that page has. `warn` lists broken links, `error` also fails the build.
+   */
+  linkValidation: z.union([z.enum(['warn', 'error']), z.literal(false)]).default('warn'),
   /** Show the last commit date of each page. Requires the site to be built from a git checkout. */
   lastUpdated: z.boolean().default(false),
   /** Show a button at the bottom of the sidebar listing the versions the site is built with. */

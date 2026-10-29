@@ -22,6 +22,7 @@ import {
 import { zenithShikiTransformers } from './markdown/shiki';
 import { getBuiltWith } from './built-with';
 import { buildSearchIndex } from './search';
+import { builtFileExists, findBrokenLinks, readBuiltPages } from './links';
 import { OVERRIDABLE_COMPONENTS, SLOT_NAMES, vitePluginZenith } from './virtual';
 
 export type { ZenithConfig, ZenithUserConfig } from './config';
@@ -81,12 +82,14 @@ export default function zenith(userConfig: ZenithUserConfig = {}): AstroIntegrat
   }
 
   let staticOutput = true;
+  let base = '/';
 
   return {
     name: 'zenith-docs',
     hooks: {
       'astro:config:setup': ({ config: astroConfig, injectRoute, updateConfig, logger }) => {
         staticOutput = astroConfig.output === 'static';
+        base = astroConfig.base;
 
         injectRoute({
           pattern: '404',
@@ -223,6 +226,20 @@ export default function zenith(userConfig: ZenithUserConfig = {}): AstroIntegrat
       },
 
       'astro:build:done': async ({ dir, logger }) => {
+        if (config.linkValidation && staticOutput) {
+          const broken = findBrokenLinks(readBuiltPages(dir, base), builtFileExists(dir, base));
+          for (const link of broken) {
+            const problem = link.reason === 'page' ? 'no such page' : 'no such anchor';
+            logger.warn(`Broken link on ${link.page}: ${link.href} (${problem})`);
+          }
+          if (broken.length > 0 && config.linkValidation === 'error') {
+            throw new AstroError(
+              `${broken.length} broken link(s)`,
+              'Fix the links listed above, or set `linkValidation: "warn"` to only report them.',
+            );
+          }
+        }
+
         if (!config.search) return;
         if (!staticOutput) {
           logger.warn('Search is only built for static output, skipping the index.');
