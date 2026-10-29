@@ -8,7 +8,6 @@
 - `og.template` draws the card with a module of your own. `zenith-docs/og` exports `h()` to build it, and the built-in `defaultTemplate` to reuse it.
 - `og` in the frontmatter changes the title and description of a page's card, replaces it with an image, or removes it with `false`.
 
-
 ## 0.4.0
 
 ### Features
