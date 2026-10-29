@@ -9,6 +9,17 @@ const pageTitle = title === config.title ? title : `${title} | ${config.title}`;
 const pageDescription = description ?? config.description;
 const canonical = Astro.site ? new URL(url, Astro.site).href : undefined;
 const noindex = entry.id === '404' || entry.data.draft;
+// Links written from the root of the site get its base, like links in content.
+const headTags = config.head.map(({ tag, attrs, content }) => ({
+  Tag: tag,
+  content,
+  attrs: Object.fromEntries(
+    Object.entries(attrs).map(([name, value]) => [
+      name,
+      (name === 'src' || name === 'href') && typeof value === 'string' ? withBase(value, baseUrl()) : value,
+    ]),
+  ),
+}));
 ---
 
 <meta charset="utf-8" />
@@ -84,3 +95,4 @@ const noindex = entry.id === '404' || entry.data.draft;
     root.setAttribute('data-js', '');
   })();
 </script>
+{headTags.map(({ Tag, attrs, content }) => <Tag {...attrs} set:html={content} />)}

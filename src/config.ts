@@ -16,6 +16,12 @@ const ColorSchema = z.string().refine(isSupportedColor, {
   message: 'Expected a color as `#rrggbb`, `#rgb` or `oklch(L C H)`',
 });
 
+const HeadTagSchema = z.object({
+  tag: z.enum(['link', 'meta', 'script', 'style', 'noscript', 'base']),
+  attrs: z.record(z.string(), z.union([z.string(), z.boolean()])).default({}),
+  content: z.string().default(''),
+});
+
 const LogoSchema = z.object({
   src: z.string(),
   alt: z.string().default(''),
@@ -129,6 +135,11 @@ export const ZenithConfigSchema = z.object({
   tableOfContents: z
     .union([z.literal(false), TableOfContentsSchema])
     .default({ minHeadingLevel: 2, maxHeadingLevel: 3 }),
+  /**
+   * Tags added to the `<head>` of every page, after the built-in ones, such as an analytics
+   * script: `{ tag: 'script', attrs: { src: '/stats.js', defer: true } }`.
+   */
+  head: z.array(HeadTagSchema).default([]),
   /** Stylesheets loaded after ZenithDocs styles, relative to the project root. */
   customCss: z.array(z.string()).default([]),
   /** Replace built-in layout components, e.g. `{ Header: './src/components/Header.astro' }`. */

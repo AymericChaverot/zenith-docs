@@ -231,6 +231,23 @@ Side the `dither` backdrop is anchored to.
 
 Font preset, self-hosted through the Astro Fonts API. `true` means `instrument` and `false` falls back to system fonts. Compare them on the [typography](/customization/typography/) page.
 
+### `head`
+
+**Type:** `{ tag: string; attrs?: Record<string, string | boolean>; content?: string }[]`
+
+Tags added to the `<head>` of every page, after the built-in ones: `link`, `meta`, `script`, `style`, `noscript` or `base`. A `src` or `href` written from the root of the site gets its [base](#base), and `content` is written as is.
+
+```js title="astro.config.mjs"
+zenith({
+  head: [
+    { tag: 'script', attrs: { src: 'https://stats.example.com/script.js', defer: true } },
+    { tag: 'meta', attrs: { name: 'author', content: 'Acme' } },
+  ],
+});
+```
+
+For markup that depends on the page, use the `head` [slot](/customization/slots/) instead.
+
 ### `customCss`
 
 **Type:** `string[]`
