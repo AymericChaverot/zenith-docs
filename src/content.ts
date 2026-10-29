@@ -22,6 +22,12 @@ export function metaLoader({ base = DEFAULT_DOCS_DIR }: LoaderOptions = {}): Loa
   });
 }
 
+const NeighbourSchema = z.union([
+  z.literal(false),
+  z.string(),
+  z.object({ label: z.string().optional(), link: z.string().optional() }),
+]);
+
 export function docsSchema() {
   return z.object({
     title: z.string(),
@@ -48,6 +54,10 @@ export function docsSchema() {
           .optional(),
       })
       .default({ hidden: false }),
+    /** Link to the previous page: `false` hides it, a string changes its label. */
+    prev: NeighbourSchema.optional(),
+    /** Link to the next page: `false` hides it, a string changes its label. */
+    next: NeighbourSchema.optional(),
     editUrl: z.union([z.string(), z.literal(false)]).optional(),
     lastUpdated: z.union([z.coerce.date(), z.literal(false)]).optional(),
   });

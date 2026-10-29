@@ -5,6 +5,7 @@ import {
   flattenTree,
   getNeighbours,
   getSidebarScope,
+  overrideNeighbour,
   slugFromId,
   urlFromId,
   type PageTreeDoc,
@@ -139,5 +140,38 @@ describe('navigation helpers', () => {
     const { previous, next } = getNeighbours(pages, '/guides/one/');
     expect(previous?.url).toBe('/');
     expect(next?.url).toBe('/guides/two/');
+  });
+});
+
+describe('overrideNeighbour', () => {
+  const page = { type: 'page' as const, name: 'Install', url: '/install/' };
+
+  it('keeps the sidebar order by default', () => {
+    expect(overrideNeighbour(page, undefined)).toBe(page);
+  });
+
+  it('hides the link', () => {
+    expect(overrideNeighbour(page, false)).toBeUndefined();
+  });
+
+  it('changes the label', () => {
+    expect(overrideNeighbour(page, 'Set up')).toEqual({ ...page, name: 'Set up' });
+  });
+
+  it('changes the target, with the base', () => {
+    expect(overrideNeighbour(page, { link: '/deploy/' }, '/docs/')).toEqual({
+      type: 'page',
+      name: 'Install',
+      url: '/docs/deploy/',
+    });
+  });
+
+  it('adds a link where the sidebar has none', () => {
+    expect(overrideNeighbour(undefined, { label: 'Blog', link: 'https://example.com' })).toEqual({
+      type: 'page',
+      name: 'Blog',
+      url: 'https://example.com',
+    });
+    expect(overrideNeighbour(undefined, 'Orphan label')).toBeUndefined();
   });
 });

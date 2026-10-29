@@ -18,6 +18,7 @@ import {
   findTrail,
   getNeighbours,
   getSidebarScope,
+  overrideNeighbour,
   slugFromId,
   urlFromId,
   type PageNode,
@@ -235,7 +236,9 @@ export async function getRouteData(
   const { id } = scopeOf(entry.id);
   const url = urlFromId(id, prefixOf(locale, version));
   const sidebar = getSidebarScope(tree, url);
-  const { previous, next } = getNeighbours(sidebar.pages, url);
+  const neighbours = getNeighbours(sidebar.pages, url);
+  const previous = overrideNeighbour(neighbours.previous, entry.data.prev, baseUrl());
+  const next = overrideNeighbour(neighbours.next, entry.data.next, baseUrl());
 
   const breadcrumbs = findTrail(tree.children, url)
     .filter((folder) => folder.index?.url !== url)

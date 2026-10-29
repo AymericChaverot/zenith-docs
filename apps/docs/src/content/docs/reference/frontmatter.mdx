@@ -25,6 +25,8 @@ sidebar:
 | `sidebar.label`   | `string`            | Label used in the sidebar instead of the title               |
 | `sidebar.hidden`  | `boolean`           | Hide the page from the sidebar                               |
 | `sidebar.badge`   | `string \| object`  | Short label next to the page in the sidebar, see [badges](#sidebar-badges) |
+| `prev`            | `string \| object \| false` | Change or hide the link to the previous page, see [pagination](#pagination) |
+| `next`            | `string \| object \| false` | Change or hide the link to the next page                    |
 | `editUrl`         | `string \| false`   | Override or disable the [edit link](/reference/configuration/#editlink) |
 | `lastUpdated`     | `Date \| false`     | Override or disable the [last updated](/reference/configuration/#lastupdated) date |
 
@@ -47,6 +49,20 @@ sidebar:
   badge:
     text: Deprecated
     variant: warning
+---
+```
+
+## Pagination
+
+The links at the bottom of a page follow the sidebar order. `prev` and `next` change them: `false` hides a link, a string changes its label, and `link` points it somewhere else, written from the root of the site like any other link:
+
+```mdx
+---
+title: Deployment
+prev: false
+next:
+  label: Read the changelog
+  link: /changelog/
 ---
 ```
 

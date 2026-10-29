@@ -1,3 +1,5 @@
+import { withBase } from './urls';
+
 export const BADGE_VARIANTS = ['default', 'note', 'tip', 'success', 'warning', 'danger'] as const;
 
 export interface SidebarBadge {
@@ -263,6 +265,26 @@ export function getNeighbours(pages: PageNode[], url: string) {
   const index = pages.findIndex((page) => page.url === url);
   if (index === -1) return {};
   return { previous: pages[index - 1], next: pages[index + 1] };
+}
+
+/** A `prev` or `next` frontmatter field: hide the link, or change its label or target. */
+export type NeighbourOverride = false | string | { label?: string; link?: string };
+
+/**
+ * Apply a `prev` or `next` field to the link found from the sidebar order. Targets are
+ * written from the root of the site, like links in content, and get the base.
+ */
+export function overrideNeighbour(
+  page: PageNode | undefined,
+  override: NeighbourOverride | undefined,
+  base = '/',
+): PageNode | undefined {
+  if (override === undefined) return page;
+  if (override === false) return undefined;
+  const { label, link } = typeof override === 'string' ? { label: override } : override;
+  const url = link ? withBase(link, base) : page?.url;
+  if (!url) return undefined;
+  return { type: 'page', name: label ?? page?.name ?? url, url };
 }
 
 function withoutRootFolders(nodes: TreeNode[]): TreeNode[] {
