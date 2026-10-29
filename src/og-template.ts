@@ -32,6 +32,10 @@ export interface OgTemplateProps {
   badges: string[];
   /** Left out on the home page, whose title is already the site name, or when `siteName` is off. */
   siteName?: string;
+  /** URL path of the page, such as `/guides/setup/`. */
+  url: string;
+  /** Language of the page, as a BCP 47 tag. */
+  lang: string;
   logo?: OgImage;
   /** Image covering the card, from the `background` option. */
   background?: OgImage;
@@ -42,6 +46,12 @@ export interface OgTemplateProps {
   width: number;
   height: number;
 }
+
+/**
+ * Draws a card. The default export of the module named by the `template` option; it can
+ * return its own tree, or wrap `defaultTemplate`.
+ */
+export type OgTemplate = (props: OgTemplateProps) => OgNode | Promise<OgNode>;
 
 /** A node of the card, as satori reads it. */
 export interface OgNode {

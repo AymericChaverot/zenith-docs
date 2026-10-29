@@ -56,6 +56,11 @@ const OgSchema = z.object({
   breadcrumb: z.boolean().default(true),
   /** Show the language and version, on sites that have several. */
   badges: z.boolean().default(true),
+  /**
+   * Module drawing the card instead of the built-in template, as a path from the project
+   * root. Its default export receives the page and the options, and returns satori nodes.
+   */
+  template: z.string().optional(),
   /** Palette the card is drawn with. */
   colorScheme: z.enum(['dark', 'light']).default('dark'),
   /** Colors taking precedence over the palette and the accent of the site. */

@@ -1,6 +1,7 @@
 import type { APIRoute, GetStaticPaths } from 'astro';
 import config from 'virtual:zenith/config';
 import * as assets from 'virtual:zenith/og-assets';
+import template from 'virtual:zenith/og-template';
 import { renderOgImage } from '../og';
 import { getDocs, getDocsPaths, getRouteData, type DocsEntry } from '../route-data';
 import { baseUrl } from '../urls';
@@ -36,6 +37,9 @@ export const GET: APIRoute = async ({ props }) => {
     description: data.description,
     section: trail || (home ? undefined : data.url),
     badges,
+    url: data.url,
+    lang: data.locale.lang,
+    template,
   });
 
   return new Response(png, { headers: { 'content-type': 'image/png' } });

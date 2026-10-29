@@ -26,6 +26,12 @@ declare module 'virtual:zenith/og-assets' {
   export const background: string | undefined;
 }
 
+declare module 'virtual:zenith/og-template' {
+  /** The module of the `og.template` option, when it is set. */
+  const template: import('./src/og-template').OgTemplate | undefined;
+  export default template;
+}
+
 declare module 'virtual:zenith/user-css' {}
 
 declare module 'virtual:zenith/slots' {

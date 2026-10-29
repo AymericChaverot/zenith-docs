@@ -106,6 +106,10 @@ export const shikiThemes = ${JSON.stringify(shikiThemes)};`,
       .map((path) => `import ${JSON.stringify(resolveFromRoot(path))};`)
       .join('\n'),
     'virtual:zenith/slots': slotsModule(config.slots, resolveFromRoot),
+    'virtual:zenith/og-template':
+      config.og && config.og.template
+        ? `export { default } from ${JSON.stringify(resolveFromRoot(config.og.template))};`
+        : 'export default undefined;',
     'virtual:zenith/built-with': `export default ${JSON.stringify(builtWith)};`,
   };
 

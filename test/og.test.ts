@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { PALETTE, resolveAccent, toHex } from '../src/colors';
 import { ZenithConfigSchema, type OgOptions, type ZenithConfig } from '../src/config';
 import { OG_HEIGHT, OG_WIDTH, renderOgSvg, resolveOgColors, type OgAssets } from '../src/og';
+import { h } from '../src/og-template';
 
 const require = createRequire(import.meta.url);
 
@@ -75,6 +76,27 @@ describe('og options', () => {
       expect(boxes).toHaveLength(2);
       expect(boxes[0]!.y).toBeLessThan(OG_HEIGHT / 2);
     }
+  });
+});
+
+describe('templates', () => {
+  it('draw the card instead of the built-in one', async () => {
+    const svg = await renderOgSvg({
+      config,
+      assets,
+      title: 'Getting started',
+      url: '/guides/',
+      lang: 'fr',
+      template: ({ url, lang, colors }) =>
+        h(
+          'div',
+          { style: { display: 'flex', width: '100%', background: colors.accent } },
+          url,
+          lang,
+        ),
+    });
+    expect(svg).toContain(`fill="${toHex(resolveAccent('emerald').dark)}"`);
+    expect(borderedBoxes(svg)).toHaveLength(0);
   });
 });
 

@@ -3,7 +3,13 @@ import { initWasm, Resvg } from '@resvg/resvg-wasm';
 import satori from 'satori';
 import { PALETTE, resolveAccent, toHex } from './colors';
 import type { OgOptions, ZenithConfig } from './config';
-import { defaultTemplate, type OgColors, type OgImage, type OgTemplateProps } from './og-template';
+import {
+  defaultTemplate,
+  type OgColors,
+  type OgImage,
+  type OgTemplate,
+  type OgTemplateProps,
+} from './og-template';
 
 export const OG_WIDTH = 1200;
 export const OG_HEIGHT = 630;
@@ -78,6 +84,12 @@ export interface OgImageOptions {
   section?: string;
   /** Small pills, such as the language and the version. */
   badges?: string[];
+  /** URL path of the page. */
+  url?: string;
+  /** Language of the page, as a BCP 47 tag. */
+  lang?: string;
+  /** Draws the card instead of the built-in template. */
+  template?: OgTemplate;
 }
 
 export async function renderOgImage(options: OgImageOptions): Promise<Uint8Array<ArrayBuffer>> {
@@ -89,7 +101,8 @@ export async function renderOgImage(options: OgImageOptions): Promise<Uint8Array
 
 /** The card as SVG, before it is rasterized. */
 export async function renderOgSvg(options: OgImageOptions): Promise<string> {
-  return satori(defaultTemplate(await templateProps(options)) as never, {
+  const template = options.template ?? defaultTemplate;
+  return satori((await template(await templateProps(options))) as never, {
     width: OG_WIDTH,
     height: OG_HEIGHT,
     fonts: await loadFonts(options.assets),
@@ -103,6 +116,8 @@ async function templateProps({
   description,
   section,
   badges = [],
+  url = '/',
+  lang = 'en',
 }: OgImageOptions): Promise<OgTemplateProps> {
   // Images are only rendered when `og` is on.
   const options = config.og as OgOptions;
@@ -120,6 +135,8 @@ async function templateProps({
     section: options.breadcrumb ? section : undefined,
     badges: options.badges ? badges : [],
     siteName: options.siteName && name !== title ? name : undefined,
+    url,
+    lang,
     logo,
     background: assets.background
       ? await loadImage(assets.background, colors.accent, OG_HEIGHT)

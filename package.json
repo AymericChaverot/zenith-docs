@@ -33,6 +33,7 @@
     "./routes/*": "./src/routes/*",
     "./styles/*": "./src/styles/*",
     "./markdown": "./src/markdown/index.ts",
+    "./og": "./src/og-template.ts",
     "./types": "./src/types.ts"
   },
   "scripts": {
