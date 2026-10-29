@@ -1,28 +1,17 @@
 import { readFile } from 'node:fs/promises';
 import { initWasm, Resvg } from '@resvg/resvg-wasm';
 import satori from 'satori';
+import { ACCENT_COLORS, PALETTE, toHex, toRgba } from './colors';
 import type { ZenithConfig } from './config';
 
 export const OG_WIDTH = 1200;
 export const OG_HEIGHT = 630;
 
-/**
- * Dark theme colors, in sRGB. Neither satori nor resvg parses `oklch`, so these
- * mirror the tokens of `styles/theme.css` and have to be updated with them.
- */
-const SURFACE = '#09090b';
-const TEXT = '#fafafa';
-const MUTED = '#a4a4a8';
-const BORDER = '#2d2d31';
-
-const ACCENTS: Record<ZenithConfig['accent'], string> = {
-  emerald: '#16d584',
-  teal: '#00d9cb',
-  amber: '#ffaa1c',
-  rose: '#ff6889',
-  violet: '#a892ff',
-  neutral: '#f3f3f5',
-};
+/** Dark theme colors, in sRGB: neither satori nor resvg parses `oklch`. */
+const SURFACE = toHex(PALETTE.dark.background);
+const TEXT = toHex(PALETTE.dark.text);
+const MUTED = toHex(PALETTE.dark.text2);
+const BORDER = toHex(PALETTE.dark.borderStrong);
 
 /**
  * Files read at render time. Their paths are resolved when the integration starts,
@@ -94,7 +83,7 @@ function el(type: string, style: Record<string, unknown>, children?: Child | Chi
 }
 
 function card({ config, title, description, section, badges = [] }: OgImageOptions): Element {
-  const accent = ACCENTS[config.accent];
+  const accent = toHex(ACCENT_COLORS[config.accent].dark);
   const heading = truncate(title, 70);
   const logo = config.logo?.svg ? logoDataUri(config.logo.svg, accent) : undefined;
 
@@ -109,7 +98,7 @@ function card({ config, title, description, section, badges = [] }: OgImageOptio
       color: TEXT,
       fontFamily: 'Geist',
       // The site anchors its backdrop to the top left, the card does the same.
-      backgroundImage: `radial-gradient(circle at 12% 0%, ${rgba(accent, 0.22)}, ${rgba(SURFACE, 0)} 55%)`,
+      backgroundImage: `radial-gradient(circle at 12% 0%, ${toRgba(accent, 0.22)}, ${toRgba(SURFACE, 0)} 55%)`,
     },
     [
       el('div', {
@@ -118,7 +107,7 @@ function card({ config, title, description, section, badges = [] }: OgImageOptio
         left: 0,
         width: '100%',
         height: 8,
-        backgroundImage: `linear-gradient(90deg, ${accent}, ${rgba(accent, 0)})`,
+        backgroundImage: `linear-gradient(90deg, ${accent}, ${toRgba(accent, 0)})`,
       }),
       el(
         'div',
@@ -200,11 +189,6 @@ function truncate(text: string, max: number): string {
   const cut = text.slice(0, max - 1);
   const space = cut.lastIndexOf(' ');
   return `${(space > max * 0.6 ? cut.slice(0, space) : cut).trimEnd()}…`;
-}
-
-function rgba(hex: string, alpha: number): string {
-  const value = Number.parseInt(hex.slice(1), 16);
-  return `rgba(${(value >> 16) & 255}, ${(value >> 8) & 255}, ${value & 255}, ${alpha})`;
 }
 
 /** Inline the logo as a data URI, with `currentColor` resolved and explicit dimensions. */
