@@ -16,6 +16,7 @@ export const OVERRIDABLE_COMPONENTS = [
   'Sidebar',
   'TableOfContents',
   'PageTitle',
+  'PageActions',
   'Breadcrumb',
   'PageFooter',
   'Pagination',

@@ -5,6 +5,7 @@ import 'virtual:zenith/user-css';
 import Breadcrumb from 'virtual:zenith/components/Breadcrumb';
 import Head from 'virtual:zenith/components/Head';
 import Header from 'virtual:zenith/components/Header';
+import PageActions from 'virtual:zenith/components/PageActions';
 import PageFooter from 'virtual:zenith/components/PageFooter';
 import PageTitle from 'virtual:zenith/components/PageTitle';
 import Pagination from 'virtual:zenith/components/Pagination';
@@ -60,6 +61,7 @@ const accentStyle =
             <Breadcrumb />
           </div>
           <PageTitle />
+          <PageActions />
           {
             toc.length > 0 && (
               <details
@@ -108,14 +110,30 @@ const accentStyle =
     </div>
     <InjectionPoint name="footer" class="zd-slot-footer" />
     <script is:inline>
+      const copied = (button) => {
+        button.setAttribute('data-copied', '');
+        setTimeout(() => button.removeAttribute('data-copied'), 1500);
+      };
       document.addEventListener('click', (event) => {
-        const button = event.target instanceof Element && event.target.closest('[data-copy]');
+        const target = event.target instanceof Element ? event.target : null;
+        for (const menu of document.querySelectorAll('.zd-page-menu[open]')) {
+          if (!menu.contains(target)) menu.open = false;
+        }
+        const page = target && target.closest('[data-copy-page]');
+        if (page) {
+          // Safari only copies within the click, so the item takes the pending download.
+          const text = fetch(page.dataset.copyPage)
+            .then((response) => response.text())
+            .then((markdown) => new Blob([markdown], { type: 'text/plain' }));
+          navigator.clipboard
+            .write([new ClipboardItem({ 'text/plain': text })])
+            .then(() => copied(page));
+          return;
+        }
+        const button = target && target.closest('[data-copy]');
         const code = button && button.parentElement.querySelector('pre code');
         if (!code) return;
-        navigator.clipboard.writeText(code.textContent.replace(/\n$/, '')).then(() => {
-          button.setAttribute('data-copied', '');
-          setTimeout(() => button.removeAttribute('data-copied'), 1500);
-        });
+        navigator.clipboard.writeText(code.textContent.replace(/\n$/, '')).then(() => copied(button));
       });
     </script>
   </body>

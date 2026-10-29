@@ -41,6 +41,11 @@ export const ZenithConfigSchema = z.object({
   search: z.boolean().default(true),
   /** Generate `llms.txt`, `llms-full.txt` and a `.md` version of every page. */
   llms: z.boolean().default(true),
+  /**
+   * Show buttons under the page title to copy the page as Markdown, view it, or open it
+   * in ChatGPT or Claude, which needs `site`. Requires `llms`.
+   */
+  pageActions: z.boolean().default(true),
   /** Generate an Open Graph image for every page, shown when a link is shared. */
   og: z.boolean().default(true),
   /** OpenAPI specs rendered by `<APIPage>`, keyed by name, as paths from the project root. */
