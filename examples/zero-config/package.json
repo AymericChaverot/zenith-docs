@@ -8,7 +8,7 @@
     "preview": "zenith preview"
   },
   "dependencies": {
-    "astro": "^7.3.2",
+    "astro": "^7.4.3",
     "zenith-docs": "workspace:*"
   }
 }
