@@ -125,6 +125,8 @@ function card({ config, title, description, section, badges = [] }: OgImageOptio
           width: '100%',
           height: '100%',
           padding: '76px 80px',
+          // Satori sizes boxes like CSS, padding included only with `border-box`.
+          boxSizing: 'border-box',
         },
         [
           el(
