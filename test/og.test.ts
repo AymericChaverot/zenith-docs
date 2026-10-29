@@ -1,7 +1,8 @@
 import { createRequire } from 'node:module';
 import { describe, expect, it } from 'vitest';
-import { ZenithConfigSchema, type ZenithConfig } from '../src/config';
-import { OG_HEIGHT, OG_WIDTH, renderOgSvg, type OgAssets } from '../src/og';
+import { PALETTE, resolveAccent, toHex } from '../src/colors';
+import { ZenithConfigSchema, type OgOptions, type ZenithConfig } from '../src/config';
+import { OG_HEIGHT, OG_WIDTH, renderOgSvg, resolveOgColors, type OgAssets } from '../src/og';
 
 const require = createRequire(import.meta.url);
 
@@ -48,5 +49,29 @@ describe('renderOgSvg', () => {
       // The bottom row sits in the lower part of the card, above its padding.
       expect(box.y).toBeGreaterThan(OG_HEIGHT / 2);
     }
+  });
+});
+
+describe('resolveOgColors', () => {
+  const parse = (og: unknown) =>
+    ({ ...ZenithConfigSchema.parse({ og }), favicon: '' }) as ZenithConfig;
+
+  it('takes the dark palette and the accent of the site by default', () => {
+    const site = parse(true);
+    expect(resolveOgColors(site, site.og as OgOptions)).toEqual({
+      background: toHex(PALETTE.dark.background),
+      text: toHex(PALETTE.dark.text),
+      muted: toHex(PALETTE.dark.text2),
+      accent: toHex(resolveAccent('emerald').dark),
+      border: toHex(PALETTE.dark.borderStrong),
+    });
+  });
+
+  it('follows the color scheme, then the overrides', () => {
+    const site = parse({ colorScheme: 'light', colors: { accent: '#f60', background: '#fafafa' } });
+    const colors = resolveOgColors(site, site.og as OgOptions);
+    expect(colors.text).toBe(toHex(PALETTE.light.text));
+    expect(colors.accent).toBe('#ff6600');
+    expect(colors.background).toBe('#fafafa');
   });
 });

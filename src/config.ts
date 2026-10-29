@@ -22,6 +22,27 @@ const HeadTagSchema = z.object({
   content: z.string().default(''),
 });
 
+export const OG_BACKDROPS = ['glow', 'grid', 'dots', 'none'] as const;
+
+const OgSchema = z.object({
+  /** Palette the card is drawn with. */
+  colorScheme: z.enum(['dark', 'light']).default('dark'),
+  /** Colors taking precedence over the palette and the accent of the site. */
+  colors: z
+    .object({
+      background: ColorSchema.optional(),
+      text: ColorSchema.optional(),
+      muted: ColorSchema.optional(),
+      accent: ColorSchema.optional(),
+      border: ColorSchema.optional(),
+    })
+    .default({}),
+  /** Decoration drawn with the accent behind the text. */
+  backdrop: z.enum(OG_BACKDROPS).default('glow'),
+  /** Accent line along the top edge. */
+  accentBar: z.boolean().default(true),
+});
+
 const LogoSchema = z.object({
   src: z.string(),
   alt: z.string().default(''),
@@ -57,8 +78,14 @@ export const ZenithConfigSchema = z.object({
    * what dollar signs mean in existing content.
    */
   math: z.boolean().default(false),
-  /** Generate an Open Graph image for every page, shown when a link is shared. */
-  og: z.boolean().default(true),
+  /**
+   * Generate an Open Graph image for every page, shown when a link is shared. An object
+   * turns it on and changes how the card looks.
+   */
+  og: z
+    .union([z.boolean(), OgSchema])
+    .default(true)
+    .transform((og) => (og === false ? false : OgSchema.parse(og === true ? {} : og))),
   /** OpenAPI specs rendered by `<APIPage>`, keyed by name, as paths from the project root. */
   openapi: z.record(z.string(), z.string()).default({}),
   /**
@@ -153,6 +180,9 @@ export const ZenithConfigSchema = z.object({
 
 /** Options as validated, before assets are resolved. */
 export type ZenithParsedConfig = z.output<typeof ZenithConfigSchema>;
+
+/** Options of the Open Graph images, with their defaults. */
+export type OgOptions = z.output<typeof OgSchema>;
 
 export type ZenithLogo = z.output<typeof LogoSchema> & {
   /** SVG markup, inlined so the logo can use `currentColor`. */

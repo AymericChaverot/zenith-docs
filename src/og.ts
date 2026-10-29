@@ -2,16 +2,40 @@ import { readFile } from 'node:fs/promises';
 import { initWasm, Resvg } from '@resvg/resvg-wasm';
 import satori from 'satori';
 import { PALETTE, resolveAccent, toHex, toRgba } from './colors';
-import type { ZenithConfig } from './config';
+import type { OgOptions, ZenithConfig } from './config';
 
 export const OG_WIDTH = 1200;
 export const OG_HEIGHT = 630;
 
-/** Dark theme colors, in sRGB: neither satori nor resvg parses `oklch`. */
-const SURFACE = toHex(PALETTE.dark.background);
-const TEXT = toHex(PALETTE.dark.text);
-const MUTED = toHex(PALETTE.dark.text2);
-const BORDER = toHex(PALETTE.dark.borderStrong);
+/** Colors of a card, in sRGB: neither satori nor resvg parses `oklch`. */
+export interface OgColors {
+  background: string;
+  text: string;
+  muted: string;
+  accent: string;
+  border: string;
+}
+
+/** The palette of the chosen color scheme, the accent of the site, then the overrides. */
+export function resolveOgColors(config: ZenithConfig, og: OgOptions): OgColors {
+  const scheme = og.colorScheme;
+  const palette = PALETTE[scheme];
+  const base = {
+    background: palette.background,
+    text: palette.text,
+    muted: palette.text2,
+    accent: resolveAccent(config.accent)[scheme],
+    border: scheme === 'dark' ? PALETTE.dark.borderStrong : PALETTE.light.border,
+  };
+  const colors = { ...base, ...og.colors };
+  return {
+    background: toHex(colors.background),
+    text: toHex(colors.text),
+    muted: toHex(colors.muted),
+    accent: toHex(colors.accent),
+    border: toHex(colors.border),
+  };
+}
 
 /**
  * Files read at render time. Their paths are resolved when the integration starts,
@@ -83,7 +107,10 @@ function el(type: string, style: Record<string, unknown>, children?: Child | Chi
 }
 
 function card({ config, title, description, section, badges = [] }: OgImageOptions): Element {
-  const accent = toHex(resolveAccent(config.accent).dark);
+  // Images are only rendered when `og` is on.
+  const og = config.og as OgOptions;
+  const colors = resolveOgColors(config, og);
+  const { accent } = colors;
   const heading = truncate(title, 70);
   const logo = config.logo?.svg ? logoDataUri(config.logo.svg, accent) : undefined;
 
@@ -94,21 +121,21 @@ function card({ config, title, description, section, badges = [] }: OgImageOptio
       position: 'relative',
       width: '100%',
       height: '100%',
-      backgroundColor: SURFACE,
-      color: TEXT,
+      backgroundColor: colors.background,
+      color: colors.text,
       fontFamily: 'Geist',
-      // The site anchors its backdrop to the top left, the card does the same.
-      backgroundImage: `radial-gradient(circle at 12% 0%, ${toRgba(accent, 0.22)}, ${toRgba(SURFACE, 0)} 55%)`,
+      ...backdrop(og.backdrop, colors),
     },
     [
-      el('div', {
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        width: '100%',
-        height: 8,
-        backgroundImage: `linear-gradient(90deg, ${accent}, ${toRgba(accent, 0)})`,
-      }),
+      og.accentBar &&
+        el('div', {
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: 8,
+          backgroundImage: `linear-gradient(90deg, ${accent}, ${toRgba(accent, 0)})`,
+        }),
       el(
         'div',
         {
@@ -144,7 +171,7 @@ function card({ config, title, description, section, badges = [] }: OgImageOptio
             description &&
               el(
                 'div',
-                { fontSize: 30, lineHeight: 1.4, color: MUTED, marginTop: 20 },
+                { fontSize: 30, lineHeight: 1.4, color: colors.muted, marginTop: 20 },
                 truncate(description, 130),
               ),
           ]),
@@ -154,7 +181,7 @@ function card({ config, title, description, section, badges = [] }: OgImageOptio
             [
               el(
                 'div',
-                { display: 'flex', fontSize: 22, color: MUTED },
+                { display: 'flex', fontSize: 22, color: colors.muted },
                 truncate(section ?? '', 60),
               ),
               el(
@@ -166,8 +193,8 @@ function card({ config, title, description, section, badges = [] }: OgImageOptio
                     {
                       display: 'flex',
                       fontSize: 20,
-                      color: MUTED,
-                      border: `1px solid ${BORDER}`,
+                      color: colors.muted,
+                      border: `1px solid ${colors.border}`,
                       borderRadius: 999,
                       padding: '8px 18px',
                     },
@@ -181,6 +208,33 @@ function card({ config, title, description, section, badges = [] }: OgImageOptio
       ),
     ],
   );
+}
+
+/** Background of the card, drawn with the accent so it matches the site. */
+function backdrop(name: OgOptions['backdrop'], { accent, background }: OgColors) {
+  const faint = toRgba(accent, 0.14);
+  // Fades the pattern out towards the bottom right, where the text sits.
+  const fade = `radial-gradient(circle at 0% 0%, ${toRgba(background, 0)}, ${background} 75%)`;
+  switch (name) {
+    case 'glow':
+      // The site anchors its backdrop to the top left, the card does the same.
+      return {
+        backgroundImage: `radial-gradient(circle at 12% 0%, ${toRgba(accent, 0.22)}, ${toRgba(background, 0)} 55%)`,
+      };
+    case 'grid':
+      return {
+        backgroundImage: `${fade}, linear-gradient(${faint} 1px, transparent 1px), linear-gradient(90deg, ${faint} 1px, transparent 1px)`,
+        backgroundSize: '100% 100%, 48px 48px, 48px 48px',
+      };
+    case 'dots':
+      return {
+        // satori reads the stops of a radial gradient as percentages only.
+        backgroundImage: `${fade}, radial-gradient(${toRgba(accent, 0.5)} 8%, ${toRgba(accent, 0)} 12%)`,
+        backgroundSize: '100% 100%, 24px 24px',
+      };
+    case 'none':
+      return {};
+  }
 }
 
 /** Cut on a word boundary when there is one close enough to the limit. */

@@ -19,3 +19,24 @@ describe('head option', () => {
     expect(ZenithConfigSchema.safeParse({ head: [{ tag: 'div' }] }).success).toBe(false);
   });
 });
+
+describe('og option', () => {
+  it('fills in the defaults when on', () => {
+    expect(ZenithConfigSchema.parse({}).og).toMatchObject({
+      colorScheme: 'dark',
+      backdrop: 'glow',
+    });
+    expect(ZenithConfigSchema.parse({ og: { backdrop: 'grid' } }).og).toMatchObject({
+      backdrop: 'grid',
+      accentBar: true,
+    });
+  });
+
+  it('stays off with false', () => {
+    expect(ZenithConfigSchema.parse({ og: false }).og).toBe(false);
+  });
+
+  it('rejects colors it cannot draw', () => {
+    expect(ZenithConfigSchema.safeParse({ og: { colors: { text: 'red' } } }).success).toBe(false);
+  });
+});
