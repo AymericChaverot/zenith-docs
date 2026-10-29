@@ -3,13 +3,15 @@ import type { Paragraph, PhrasingContent } from 'mdast';
 import { directiveToMarkdown } from 'mdast-util-directive';
 import { toMarkdown } from 'mdast-util-to-markdown';
 import GithubSlugger from 'github-slugger';
-import type {
-  HastPluginDefinition,
-  HastPluginEntry,
-  MdastPluginDefinition,
-  MdastPluginEntry,
+import {
+  htmlToHast,
+  type HastPluginDefinition,
+  type HastPluginEntry,
+  type MdastPluginDefinition,
+  type MdastPluginEntry,
 } from 'satteri';
 import { resolveCallout, type CalloutType, type ResolvedCallout } from '../callouts';
+import { renderMermaid } from './diagrams';
 import { convertCommand, PACKAGE_MANAGERS } from './package-managers';
 import { DEFAULT_TRANSLATIONS, type Translations } from '../translations';
 import { withBase } from '../urls';
@@ -34,7 +36,11 @@ export function zenithHastPlugins(
 ): HastPluginEntry[] {
   // A factory so each file gets its own slugger and its own language.
   return [
-    ({ fileURL }) => [headingsPlugin(t(fileURL)), codeBlocksPlugin(t(fileURL))],
+    ({ fileURL }) => [
+      headingsPlugin(t(fileURL)),
+      diagramsPlugin(fileURL),
+      codeBlocksPlugin(t(fileURL)),
+    ],
     ...(base === '/' ? [] : [linksPlugin(base)]),
   ];
 }
@@ -211,6 +217,45 @@ function headingsPlugin(t: Translations): HastPluginDefinition {
       },
     },
   };
+}
+
+/**
+ * ```mermaid code blocks drawn as SVG at build time.
+ * The markup is parsed into elements, so it goes through MDX like any other.
+ */
+function diagramsPlugin(fileURL: URL | undefined): HastPluginDefinition {
+  return {
+    name: 'zenith-diagrams',
+    element: {
+      filter: ['pre'],
+      visit(node, ctx) {
+        const code = node.children.find(
+          (child): child is Element => child.type === 'element' && child.tagName === 'code',
+        );
+        if (!code) return;
+
+        // Shiki marks the language on `<pre>`, plain Markdown on `<code>`.
+        const language = node.properties?.dataLanguage ?? node.properties?.['data-language'];
+        if (language !== 'mermaid' && !hasClass(code, 'language-mermaid')) return;
+        try {
+          return parseHtml(`<figure class="zd-mermaid">${renderMermaid(ctx.textContent(node))}</figure>`);
+        } catch (error) {
+          // Diagram types the renderer does not draw stay readable as code.
+          const file = fileURL ? ` in ${fileURL.pathname}` : '';
+          console.warn(`[zenith-docs] Mermaid diagram shown as code${file}: ${(error as Error).message}`);
+        }
+      },
+    },
+  };
+}
+
+/**
+ * The single element of an HTML fragment. `xmlns` is dropped: HTML does not need it on
+ * `<svg>`, and the parser would keep it as a namespaced `:xmlns`.
+ */
+function parseHtml(html: string): Element {
+  const root = htmlToHast(html.replace(/\sxmlns="[^"]*"/g, ''), { fragment: true }) as HastRoot;
+  return root.children.find((child): child is Element => child.type === 'element')!;
 }
 
 /** Wrap highlighted `<pre>` blocks with a title bar and a copy button. */

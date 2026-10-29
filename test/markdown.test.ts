@@ -1,5 +1,5 @@
 import { markdownToHtml } from 'satteri';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import {
   directivesRestorationPlugin,
   zenithHastPlugins,
@@ -106,5 +106,29 @@ describe('package managers', () => {
     expect(html).toContain('data-value="pnpm"');
     expect(html).toContain('<code class="language-sh">pnpm add zenith-docs\n</code>');
     expect(html).toContain('<code class="language-sh">bun add zenith-docs\n</code>');
+  });
+});
+
+describe('mermaid', () => {
+  const diagram = '```mermaid\ngraph LR\n  A --> B\n```';
+
+  it('draws diagrams as inline SVG', () => {
+    const html = render(diagram);
+    expect(html).toMatch(/^<figure class="zd-mermaid"><svg /);
+    expect(html).toContain('--fg:var(--text)');
+  });
+
+  it('scopes the styles of diagrams and loads no font', () => {
+    const html = render(diagram);
+    expect(html).toContain('.zd-mermaid svg {');
+    expect(html).not.toMatch(/@import|googleapis|^\s*svg \{/m);
+  });
+
+  it('leaves unsupported diagrams as code', () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    const html = render('```mermaid\ngantt\n  title Plan\n```');
+    expect(html).toContain('<code class="language-mermaid">');
+    expect(warn).toHaveBeenCalledOnce();
+    warn.mockRestore();
   });
 });

@@ -63,6 +63,26 @@ Headings from level 2 to 3 are listed in the table of contents, and each one get
 
 This heading can be linked to with [`#custom-id`](#custom-id).
 
+## Diagrams
+
+Code blocks whose language is `mermaid` are drawn as SVG when the site is built, with the colors of the site, so they follow dark mode. No diagram library is sent to the browser.
+
+````md
+```mermaid
+graph LR
+  A[Markdown] --> B{Sätteri} --> C[HTML]
+  B --> D[llms.txt]
+```
+````
+
+```mermaid
+graph LR
+  A[Markdown] --> B{Sätteri} --> C[HTML]
+  B --> D[llms.txt]
+```
+
+Flowcharts, sequence, state, class and ER diagrams, and XY charts are supported. Other diagram types are shown as code, with a warning in the build output.
+
 ## Footnotes
 
 Footnotes are collected at the end of the page.[^1]

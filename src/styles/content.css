@@ -122,6 +122,20 @@
   color: var(--text);
 }
 
+/* Diagrams, drawn at build time */
+
+.zd-mermaid {
+  margin-block: 1.5rem;
+  overflow-x: auto;
+}
+
+.zd-mermaid svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin-inline: auto;
+}
+
 .zd-untranslated {
   margin-top: 1.5rem;
 }
