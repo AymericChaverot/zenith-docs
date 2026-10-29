@@ -27,12 +27,12 @@ const assistants = prompt
           <Icon name="chevron" size={14} class="zd-chevron" />
         </summary>
         <div class="zd-page-menu-list">
-          <a href={markdown}>
+          <a class="zd-page-menu-item" href={markdown}>
             <Icon name="file" size={16} />
             {t['page.markdown']}
           </a>
           {assistants.map(({ name, href }) => (
-            <a href={href} target="_blank" rel="noopener">
+            <a class="zd-page-menu-item" href={href} target="_blank" rel="noopener">
               <Icon name="external" size={16} />
               {t['page.openIn'].replace('{name}', name)}
             </a>

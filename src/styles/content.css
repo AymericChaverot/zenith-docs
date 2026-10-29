@@ -107,7 +107,7 @@
   box-shadow: var(--zd-shadow);
 }
 
-.zd-page-menu-list a {
+.zd-page-menu-item {
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -117,7 +117,7 @@
   font-size: 0.875rem;
 }
 
-.zd-page-menu-list a:hover {
+.zd-page-menu-item:hover {
   background: var(--background-2);
   color: var(--text);
 }
