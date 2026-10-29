@@ -41,7 +41,8 @@
     "preview": "pnpm --filter docs preview",
     "test": "vitest run",
     "check": "tsc -p tsconfig.json",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
   },
   "peerDependencies": {
     "astro": "^7.3.0"
