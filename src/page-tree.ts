@@ -1,3 +1,10 @@
+export const BADGE_VARIANTS = ['default', 'note', 'tip', 'success', 'warning', 'danger'] as const;
+
+export interface SidebarBadge {
+  text: string;
+  variant: (typeof BADGE_VARIANTS)[number];
+}
+
 export interface PageTreeDoc {
   id: string;
   /** Path relative to the docs directory, with forward slashes, e.g. `guides/intro.mdx`. */
@@ -5,6 +12,7 @@ export interface PageTreeDoc {
   title: string;
   icon?: string;
   hidden?: boolean;
+  badge?: SidebarBadge;
 }
 
 export interface PageTreeMeta {
@@ -23,6 +31,7 @@ export interface PageNode {
   url: string;
   icon?: string;
   external?: boolean;
+  badge?: SidebarBadge;
 }
 
 export interface SeparatorNode {
@@ -95,7 +104,13 @@ export function buildPageTree(
   }
 
   function makePage(doc: PageTreeDoc): PageNode {
-    return { type: 'page', name: doc.title, url: urlFromId(doc.id, base), icon: doc.icon };
+    return {
+      type: 'page',
+      name: doc.title,
+      url: urlFromId(doc.id, base),
+      icon: doc.icon,
+      badge: doc.badge,
+    };
   }
 
   function buildFolder(dir: string): FolderNode | undefined {

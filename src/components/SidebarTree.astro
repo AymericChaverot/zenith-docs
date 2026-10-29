@@ -32,6 +32,11 @@ const containsUrl = (folder: FolderNode) =>
             >
               {node.icon && <Icon name={node.icon} />}
               <span>{node.name}</span>
+              {node.badge && (
+                <span class="zd-sidebar-badge" data-variant={node.badge.variant}>
+                  {node.badge.text}
+                </span>
+              )}
               {node.external && <Icon name="external" size={12} />}
             </a>
           </li>

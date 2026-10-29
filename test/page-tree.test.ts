@@ -32,6 +32,12 @@ describe('buildPageTree', () => {
     expect(names(tree.children)).toEqual(['index.mdx', 'a.mdx', 'b.mdx']);
   });
 
+  it('keeps the badge of a page', () => {
+    const badge = { text: 'New', variant: 'tip' as const };
+    const tree = buildPageTree([doc('a.mdx', 'A', { badge })], new Map());
+    expect(tree.children[0]).toMatchObject({ type: 'page', name: 'A', badge });
+  });
+
   it('turns folders into nodes using their index page', () => {
     const tree = buildPageTree(
       [doc('guides/index.mdx', 'Guides'), doc('guides/setup.mdx', 'Setup')],

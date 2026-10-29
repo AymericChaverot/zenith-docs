@@ -1,6 +1,7 @@
 import { glob, type Loader } from 'astro/loaders';
 import { z } from 'astro/zod';
 import { DEFAULT_DOCS_DIR } from './config';
+import { BADGE_VARIANTS } from './page-tree';
 
 interface LoaderOptions {
   /** Directory holding the docs content, relative to the project root. */
@@ -35,6 +36,16 @@ export function docsSchema() {
       .object({
         label: z.string().optional(),
         hidden: z.boolean().default(false),
+        /** Short label next to the page in the sidebar, such as `New`. */
+        badge: z
+          .union([
+            z.string(),
+            z.object({ text: z.string(), variant: z.enum(BADGE_VARIANTS).default('default') }),
+          ])
+          .transform((badge) =>
+            typeof badge === 'string' ? { text: badge, variant: 'default' as const } : badge,
+          )
+          .optional(),
       })
       .default({ hidden: false }),
     editUrl: z.union([z.string(), z.literal(false)]).optional(),

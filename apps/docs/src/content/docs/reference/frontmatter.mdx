@@ -24,8 +24,31 @@ sidebar:
 | `draft`           | `boolean`           | Only show the page in development, leave it out of builds    |
 | `sidebar.label`   | `string`            | Label used in the sidebar instead of the title               |
 | `sidebar.hidden`  | `boolean`           | Hide the page from the sidebar                               |
+| `sidebar.badge`   | `string \| object`  | Short label next to the page in the sidebar, see [badges](#sidebar-badges) |
 | `editUrl`         | `string \| false`   | Override or disable the [edit link](/reference/configuration/#editlink) |
 | `lastUpdated`     | `Date \| false`     | Override or disable the [last updated](/reference/configuration/#lastupdated) date |
+
+## Sidebar badges
+
+A badge points readers to a page, such as a new feature. It takes the accent color, or the color of a [callout](/writing/markdown/#callouts) with a `variant`: `note`, `tip`, `success`, `warning` or `danger`.
+
+```mdx
+---
+title: Search
+sidebar:
+  badge: New
+---
+```
+
+```mdx
+---
+title: Legacy API
+sidebar:
+  badge:
+    text: Deprecated
+    variant: warning
+---
+```
 
 ## Extending the schema
 

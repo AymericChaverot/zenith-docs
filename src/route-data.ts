@@ -202,6 +202,7 @@ async function loadPageTree(
     title: entry.data.sidebar.label ?? entry.data.title,
     icon: entry.data.icon,
     hidden: entry.data.sidebar.hidden,
+    badge: entry.data.sidebar.badge,
   }));
 
   // A locale without its own meta.json for a folder uses the default language ordering.
