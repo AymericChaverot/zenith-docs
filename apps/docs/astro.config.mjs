@@ -30,6 +30,7 @@ export default defineConfig({
       github: 'https://github.com/AymericChaverot/zenith-docs',
       lastUpdated: true,
       math: true,
+      linkValidation: 'error',
       openapi: {
         rockets: './src/openapi/rockets.yaml',
       },
