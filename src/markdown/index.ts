@@ -10,6 +10,7 @@ import type {
   MdastPluginEntry,
 } from 'satteri';
 import { resolveCallout, type CalloutType, type ResolvedCallout } from '../callouts';
+import { convertCommand, PACKAGE_MANAGERS } from './package-managers';
 import { DEFAULT_TRANSLATIONS, type Translations } from '../translations';
 import { withBase } from '../urls';
 
@@ -21,8 +22,10 @@ const defaultTranslations: TranslationsForFile = () => DEFAULT_TRANSLATIONS as T
 const calloutTitle = (t: Translations, callout: ResolvedCallout) =>
   (t as Record<string, string>)[`callout.${callout.name}`] ?? callout.title;
 
-export function zenithMdastPlugins(t: TranslationsForFile = defaultTranslations): MdastPluginEntry[] {
-  return [({ fileURL }) => calloutsPlugin(t(fileURL))];
+export function zenithMdastPlugins(
+  t: TranslationsForFile = defaultTranslations,
+): MdastPluginEntry[] {
+  return [({ fileURL }) => calloutsPlugin(t(fileURL)), packageManagersPlugin()];
 }
 
 export function zenithHastPlugins(
@@ -111,6 +114,41 @@ function calloutsPlugin(t: Translations): MdastPluginDefinition {
         ...node.children.slice(1),
       ];
       return callout(resolved.type, calloutTitle(t, resolved), children);
+    },
+  };
+}
+
+/**
+ * ```npm code blocks, shown as tabs with the same commands for each package manager.
+ * The markup is the one of `<Tabs groupId="package-manager" persist>`.
+ */
+function packageManagersPlugin(): MdastPluginDefinition {
+  return {
+    name: 'zenith-package-managers',
+    code(node) {
+      if (node.lang !== 'npm') return;
+      const lines = node.value.split('\n');
+      return element(
+        'zd-tabs',
+        { class: 'zd-tabs', 'data-group': 'package-manager', 'data-persist': '' },
+        PACKAGE_MANAGERS.map((pm) =>
+          element(
+            'div',
+            { class: 'zd-tab-panel', role: 'tabpanel', 'data-value': pm, tabindex: '0' },
+            [
+              element('p', { class: 'zd-tab-label', 'data-pagefind-ignore': '' }, [
+                { type: 'text', value: pm },
+              ]),
+              {
+                type: 'code',
+                lang: 'sh',
+                meta: node.meta,
+                value: lines.map((line) => convertCommand(line, pm)).join('\n'),
+              },
+            ],
+          ),
+        ),
+      );
     },
   };
 }

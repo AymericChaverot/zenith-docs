@@ -76,3 +76,21 @@ Add `lineNumbers` to the meta, optionally with a starting number: `lineNumbers=1
 ## Copy button
 
 Every code block gets a copy button, shown on hover. It is only rendered when JavaScript is available.
+
+## Package managers
+
+Write a command once for npm, in a block whose language is `npm`, and readers get it for npm, pnpm, Yarn and Bun, in tabs:
+
+````md
+```npm
+npm install zenith-docs
+npx astro dev
+```
+````
+
+```npm
+npm install zenith-docs
+npx astro dev
+```
+
+`install`, `uninstall`, `run`, `exec` and `npx` are rewritten for each package manager, and other commands keep their name. The tabs of a site switch together, and the choice is remembered across pages. Without JavaScript, every variant is shown with its name.

@@ -13,11 +13,14 @@ import Sidebar from 'virtual:zenith/components/Sidebar';
 import TableOfContents from 'virtual:zenith/components/TableOfContents';
 import { resolveAccent } from '../../colors';
 import Icon from '../Icon.astro';
+import TabsScript from '../TabsScript.astro';
 import InjectionPoint from './InjectionPoint.astro';
 
 const { config, entry, toc, locale, t, translated } = Astro.locals.zenith;
 const full = entry.data.full;
 const hasToc = toc.length > 0 && !full;
+// ```npm blocks become tabs, whose script is otherwise only loaded by `<Tabs>`.
+const packageManagers = /^\s*(`{3,}|~{3,})npm\b/m.test(entry.body ?? '');
 const accent = resolveAccent(config.accent);
 // A custom accent sets the variables the presets set in `theme.css`.
 const accentStyle =
@@ -109,6 +112,7 @@ const accentStyle =
       }
     </div>
     <InjectionPoint name="footer" class="zd-slot-footer" />
+    {packageManagers && <TabsScript />}
     <script is:inline>
       const copied = (button) => {
         button.setAttribute('data-copied', '');

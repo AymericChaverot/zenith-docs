@@ -98,3 +98,13 @@ describe('links', () => {
     expect(render('[Install](/installation/)')).toBe('<p><a href="/installation/">Install</a></p>');
   });
 });
+
+describe('package managers', () => {
+  it('turns npm blocks into tabs', () => {
+    const html = render('```npm\nnpm i zenith-docs\n```');
+    expect(html).toMatch(/^<zd-tabs class="zd-tabs" data-group="package-manager" data-persist="">/);
+    expect(html).toContain('data-value="pnpm"');
+    expect(html).toContain('<code class="language-sh">pnpm add zenith-docs\n</code>');
+    expect(html).toContain('<code class="language-sh">bun add zenith-docs\n</code>');
+  });
+});
