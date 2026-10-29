@@ -27,7 +27,7 @@ import {
   type SidebarScope,
 } from './page-tree';
 import { getTranslations, type Translations } from './translations';
-import { baseUrl } from './urls';
+import { baseUrl, withBase } from './urls';
 import {
   getDefaultVersion,
   getVersion,
@@ -92,6 +92,19 @@ function prefixOf(locale: ResolvedLocale, version: ResolvedVersion): string {
 
 const scopeKey = (locale: ResolvedLocale, version: ResolvedVersion) =>
   `${locale.key}|${version.key}`;
+
+/** Whether an Open Graph image is generated for a page. */
+export function hasGeneratedOgImage(entry: DocsEntry): boolean {
+  const og = entry.data.og;
+  return Boolean(config.og) && og !== false && !og?.image;
+}
+
+/** The image of a page from its frontmatter, or the generated one. */
+function getOgImage(entry: DocsEntry, url: string): string | undefined {
+  const image = entry.data.og ? entry.data.og.image : undefined;
+  if (image) return withBase(image);
+  return hasGeneratedOgImage(entry) ? ogImagePath(url) : undefined;
+}
 
 /** Path of the Open Graph image of a page, matching the `og/[...slug].png` route. */
 export function ogImagePath(url: string): string {
@@ -269,7 +282,7 @@ export async function getRouteData(
     next,
     editUrl: getEditUrl(entry),
     lastUpdated: getPageLastUpdated(entry),
-    ogImage: config.og ? ogImagePath(url) : undefined,
+    ogImage: getOgImage(entry, url),
     locale,
     locales,
     alternates: locales.map((other) => ({

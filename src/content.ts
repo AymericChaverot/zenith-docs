@@ -58,6 +58,21 @@ export function docsSchema() {
     prev: NeighbourSchema.optional(),
     /** Link to the next page: `false` hides it, a string changes its label. */
     next: NeighbourSchema.optional(),
+    /**
+     * Social preview image: `false` leaves it out, `title` and `description` change the
+     * text of the generated card, and `image` replaces it with a file of your own.
+     */
+    og: z
+      .union([
+        z.literal(false),
+        z.object({
+          title: z.string().optional(),
+          description: z.string().optional(),
+          /** URL of the image, from the root of the site or absolute. */
+          image: z.string().optional(),
+        }),
+      ])
+      .optional(),
     editUrl: z.union([z.string(), z.literal(false)]).optional(),
     lastUpdated: z.union([z.coerce.date(), z.literal(false)]).optional(),
   });

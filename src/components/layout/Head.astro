@@ -64,8 +64,13 @@ const headTags = config.head.map(({ tag, attrs, content }) => ({
 {ogImage && !noindex && (
   <>
     <meta property="og:image" content={absolute(ogImage)} />
-    <meta property="og:image:width" content="1200" />
-    <meta property="og:image:height" content="630" />
+    {/* The size of an image given in the frontmatter is unknown. */}
+    {!(entry.data.og && entry.data.og.image) && (
+      <>
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+      </>
+    )}
     <meta property="og:image:alt" content={title} />
   </>
 )}

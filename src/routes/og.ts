@@ -3,13 +3,21 @@ import config from 'virtual:zenith/config';
 import * as assets from 'virtual:zenith/og-assets';
 import template from 'virtual:zenith/og-template';
 import { renderOgImage } from '../og';
-import { getDocs, getDocsPaths, getRouteData, type DocsEntry } from '../route-data';
+import {
+  getDocs,
+  getDocsPaths,
+  getRouteData,
+  hasGeneratedOgImage,
+  type DocsEntry,
+} from '../route-data';
 import { baseUrl } from '../urls';
 
 export const getStaticPaths = (async () => {
   const paths = await getDocsPaths(await getDocs());
   // The home page has no slug, its image is `og/index.png`.
-  return paths.map(({ params, props }) => ({ params: { slug: params.slug ?? 'index' }, props }));
+  return paths
+    .filter(({ props }) => hasGeneratedOgImage(props.entry))
+    .map(({ params, props }) => ({ params: { slug: params.slug ?? 'index' }, props }));
 }) satisfies GetStaticPaths;
 
 export const GET: APIRoute = async ({ props }) => {
@@ -20,6 +28,7 @@ export const GET: APIRoute = async ({ props }) => {
     translated: boolean;
   };
   const data = await getRouteData(entry, [], { locale, version, translated });
+  const og = entry.data.og || undefined;
 
   const badges = [
     data.locales.length > 1 ? data.locale.label : undefined,
@@ -33,8 +42,8 @@ export const GET: APIRoute = async ({ props }) => {
   const png = await renderOgImage({
     config,
     assets,
-    title: data.title,
-    description: data.description,
+    title: og?.title ?? data.title,
+    description: og?.description ?? data.description,
     section: trail || (home ? undefined : data.url),
     badges,
     url: data.url,
