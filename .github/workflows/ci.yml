@@ -1,5 +1,5 @@
 # ZenithDocs installs straight from this repository, so `main` is what people get:
-# every push and pull request is type checked and tested.
+# every push and pull request is type checked, tested, and builds the docs and the example.
 name: CI
 
 on:
@@ -23,3 +23,5 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm check
       - run: pnpm test
+      - run: pnpm build
+      - run: pnpm --filter zero-config-example build
