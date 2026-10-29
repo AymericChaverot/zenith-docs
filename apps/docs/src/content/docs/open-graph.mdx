@@ -2,27 +2,187 @@
 title: Open Graph images
 description: A social preview image is generated for every page at build time.
 icon: image
+sidebar:
+  badge: New
 ---
 
 Every page gets its own 1200×630 preview image, the one social networks and chat apps show when its link is shared. Images are generated during the build, written to `og/<page>.png` at the root of the site, and referenced with the `og:image` meta tag, which X and the others read as well, alongside a `summary_large_image` Twitter card.
 
-Nothing is required to turn this on: it follows the `og` option, which defaults to `true`.
+Nothing is required to turn this on: it follows the `og` option, which defaults to `true`. Pass an object instead to change how the card looks.
 
 ## What the card shows
 
-| Element              | Source                                                |
-| -------------------- | ----------------------------------------------------- |
-| Logo and site name   | The `logo` and `title` options                        |
-| Title                | The page `title`, in a smaller size when it is long   |
-| Description          | The page `description`, when it has one               |
-| Folders              | The breadcrumb trail, or the path for a top-level page |
-| Badges               | Language and version, when the site has several       |
+| Element            | Source                                                 |
+| ------------------ | ------------------------------------------------------ |
+| Logo and site name | The `logo` and `title` options                         |
+| Title              | The page `title`, in a smaller size when it is long    |
+| Description        | The page `description`, when it has one                |
+| Folders            | The breadcrumb trail, or the path for a top-level page |
+| Badges             | Language and version, when the site has several        |
 
 Colors follow the [accent](/customization/theming/#accent-presets) of the site, so a card looks like the page it points to.
 
 :::note
 Set [`site`](/reference/configuration/#site). Social networks only fetch absolute URLs, and that option is what turns `/og/index.png` into `https://example.com/og/index.png`.
 :::
+
+## Customizing the card
+
+Every option is optional, and the ones you leave out keep the defaults below.
+
+```js title="astro.config.mjs"
+zenith({
+  og: {
+    layout: 'split',
+    colorScheme: 'light',
+    backdrop: 'grid',
+    logo: { src: './src/assets/card-logo.svg', size: 56, position: 'bottom-left' },
+    siteName: 'Acme Docs',
+  },
+});
+```
+
+### Layout
+
+| `layout`   | Arrangement                                                                       |
+| ---------- | --------------------------------------------------------------------------------- |
+| `default`  | Text on the left, the logo and the site name in a corner, the folders and badges in the others |
+| `centered` | Everything on the center line, the logo above or below the text                   |
+| `split`    | Text on the left, the logo drawn large on the right                               |
+
+### Logo and site name
+
+`logo` takes the logo of the site, at a height of `size` pixels, in the corner set by `position`: `top-left`, `top-right`, `bottom-left` or `bottom-right`. The `centered` and `split` layouts only read whether it is at the top or the bottom. `src` points to another image, as a path from the project root or from `public/`, and `logo: false` leaves it out.
+
+`siteName` is shown next to the logo: `true` for the `title` option, a string for another text, or `false` for none. It is left out of the home page, whose title already is the site name.
+
+SVG, PNG and JPEG files are supported. In an SVG, `currentColor` takes the accent.
+
+### Colors
+
+`colorScheme` draws the card with the `dark` or `light` palette of the site. `colors` changes any of them, as `#rrggbb`, `#rgb` or `oklch(L C H)`:
+
+```js title="astro.config.mjs"
+zenith({
+  og: {
+    colors: {
+      background: '#0b1020',
+      text: '#ffffff',
+      muted: '#9ca3af',
+      accent: '#f97316',
+      border: '#1f2937',
+    },
+  },
+});
+```
+
+### Background
+
+`backdrop` decorates the card with the accent: `glow`, `grid`, `dots` or `none`. `accentBar: false` removes the line along the top edge.
+
+`background` covers the card with an image of your own, under the backdrop and the text, as a path from the project root or from `public/`. Pair it with `backdrop: 'none'` to show it as it is.
+
+### Font
+
+The card is set in Geist. `font` takes other TTF, OTF or WOFF files, but not WOFF2, which satori cannot read. Geist still draws the characters they lack.
+
+```js title="astro.config.mjs"
+zenith({
+  og: {
+    font: {
+      name: 'Inter',
+      files: [
+        { path: './src/fonts/inter-regular.woff', weight: 400 },
+        { path: './src/fonts/inter-semibold.woff', weight: 600 },
+      ],
+    },
+  },
+});
+```
+
+The title and the site name use weight 600, the rest 400. The closest weight is picked when one is missing.
+
+### What to show
+
+`description`, `breadcrumb` and `badges` each take `false` to leave that part out of every card.
+
+## Per page
+
+The `og` field of the [frontmatter](/reference/frontmatter/) changes the card of a single page. `title` and `description` replace the text of the card without touching the page:
+
+```mdx
+---
+title: CLI
+og:
+  title: The zenith command
+  description: Develop, build and preview a site from a folder of Markdown.
+---
+```
+
+`image` replaces the generated card with an image of your own, from the root of the site or as a full URL, and `og: false` gives the page no image at all.
+
+## Your own template
+
+When the options are not enough, `template` names a module that draws the card. Its default export receives the page and the resolved options, and returns a tree of elements that [satori](https://github.com/vercel/satori) renders: a subset of HTML and CSS, laid out with flexbox.
+
+```js title="astro.config.mjs"
+zenith({
+  og: { template: './src/og-card.ts' },
+});
+```
+
+```ts title="src/og-card.ts"
+import { h, type OgTemplateProps } from 'zenith-docs/og';
+
+export default function card({ title, siteName, colors, fontFamily }: OgTemplateProps) {
+  return h(
+    'div',
+    {
+      style: {
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'flex-end',
+        width: '100%',
+        height: '100%',
+        padding: 80,
+        background: colors.background,
+        color: colors.text,
+        fontFamily,
+      },
+    },
+    h('div', { style: { fontSize: 28, color: colors.accent } }, siteName),
+    h('div', { style: { fontSize: 72, fontWeight: 600 } }, title),
+  );
+}
+```
+
+`h(type, props, ...children)` builds an element, and leaves out children that are `false`, `null` or `undefined`. Every element with more than one child needs `display: 'flex'`.
+
+The template receives:
+
+| Prop          | Content                                                                    |
+| ------------- | -------------------------------------------------------------------------- |
+| `title`       | Title of the page, or the one of its `og` frontmatter                      |
+| `description` | Description of the page, unless `description` is off                       |
+| `section`     | Breadcrumb trail, unless `breadcrumb` is off                               |
+| `badges`      | Language and version, unless `badges` is off                               |
+| `siteName`    | Site name, left out on the home page or when `siteName` is off             |
+| `url`, `lang` | URL path and language of the page                                          |
+| `logo`        | The logo, as `{ src, width, height }` with `src` a data URI                |
+| `background`  | The `background` image, in the same shape                                  |
+| `colors`      | `background`, `text`, `muted`, `accent` and `border`, as hexadecimal colors |
+| `fontFamily`  | Family to set the text in                                                  |
+| `options`     | The `og` options, with their defaults                                      |
+
+`zenith-docs/og` also exports `defaultTemplate`, the built-in card. Call it to keep it for most pages, or to change what it receives:
+
+```ts title="src/og-card.ts"
+import { defaultTemplate, type OgTemplateProps } from 'zenith-docs/og';
+
+export default function card(props: OgTemplateProps) {
+  return defaultTemplate({ ...props, badges: [...props.badges, 'Beta'] });
+}
+```
 
 ## Translations and versions
 
@@ -43,18 +203,4 @@ zenith({
 });
 ```
 
-## Using your own images
-
-With `og: false`, no image is generated and no meta tag is added. Override the [`Head` component](/customization/overrides/) to point at images you provide yourself:
-
-```astro title="src/components/Head.astro"
----
-import Default from 'zenith-docs/components/layout/Head.astro';
-const { url, title } = Astro.locals.zenith;
----
-
-<Default />
-<meta property="og:image" content={new URL(`/social${url}cover.png`, Astro.site)} />
-<meta property="og:image:alt" content={title} />
-<meta name="twitter:card" content="summary_large_image" />
-```
+With `og: false`, no image is generated and no meta tag is added, except for pages that set an `image` in their frontmatter.

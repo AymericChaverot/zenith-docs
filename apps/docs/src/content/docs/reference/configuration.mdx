@@ -158,9 +158,25 @@ Shows buttons under the page title to copy the page as Markdown, view it, or ope
 
 ### `og`
 
-**Type:** `boolean` · **Default:** `true`
+**Type:** `boolean | object` · **Default:** `true`
 
-Generates a social preview image for every page. See [Open Graph images](/open-graph/).
+Generates a social preview image for every page. An object turns it on and changes the card. See [Open Graph images](/open-graph/#customizing-the-card).
+
+| Key           | Type                                                       | Default      |
+| ------------- | ---------------------------------------------------------- | ------------ |
+| `layout`      | `'default' \| 'centered' \| 'split'`                       | `'default'`  |
+| `logo`        | `{ src?: string; size?: number; position?: string } \| false` | the site logo, `44`, `'top-left'` |
+| `siteName`    | `boolean \| string`                                        | `true`       |
+| `description` | `boolean`                                                  | `true`       |
+| `breadcrumb`  | `boolean`                                                  | `true`       |
+| `badges`      | `boolean`                                                  | `true`       |
+| `colorScheme` | `'dark' \| 'light'`                                        | `'dark'`     |
+| `colors`      | `{ background?, text?, muted?, accent?, border? }`         | the theme    |
+| `backdrop`    | `'glow' \| 'grid' \| 'dots' \| 'none'`                     | `'glow'`     |
+| `accentBar`   | `boolean`                                                  | `true`       |
+| `background`  | `string`                                                   | none         |
+| `font`        | `{ name?: string; files: { path; weight?; style? }[] }`    | Geist        |
+| `template`    | `string`                                                   | the built-in card |
 
 ### `openapi`
 
