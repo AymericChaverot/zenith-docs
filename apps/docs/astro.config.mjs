@@ -119,6 +119,7 @@ export default defineConfig({
         variant: 'tip',
       },
       linkValidation: 'error',
+      redirects: { '/getting-started/': '/installation/' },
       openapi: {
         rockets: './src/openapi/rockets.yaml',
       },
