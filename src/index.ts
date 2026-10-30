@@ -24,6 +24,7 @@ import { getBuiltWith } from './built-with';
 import { buildSearchIndex } from './search';
 import { builtFileExists, findBrokenLinks, readBuiltPages } from './links';
 import { resolveOgAssets } from './og-assets';
+import { withBase } from './urls';
 import { OVERRIDABLE_COMPONENTS, SLOT_NAMES, vitePluginZenith } from './virtual';
 
 export type { ZenithConfig, ZenithUserConfig } from './config';
@@ -182,6 +183,14 @@ export default function zenith(userConfig: ZenithUserConfig = {}): AstroIntegrat
           favicon,
         };
 
+        // Astro leaves the destinations as written, but links in content get the base.
+        const redirects = Object.fromEntries(
+          Object.entries(config.redirects).map(([from, to]) => [
+            from,
+            withBase(to, astroConfig.base),
+          ]),
+        );
+
         // One entry per family of the preset, under the variables the theme reads.
         const preset: FontPreset | undefined = config.fonts
           ? FONT_PRESETS[config.fonts]
@@ -211,6 +220,7 @@ export default function zenith(userConfig: ZenithUserConfig = {}): AstroIntegrat
           : { light: 'vitesse-light', dark: 'vitesse-dark' };
 
         updateConfig({
+          redirects: { ...redirects, ...astroConfig.redirects },
           markdown: {
             shikiConfig: {
               ...(hasUserThemes

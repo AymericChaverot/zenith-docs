@@ -274,6 +274,11 @@ export const ZenithConfigSchema = z.object({
    * build, and to an id that page has. `warn` lists broken links, `error` also fails the build.
    */
   linkValidation: z.union([z.enum(['warn', 'error']), z.literal(false)]).default('warn'),
+  /**
+   * Pages that moved, as `{ '/old/': '/new/' }`: the old path becomes a page that sends readers
+   * to the new one. Paths are written from the root of the site, like links in content.
+   */
+  redirects: z.record(z.string().startsWith('/'), z.string().min(1)).default({}),
   /** Show the last commit date of each page. Requires the site to be built from a git checkout. */
   lastUpdated: z.boolean().default(false),
   /** Show a button at the bottom of the sidebar listing the versions the site is built with. */

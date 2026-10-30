@@ -87,3 +87,20 @@ describe('og option', () => {
     expect(ZenithConfigSchema.safeParse({ og: { colors: { text: 'red' } } }).success).toBe(false);
   });
 });
+
+describe('redirects option', () => {
+  it('maps paths of the site to a destination', () => {
+    const { redirects } = ZenithConfigSchema.parse({
+      redirects: { '/old/': '/new/', '/moved/': 'https://example.com/' },
+    });
+    expect(redirects).toEqual({ '/old/': '/new/', '/moved/': 'https://example.com/' });
+  });
+
+  it('is empty by default', () => {
+    expect(ZenithConfigSchema.parse({}).redirects).toEqual({});
+  });
+
+  it('rejects sources that are not paths of the site', () => {
+    expect(ZenithConfigSchema.safeParse({ redirects: { old: '/new/' } }).success).toBe(false);
+  });
+});

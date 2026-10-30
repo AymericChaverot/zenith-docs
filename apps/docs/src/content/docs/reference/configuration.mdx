@@ -217,6 +217,23 @@ Checks internal links once the site is built: each one must lead to a page or a 
 [WARN] Broken link on /guides/setup/: /reference/#options (no such anchor)
 ```
 
+### `redirects`
+
+**Type:** `Record<string, string>` · **Default:** `{}`
+
+Keeps the links to pages that moved working. Each old path becomes a page that sends readers to the new one, and tells search engines about the move. Paths are written from the root of the site, like links in content, and a destination can be another site.
+
+```js title="astro.config.mjs"
+zenith({
+  redirects: {
+    '/getting-started/': '/installation/',
+    '/guides/old-name/': 'https://example.com/guides/',
+  },
+});
+```
+
+The redirects are plain HTML pages, so they work on any static host. They add to the `redirects` option of Astro, which takes precedence.
+
 ### `lastUpdated`
 
 **Type:** `boolean` · **Default:** `false`
@@ -240,9 +257,9 @@ zenith({
 
 | Key           | Type                                                        | Default     |
 | ------------- | ----------------------------------------------------------- | ----------- |
-| `text`        | `string | Record<string, string>`                          | required    |
-| `link`        | `{ label: string | Record<string, string>; href: string }`  | none        |
-| `variant`     | `'default' | 'note' | 'tip' | 'success' | 'warning' | 'danger'` | `'default'` |
+| `text`        | `string \| Record<string, string>`                          | required    |
+| `link`        | `{ label: string \| Record<string, string>; href: string }`  | none        |
+| `variant`     | `'default' \| 'note' \| 'tip' \| 'success' \| 'warning' \| 'danger'` | `'default'` |
 | `dismissible` | `boolean`                                                   | `true`      |
 
 The text is plain. On a site with [several languages](/i18n/), `text` and `link.label` take one text per locale, with `root` as the fallback. A reader who closes the bar does not see it again until the announcement changes. For richer content, use the `banner` [slot](/customization/slots/).
