@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.6.0
+
+### Features
+
+- `mermaid` changes how diagrams are drawn: the `spacing` between nodes (`compact`, `normal` or `wide`), their `colors`, and a `fallback` that fails the build on a diagram of an unsupported type.
+- A keyword after `mermaid` sets the spacing of a single diagram, and `title` adds a caption below it.
+- `announcement` shows a bar above the header for news such as a release, with an optional link, a color, a text per language, and a button to close it that remembers the choice until the announcement changes.
+- `redirects` keeps the links to pages that moved working, with static pages that work on any host.
+
 ## 0.5.1
 
 ### Fixes
