@@ -161,7 +161,7 @@ export default function zenith(userConfig: ZenithUserConfig = {}): AstroIntegrat
             directivesRestorationPlugin(),
           );
           processor.options.hastPlugins.push(
-            ...zenithHastPlugins(translationsForFile, astroConfig.base),
+            ...zenithHastPlugins(translationsForFile, astroConfig.base, config.mermaid),
           );
         } else {
           logger.warn(

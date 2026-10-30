@@ -6,16 +6,22 @@ import {
   zenithMdastPlugins,
   type TranslationsForFile,
 } from '../src/markdown/index';
+import type { MermaidOptions } from '../src/config';
 import { getTranslations } from '../src/translations';
 
 function render(
   source: string,
-  options: { base?: string; t?: TranslationsForFile; math?: boolean } = {},
+  options: {
+    base?: string;
+    t?: TranslationsForFile;
+    math?: boolean;
+    mermaid?: MermaidOptions;
+  } = {},
 ) {
   const { html } = markdownToHtml(source, {
     features: { directive: true, math: options.math ?? false },
     mdastPlugins: [...zenithMdastPlugins(options.t), directivesRestorationPlugin()],
-    hastPlugins: zenithHastPlugins(options.t, options.base),
+    hastPlugins: zenithHastPlugins(options.t, options.base, options.mermaid),
   }) as { html: string };
   return html.trim();
 }
@@ -133,6 +139,46 @@ describe('mermaid', () => {
     expect(html).toContain('<code class="language-mermaid">');
     expect(warn).toHaveBeenCalledOnce();
     warn.mockRestore();
+  });
+});
+
+describe('mermaid options', () => {
+  const fence = (meta: string, body = 'graph LR\n  A --> B') =>
+    '```mermaid' + meta + '\n' + body + '\n```';
+  const options = (mermaid: Partial<MermaidOptions>): MermaidOptions => ({
+    spacing: 'normal',
+    colors: {},
+    fallback: 'code',
+    ...mermaid,
+  });
+  const width = (html: string) => Number(/viewBox="0 0 (\d+)/.exec(html)![1]);
+
+  it('spaces the nodes with the spacing option', () => {
+    const compact = render(fence(''), { mermaid: options({ spacing: 'compact' }) });
+    expect(width(compact)).toBeLessThan(width(render(fence(''))));
+  });
+
+  it('lets a keyword on the code block override the spacing', () => {
+    expect(width(render(fence(' wide')))).toBeGreaterThan(width(render(fence(''))));
+    const compact = options({ spacing: 'compact' });
+    expect(width(render(fence(' wide'), { mermaid: compact }))).toBe(width(render(fence(' wide'))));
+  });
+
+  it('takes the colors of the options', () => {
+    const html = render(fence(''), { mermaid: options({ colors: { line: 'hotpink' } }) });
+    expect(html).toContain('--line:hotpink');
+  });
+
+  it('adds a title below the diagram', () => {
+    expect(render(fence(' title="Flow <1>"'))).toContain(
+      '<figcaption class="zd-mermaid-title">Flow &lt;1&gt;</figcaption>',
+    );
+  });
+
+  it('fails the build on unsupported diagrams with the error fallback', () => {
+    expect(() =>
+      render(fence('', 'gantt\n  title Plan'), { mermaid: options({ fallback: 'error' }) }),
+    ).toThrow(/Mermaid diagram/);
   });
 });
 

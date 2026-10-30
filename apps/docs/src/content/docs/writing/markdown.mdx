@@ -81,7 +81,44 @@ graph LR
   B --> D[llms.txt]
 ```
 
-Flowcharts, sequence, state, class and ER diagrams, and XY charts are supported. Other diagram types are shown as code, with a warning in the build output.
+Flowcharts, sequence, state, class and ER diagrams, and XY charts are supported. Other diagram types are shown as code, with a warning in the build output. Set `mermaid.fallback` to `'error'` to fail the build instead.
+
+### Spacing and title
+
+A keyword after `mermaid` sets the room between the nodes: `compact`, `normal` or `wide`. `title` adds a caption below the diagram.
+
+````md
+```mermaid wide title="Build pipeline"
+graph LR
+  A[Markdown] --> B{Sätteri} --> C[HTML]
+  B --> D[llms.txt]
+```
+````
+
+```mermaid wide title="Build pipeline"
+graph LR
+  A[Markdown] --> B{Sätteri} --> C[HTML]
+  B --> D[llms.txt]
+```
+
+```mermaid compact
+graph LR
+  A[Markdown] --> B{Sätteri} --> C[HTML]
+  B --> D[llms.txt]
+```
+
+### Colors and default spacing
+
+The `mermaid` option changes the defaults for every diagram, and the colors the diagrams are drawn with.
+
+```js title="astro.config.mjs"
+zenith({
+  mermaid: {
+    spacing: 'wide',
+    colors: { line: 'var(--text-2)', surface: 'var(--background)' },
+  },
+});
+```
 
 ## Math
 

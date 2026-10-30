@@ -35,6 +35,8 @@ function metaTransformer(): ShikiTransformer {
       const value = title?.[1] ?? title?.[2] ?? title?.[3];
       if (value) node.properties['data-title'] = value;
       node.properties['data-language'] = this.options.lang;
+      // Diagrams read their own keywords from the meta.
+      if (this.options.lang === 'mermaid' && raw) node.properties['data-meta'] = raw;
 
       const lineNumbers = /\blineNumbers(?:=(\d+))?/.exec(raw);
       if (lineNumbers) {

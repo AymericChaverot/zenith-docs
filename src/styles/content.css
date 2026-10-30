@@ -142,6 +142,13 @@
   margin-inline: auto;
 }
 
+.zd-mermaid-title {
+  margin-top: 0.5rem;
+  color: var(--text-2);
+  font-size: 0.875rem;
+  text-align: center;
+}
+
 .zd-untranslated {
   margin-top: 1.5rem;
 }

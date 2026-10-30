@@ -11,7 +11,8 @@ import {
   type MdastPluginEntry,
 } from 'satteri';
 import { resolveCallout, type CalloutType, type ResolvedCallout } from '../callouts';
-import { renderMath, renderMermaid } from './diagrams';
+import type { MermaidOptions } from '../config';
+import { parseMermaidMeta, renderMath, renderMermaid } from './diagrams';
 import { convertCommand, PACKAGE_MANAGERS } from './package-managers';
 import { DEFAULT_TRANSLATIONS, type Translations } from '../translations';
 import { withBase } from '../urls';
@@ -33,12 +34,13 @@ export function zenithMdastPlugins(
 export function zenithHastPlugins(
   t: TranslationsForFile = defaultTranslations,
   base = '/',
+  mermaid: MermaidOptions = { spacing: 'normal', colors: {}, fallback: 'code' },
 ): HastPluginEntry[] {
   // A factory so each file gets its own slugger and its own language.
   return [
     ({ fileURL }) => [
       headingsPlugin(t(fileURL)),
-      diagramsPlugin(fileURL),
+      diagramsPlugin(fileURL, mermaid),
       codeBlocksPlugin(t(fileURL)),
     ],
     ...(base === '/' ? [] : [linksPlugin(base)]),
@@ -223,7 +225,7 @@ function headingsPlugin(t: Translations): HastPluginDefinition {
  * ```mermaid code blocks drawn as SVG, and math rendered as MathML, at build time.
  * The markup is parsed into elements, so it goes through MDX like any other.
  */
-function diagramsPlugin(fileURL: URL | undefined): HastPluginDefinition {
+function diagramsPlugin(fileURL: URL | undefined, mermaid: MermaidOptions): HastPluginDefinition {
   return {
     name: 'zenith-diagrams',
     element: {
@@ -244,16 +246,31 @@ function diagramsPlugin(fileURL: URL | undefined): HastPluginDefinition {
         // Shiki marks the language on `<pre>`, plain Markdown on `<code>`.
         const language = node.properties?.dataLanguage ?? node.properties?.['data-language'];
         if (language !== 'mermaid' && !hasClass(code, 'language-mermaid')) return;
+
+        // Plain Markdown keeps the fence meta on the node, Shiki output on `<pre>`.
+        const meta = parseMermaidMeta(
+          String(
+            (code.data as { meta?: string } | undefined)?.meta ??
+              node.properties?.dataMeta ??
+              node.properties?.['data-meta'] ??
+              '',
+          ),
+        );
         try {
-          return parseHtml(
-            `<figure class="zd-mermaid">${renderMermaid(ctx.textContent(node))}</figure>`,
-          );
+          const svg = renderMermaid(ctx.textContent(node), {
+            ...mermaid,
+            spacing: meta.spacing ?? mermaid.spacing,
+          });
+          const caption = meta.title
+            ? `<figcaption class="zd-mermaid-title">${escapeHtml(meta.title)}</figcaption>`
+            : '';
+          return parseHtml(`<figure class="zd-mermaid">${svg}${caption}</figure>`);
         } catch (error) {
-          // Diagram types the renderer does not draw stay readable as code.
           const file = fileURL ? ` in ${fileURL.pathname}` : '';
-          console.warn(
-            `[zenith-docs] Mermaid diagram shown as code${file}: ${(error as Error).message}`,
-          );
+          const message = `Mermaid diagram${file}: ${(error as Error).message}`;
+          if (mermaid.fallback === 'error') throw new Error(`[zenith-docs] ${message}`);
+          // Diagram types the renderer does not draw stay readable as code.
+          console.warn(`[zenith-docs] ${message}, shown as code`);
         }
       },
     },
@@ -312,6 +329,10 @@ function codeBlocksPlugin(t: Translations): HastPluginDefinition {
       },
     },
   };
+}
+
+function escapeHtml(text: string): string {
+  return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
 
 function hasClass(node: Element, name: string): boolean {

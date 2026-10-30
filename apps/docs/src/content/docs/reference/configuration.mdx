@@ -144,6 +144,20 @@ Builds a static search index with Pagefind and shows the search dialog. See [sea
 
 Renders TeX between `$` and `$$` as math, with MathML. See [math](/writing/markdown/#math).
 
+### `mermaid`
+
+**Type:** `object` · **Default:** `{ spacing: 'normal', fallback: 'code' }`
+
+Changes how [Mermaid diagrams](/writing/markdown/#diagrams) are drawn.
+
+| Key        | Type                                                     | Default    |
+| ---------- | -------------------------------------------------------- | ---------- |
+| `spacing`  | `'compact' \| 'normal' \| 'wide'`                        | `'normal'` |
+| `colors`   | `{ accent?, line?, muted?, surface?, border? }`          | the theme  |
+| `fallback` | `'code' \| 'error'`                                      | `'code'`   |
+
+`spacing` sets the room between nodes and around the diagram; a code block can choose its own with a keyword. `colors` takes any CSS color or variable, such as `var(--zd-color-success)`. `fallback` is what a diagram of an unsupported type becomes: its source as a code block with a warning, or a failed build.
+
 ### `llms`
 
 **Type:** `boolean` · **Default:** `true`

@@ -103,6 +103,31 @@ const OgSchema = z.object({
     .optional(),
 });
 
+export const MERMAID_SPACINGS = ['compact', 'normal', 'wide'] as const;
+
+const MermaidSchema = z.object({
+  /** Room between the nodes of a diagram. A code block can set its own with a keyword. */
+  spacing: z.enum(MERMAID_SPACINGS).default('normal'),
+  /**
+   * Colors of the diagrams, as any CSS color or variable. They default to colors derived
+   * from the text and background of the site, and `accent` to the accent of the site.
+   */
+  colors: z
+    .object({
+      accent: z.string().optional(),
+      line: z.string().optional(),
+      muted: z.string().optional(),
+      surface: z.string().optional(),
+      border: z.string().optional(),
+    })
+    .default({}),
+  /**
+   * What a diagram of an unsupported type becomes: `code` shows its source with a warning in
+   * the build output, `error` fails the build.
+   */
+  fallback: z.enum(['code', 'error']).default('code'),
+});
+
 const LogoSchema = z.object({
   src: z.string(),
   alt: z.string().default(''),
@@ -138,6 +163,8 @@ export const ZenithConfigSchema = z.object({
    * what dollar signs mean in existing content.
    */
   math: z.boolean().default(false),
+  /** Look of the Mermaid diagrams, which are drawn at build time. */
+  mermaid: MermaidSchema.default({ spacing: 'normal', colors: {}, fallback: 'code' }),
   /**
    * Generate an Open Graph image for every page, shown when a link is shared. An object
    * turns it on and changes how the card looks.
@@ -243,6 +270,9 @@ export type ZenithParsedConfig = z.output<typeof ZenithConfigSchema>;
 
 /** Options of the Open Graph images, with their defaults. */
 export type OgOptions = z.output<typeof OgSchema>;
+
+/** Options of the Mermaid diagrams, with their defaults. */
+export type MermaidOptions = z.output<typeof MermaidSchema>;
 
 export type ZenithLogo = z.output<typeof LogoSchema> & {
   /** SVG markup, inlined so the logo can use `currentColor`. */
