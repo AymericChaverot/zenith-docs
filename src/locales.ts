@@ -29,6 +29,12 @@ export function getLocale(locales: ResolvedLocale[], key: string): ResolvedLocal
   return locales.find((locale) => locale.key === key) ?? getDefaultLocale(locales);
 }
 
+/** The text of a locale, or the one of the default locale when it has none. */
+export function localize(text: string | Record<string, string>, locale: ResolvedLocale): string {
+  if (typeof text === 'string') return text;
+  return text[locale.key] ?? text.root ?? Object.values(text)[0] ?? '';
+}
+
 /** The locale a content path belongs to, based on its first segment. */
 export function localeOf(path: string, locales: ResolvedLocale[]): ResolvedLocale {
   return segmentOf(path, locales, getDefaultLocale(locales));

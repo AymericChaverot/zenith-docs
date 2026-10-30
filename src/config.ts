@@ -128,6 +128,29 @@ const MermaidSchema = z.object({
   fallback: z.enum(['code', 'error']).default('code'),
 });
 
+/** A text, or one text per locale key, with the `root` one as the fallback. */
+const LocalizedSchema = z.union([z.string(), z.record(z.string(), z.string())]);
+
+export const ANNOUNCEMENT_VARIANTS = [
+  'default',
+  'note',
+  'tip',
+  'success',
+  'warning',
+  'danger',
+] as const;
+
+const AnnouncementSchema = z.object({
+  /** Plain text of the bar. */
+  text: LocalizedSchema,
+  /** Link shown after the text. */
+  link: z.object({ label: LocalizedSchema, href: z.string() }).optional(),
+  /** Color of the bar: the accent, or the one of a callout. */
+  variant: z.enum(ANNOUNCEMENT_VARIANTS).default('default'),
+  /** Add a button to close the bar. It stays closed until the announcement changes. */
+  dismissible: z.boolean().default(true),
+});
+
 const LogoSchema = z.object({
   src: z.string(),
   alt: z.string().default(''),
@@ -163,6 +186,15 @@ export const ZenithConfigSchema = z.object({
    * what dollar signs mean in existing content.
    */
   math: z.boolean().default(false),
+  /** A bar above the header of every page, for news such as a release. A string is its text. */
+  announcement: z
+    .union([z.string(), AnnouncementSchema])
+    .optional()
+    .transform((announcement) =>
+      typeof announcement === 'string'
+        ? AnnouncementSchema.parse({ text: announcement })
+        : announcement,
+    ),
   /** Look of the Mermaid diagrams, which are drawn at build time. */
   mermaid: MermaidSchema.default({ spacing: 'normal', colors: {}, fallback: 'code' }),
   /**
@@ -270,6 +302,9 @@ export type ZenithParsedConfig = z.output<typeof ZenithConfigSchema>;
 
 /** Options of the Open Graph images, with their defaults. */
 export type OgOptions = z.output<typeof OgSchema>;
+
+/** The announcement bar, as configured. */
+export type AnnouncementOptions = z.output<typeof AnnouncementSchema>;
 
 /** Options of the Mermaid diagrams, with their defaults. */
 export type MermaidOptions = z.output<typeof MermaidSchema>;

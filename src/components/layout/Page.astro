@@ -2,6 +2,7 @@
 import '../../styles/zenith.css';
 import 'virtual:zenith/user-css';
 
+import Announcement from './Announcement.astro';
 import Breadcrumb from 'virtual:zenith/components/Breadcrumb';
 import Head from 'virtual:zenith/components/Head';
 import Header from 'virtual:zenith/components/Header';
@@ -56,6 +57,7 @@ const accentStyle =
     <a class="zd-skip" href="#zd-content">
       {t.skip}
     </a>
+    <Announcement />
     <InjectionPoint name="banner" class="zd-slot-banner" />
     <Header />
     <div class="zd-layout" data-toc={hasToc ? '' : undefined}>

@@ -912,6 +912,70 @@ html {
   }
 }
 
+/* Announcement bar above the header */
+
+.zd-announcement {
+  --zd-announce: var(--accent);
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.5rem clamp(2.75rem, 5vw, 3.5rem);
+  border-bottom: var(--border-width) solid color-mix(in oklab, var(--zd-announce) 30%, transparent);
+  background: color-mix(in oklab, var(--zd-announce) 12%, var(--background));
+  font-size: 0.875rem;
+  text-align: center;
+}
+
+.zd-announcement p {
+  margin: 0;
+}
+
+.zd-announcement a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin-inline-start: 0.5rem;
+  color: var(--zd-announce);
+  font-weight: var(--primary-medium);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+.zd-announcement[data-variant='note'] {
+  --zd-announce: var(--zd-color-note);
+}
+
+.zd-announcement[data-variant='tip'] {
+  --zd-announce: var(--zd-color-tip);
+}
+
+.zd-announcement[data-variant='success'] {
+  --zd-announce: var(--zd-color-success);
+}
+
+.zd-announcement[data-variant='warning'] {
+  --zd-announce: var(--zd-color-warning);
+}
+
+.zd-announcement[data-variant='danger'] {
+  --zd-announce: var(--zd-color-danger);
+}
+
+.zd-announcement-close {
+  position: absolute;
+  inset-block: 0;
+  inset-inline-end: clamp(0.25rem, 2vw, 1rem);
+  margin-block: auto;
+  width: 1.75rem;
+  height: 1.75rem;
+}
+
+:root:not([data-js]) .zd-announcement-close {
+  display: none;
+}
+
 /* Slots: containers around injected components, only rendered when a slot is used */
 .zd-slot-banner {
   position: relative;

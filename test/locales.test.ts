@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   getDefaultLocale,
   localeOf,
+  localize,
   resolveLocales,
   stripLocale,
   type ResolvedLocale,
@@ -71,5 +72,21 @@ describe('getTranslations', () => {
 
   it('applies overrides', () => {
     expect(getTranslations('fr', { 'toc.title': 'Sommaire' })['toc.title']).toBe('Sommaire');
+  });
+});
+
+describe('localize', () => {
+  const [root, fr] = resolveLocales(
+    config({ root: { label: 'English', dir: 'ltr' }, fr: { label: 'Français', dir: 'ltr' } }),
+  ) as [ResolvedLocale, ResolvedLocale];
+
+  it('keeps a plain text', () => {
+    expect(localize('Hello', fr)).toBe('Hello');
+  });
+
+  it('picks the text of the locale, then the root one', () => {
+    expect(localize({ root: 'Hello', fr: 'Bonjour' }, fr)).toBe('Bonjour');
+    expect(localize({ root: 'Hello' }, fr)).toBe('Hello');
+    expect(localize({ fr: 'Bonjour' }, root)).toBe('Bonjour');
   });
 });

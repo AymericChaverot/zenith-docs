@@ -223,6 +223,30 @@ Checks internal links once the site is built: each one must lead to a page or a 
 
 Shows the date of the last commit that touched each page. The site has to be built from a git checkout with its history: a shallow clone, the default in many CI services, dates every page to the last commit.
 
+### `announcement`
+
+**Type:** `string | object` · **Default:** none
+
+Shows a bar above the header of every page, for news such as a release. A string is its text.
+
+```js title="astro.config.mjs"
+zenith({
+  announcement: {
+    text: 'Version 2 is out.',
+    link: { label: 'Read the notes', href: '/changelog/' },
+  },
+});
+```
+
+| Key           | Type                                                        | Default     |
+| ------------- | ----------------------------------------------------------- | ----------- |
+| `text`        | `string | Record<string, string>`                          | required    |
+| `link`        | `{ label: string | Record<string, string>; href: string }`  | none        |
+| `variant`     | `'default' | 'note' | 'tip' | 'success' | 'warning' | 'danger'` | `'default'` |
+| `dismissible` | `boolean`                                                   | `true`      |
+
+The text is plain. On a site with [several languages](/i18n/), `text` and `link.label` take one text per locale, with `root` as the fallback. A reader who closes the bar does not see it again until the announcement changes. For richer content, use the `banner` [slot](/customization/slots/).
+
 ### `builtWith`
 
 **Type:** `boolean` · **Default:** `true`

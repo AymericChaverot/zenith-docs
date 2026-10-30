@@ -1,0 +1,58 @@
+---
+import { localize } from '../../locales';
+import { withBase } from '../../urls';
+import Icon from '../Icon.astro';
+
+const { config, locale, t } = Astro.locals.zenith;
+const announcement = config.announcement;
+const text = announcement && localize(announcement.text, locale);
+const link = announcement?.link;
+// Closing is remembered per announcement, so a new one shows again.
+const id = announcement ? hash(JSON.stringify(announcement)) : '';
+
+function hash(value: string): string {
+  let result = 5381;
+  for (const char of value) result = (result * 33) ^ char.charCodeAt(0);
+  return (result >>> 0).toString(36);
+}
+---
+
+{announcement && text && (
+  <div class="zd-announcement" data-variant={announcement.variant} data-announcement={id}>
+    <p>
+      {text}
+      {link && (
+        <a href={withBase(link.href)}>
+          {localize(link.label, locale)}
+          <Icon name="arrow-right" size={14} />
+        </a>
+      )}
+    </p>
+    {announcement.dismissible && (
+      <button
+        class="zd-icon-button zd-announcement-close"
+        type="button"
+        aria-label={t['announcement.dismiss']}
+      >
+        <Icon name="close" size={16} />
+      </button>
+    )}
+    <script is:inline>
+      (() => {
+        const bar = document.currentScript.parentElement;
+        const key = `zd-announcement:${bar.dataset.announcement}`;
+        try {
+          if (localStorage.getItem(key)) return bar.remove();
+        } catch {}
+        const close = bar.querySelector('.zd-announcement-close');
+        if (!close) return;
+        close.addEventListener('click', () => {
+          bar.remove();
+          try {
+            localStorage.setItem(key, '1');
+          } catch {}
+        });
+      })();
+    </script>
+  </div>
+)}
