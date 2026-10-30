@@ -107,6 +107,17 @@ export default defineConfig({
       github: 'https://github.com/AymericChaverot/zenith-docs',
       lastUpdated: true,
       math: true,
+      announcement: {
+        text: {
+          root: 'Mermaid options, redirects and announcements are new.',
+          fr: 'Options Mermaid, redirections et annonces : du nouveau.',
+        },
+        link: {
+          label: { root: 'See the diagrams', fr: 'Voir les diagrammes' },
+          href: '/writing/markdown/#diagrams',
+        },
+        variant: 'tip',
+      },
       linkValidation: 'error',
       openapi: {
         rockets: './src/openapi/rockets.yaml',
