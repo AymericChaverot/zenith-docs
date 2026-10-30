@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.5.1
+
+### Fixes
+
+- The `zenith` CLI prints which options of the config are invalid, and the hint of any other error, instead of the error's title alone.
+
 ## 0.5.0
 
 ### Features
