@@ -2,6 +2,8 @@
 title: Kitchen sink
 description: Every element ZenithDocs can render, on a single page.
 icon: box
+sidebar:
+  badge: Demo
 ---
 
 import AccentPicker from '../../../components/AccentPicker.astro';
@@ -247,6 +249,58 @@ npx zenith build && npx zenith preview --open
 ```ts
 const aVeryLongLine = 'This line is deliberately long so that the code block has to scroll horizontally instead of wrapping, which keeps the code readable.';
 ```
+
+### Package managers
+
+```npm
+npm install zenith-docs
+npm run build
+```
+
+## Diagrams
+
+Mermaid diagrams are drawn at build time, with the colors of the site.
+
+```mermaid
+graph LR
+  A[Markdown] --> B{Sätteri} --> C[HTML]
+  B --> D[llms.txt]
+```
+
+A keyword sets the spacing, and `title` adds a caption.
+
+```mermaid wide title="Wide spacing"
+graph LR
+  A[Markdown] --> B{Sätteri} --> C[HTML]
+  B --> D[llms.txt]
+```
+
+```mermaid compact title="Compact spacing"
+graph LR
+  A[Markdown] --> B{Sätteri} --> C[HTML]
+  B --> D[llms.txt]
+```
+
+```mermaid
+sequenceDiagram
+  Reader->>Site: Open a page
+  Site-->>Reader: Static HTML
+```
+
+```mermaid
+stateDiagram-v2
+  [*] --> Draft
+  Draft --> Published
+  Published --> [*]
+```
+
+## Math
+
+Inline math such as $e^{i\pi} + 1 = 0$ sits in a sentence, and display math has its own block:
+
+$$
+\int_0^1 x^2 \, dx = \frac{1}{3}
+$$
 
 ## Cards
 
