@@ -75,11 +75,19 @@ const headTags = config.head.map(({ tag, attrs, content }) => ({
   </>
 )}
 <meta name="twitter:card" content={ogImage && !noindex ? 'summary_large_image' : 'summary'} />
+{/*
+  Prefetch, not prerender: Chrome flashes white when it reveals a prerendered page
+  through a cross-document view transition. Fetching the HTML ahead is cheap, so
+  links are fetched as soon as the pointer touches them, and the next page right away.
+*/}
 <script
   is:inline
   type="speculationrules"
   set:html={JSON.stringify({
-    prerender: [{ where: { href_matches: `${baseUrl()}*` }, eagerness: 'moderate' }],
+    prefetch: [
+      { where: { selector_matches: '.zd-pagination a' }, eagerness: 'immediate' },
+      { where: { href_matches: `${baseUrl()}*` }, eagerness: 'eager' },
+    ],
   })}
 />
 <script is:inline>

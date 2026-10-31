@@ -95,8 +95,8 @@ Every script is inlined in the page, so none of them costs an extra request. Siz
 | Search dialog            | Opens the dialog and renders results                              | 1.1 kB   |
 | Tabs                     | A web component, only on pages that use tabs                      | 0.9 kB   |
 | API reference            | None beyond the tabs of the responses                             | 0        |
-| Page transitions         | None: a crossfade in CSS, and links prerendered by the browser    | 0        |
+| Page transitions         | None: a crossfade in CSS, and links prefetched by the browser     | 0        |
 
 That is about 4 kB on a page without tabs. Search is the only feature with a real cost, paid when a reader opens it: Pagefind and its worker, about 25 kB, then its WebAssembly module, about 70 kB, and the parts of the index that a query needs. Readers who never search never download any of it.
 
-For the whole picture, the stylesheet weighs about 12 kB, and the default fonts about 140 kB for the three faces preloaded on every page, plus 38 kB for the code font on pages with code. Browsers that support speculation rules also prerender a page when the pointer rests on its link, which makes the click instant at the cost of downloading that page.
+For the whole picture, the stylesheet weighs about 12 kB, and the default fonts about 140 kB for the three faces preloaded on every page, plus 38 kB for the code font on pages with code. Browsers that support speculation rules also fetch a page as soon as the pointer touches its link, and the next page right away, so the click does not wait for the network.
