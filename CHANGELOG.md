@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.6.1
+
+### Fixes
+
+- Links are prefetched instead of prerendered, which stops Chrome from flashing white when it shows a prerendered page through the page transition. The pointer touching a link is enough to fetch it, and the previous and next pages are fetched right away.
+
 ## 0.6.0
 
 ### Features
